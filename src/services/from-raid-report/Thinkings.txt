@@ -1,0 +1,62 @@
+Data Needed
+    -> Player
+        - emblem
+        - banner
+        - linked accounts
+        - light
+        - displayName
+        - membershipId
+        - membershipType
+        - RecentRaids
+            - How Long Ago
+            - Clear Time
+            - Clear Count
+            - Fastest Clear Time
+            - Average Clear Time
+            - Completion Percentage
+            - Stats
+                - Prestige Clears
+                - Normal Clears
+                - Guided Games Clears
+                - Prestige Fastest
+                - Normal Fastest
+                - Guided Games Fastest
+                -------Section--------
+                - Kills
+                - Deaths
+                - Assists
+                - Time
+            - Weekly Progress { I assume the 3 classes per account }
+                - Warlock
+                - Titan
+                - Hunter
+
+-> SearchPlayer - "userInfo"
+    - iconPath { Playstation, etc.?
+    - membershipId
+    - membershipType
+    - displayName
+
+-> getProfile
+    - characterIds: [Strings]
+    - dateLastPlayed
+    - userInfo ( see Search Player)
+    - versionsOwned ( expansions owned )
+
+-> getCharacters
+    - {
+        baseCharacterLevel
+        characterId
+        classHash
+        emblemBackgroundPath: url
+        emblemColor
+        emblemPath: url
+        genderHash
+        genderType
+        levelProgression: {}
+        light,
+        percentToNextLevel
+        raceHash
+        raceType
+        stats: { int: int } (Agility Resilience, etc...}
+    }

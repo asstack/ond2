@@ -1,0 +1,15 @@
+collectPlayerInfo:
+    Search Destiny Player -> Get Characters
+
+collectCharacterActivityHistory:
+ -> collectPlayerInfo ->
+        [FOR ALL 3 CHARACTERS]
+            -> Get Historical Stats
+            -> Get Activity History
+
+collectRaidReport:
+    -> Get Post Game CarnageReport
+    -> get activity details { USE HASH }
+        [FOR ALL RAID MEMBERS]
+            -> Using player.destinyUserInfo
+                -> collectCharacterActivityHistory

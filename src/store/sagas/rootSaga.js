@@ -1,0 +1,98 @@
+import { call, put, takeEvery, all, fork } from 'redux-saga/effects';
+import {
+  searchPlayer,
+  fetchProfile,
+  fetchCharacters,
+  fetchActivityHistory,
+  fetchPostGameCarnageReport
+} from "../../services/destiny-services";
+import * as consts from "../constants";
+import raidDefinition from '../../services/raidDefinition';
+
+const createAction = (type, payload = {}) => ({type, ...payload});
+
+function* fetchPlayerProfile({ data }) {
+  try {
+    const searchResults = yield call(searchPlayer, data);
+    const playerProfile = yield call(fetchProfile, searchResults);
+    const playersCharacters = yield call(fetchCharacters, searchResults);
+    playerProfile.displayName = playerProfile.userInfo.displayName;
+    playerProfile.iconPath = searchResults.iconPath;
+    playerProfile.characters =  playersCharacters;
+
+    const collectPC = yield call(collectProfileCharacters, searchResults);
+    console.log('collectPC', collectPC);
+
+    yield put({ type: consts.FETCH_LOG, data: 'Profile Fetch Success' });
+    yield put({ type: consts.SET_PLAYER_PROFILE, data: playerProfile });
+
+
+    const raidHistory = yield call(collectRaidData, playerProfile);
+    console.log('raidHistory', raidHistory);
+
+    yield put({ type: consts.SET_RAID_HISTORY, data: raidHistory});
+  }
+  catch(error) {
+    yield put({ type: consts.FETCH_LOG, data: `Player Profile Fetch Error: ${error}`})
+  }
+}
+
+function* collectProfileCharacters(data) {
+    yield call(fetchCharacters, data);
+}
+
+function* collectRaidData(data) {
+  try {
+    const characters = data.characters;
+    const raidHistory = {};
+
+    const activityHistories = yield all(data.characterIds.map(curr => call(fetchActivityHistory, characters[curr])));
+
+
+    console.log('activityHistories', activityHistories);
+
+    data.characterIds.map(curr => {
+      console.log('raidHistory', raidHistory);
+      console.log('curr', curr);
+      raidHistory[curr] = activityHistories.shift();
+      console.log('raidHistory[curr]', raidHistory[curr]);
+    });
+
+    yield put({ type: consts.FETCH_LOG, data: 'Raid Data Successfully Collected' });
+    return raidHistory;
+  }
+  catch(error) {
+    yield put({ type: consts.FETCH_LOG, data: `Raid Data Fetch Error: ${error}`})
+  }
+}
+
+function* collectActivityHistory(data) {
+  yield call(fetchActivityHistory, data);
+}
+
+function* collectCarnageReport(referenceId) {
+  try{
+    yield fork(fetchPostGameCarnageReport, referenceId);
+    yield put({ type: consts.FETCH_LOG, data: 'Post Game Carnage Report Fetch Success' });
+  }
+  catch(error) {
+    yield put({ type: consts.FETCH_LOG, data: `Error fetching report ${referenceId}: ${error}`})
+  }
+}
+
+function* watchProfileCharacters() {
+  yield takeEvery(consts.FETCH_PROFILE_CHARACTERS, collectProfileCharacters);
+  yield takeEvery(consts.FETCH_PLAYER_PROFILE, fetchPlayerProfile);
+}
+
+function* requestAndPut(requestParameters, actionCreator) {
+  const result = yield call(...requestParameters);
+  //yield put(actionCreator(result));
+  return result;
+}
+
+export default function* rootSaga() {
+  yield all([
+    watchProfileCharacters()
+  ])
+}

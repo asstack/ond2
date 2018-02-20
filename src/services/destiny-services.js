@@ -25,7 +25,7 @@ const searchPlayer = async pathParams => {
   const url = applyQueryStringParams(searchDestinyPlayer(pathParams), { components: 100 });
   const res = await fetch(url, destinyInit);
   const playerData = await res.json();
-  console.log('playerData', playerData)
+  console.log('playerData', playerData);
   return playerData.Response[0];
 };
 

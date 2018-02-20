@@ -1,5 +1,9 @@
+/*
+TODO: Pull and store from destiny.plumbing (could be a delay?), or... import data into back-end and manually update it.
+ */
+
 export default {
-  "3446541099": {
+  "2449714930": {
     "name": "Leviathan",
     "displayProperties": {
       "description": "\"Grow fat from strength.\"",

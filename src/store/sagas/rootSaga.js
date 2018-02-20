@@ -48,14 +48,8 @@ function* collectRaidData(data) {
 
     const activityHistories = yield all(data.characterIds.map(curr => call(fetchActivityHistory, characters[curr])));
 
-
-    console.log('activityHistories', activityHistories);
-
     data.characterIds.map(curr => {
-      console.log('raidHistory', raidHistory);
-      console.log('curr', curr);
       raidHistory[curr] = activityHistories.shift();
-      console.log('raidHistory[curr]', raidHistory[curr]);
     });
 
     yield put({ type: consts.FETCH_LOG, data: 'Raid Data Successfully Collected' });
@@ -64,10 +58,6 @@ function* collectRaidData(data) {
   catch(error) {
     yield put({ type: consts.FETCH_LOG, data: `Raid Data Fetch Error: ${error}`})
   }
-}
-
-function* collectActivityHistory(data) {
-  yield call(fetchActivityHistory, data);
 }
 
 function* collectCarnageReport(referenceId) {
@@ -83,12 +73,6 @@ function* collectCarnageReport(referenceId) {
 function* watchProfileCharacters() {
   yield takeEvery(consts.FETCH_PROFILE_CHARACTERS, collectProfileCharacters);
   yield takeEvery(consts.FETCH_PLAYER_PROFILE, fetchPlayerProfile);
-}
-
-function* requestAndPut(requestParameters, actionCreator) {
-  const result = yield call(...requestParameters);
-  //yield put(actionCreator(result));
-  return result;
 }
 
 export default function* rootSaga() {

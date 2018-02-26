@@ -4,27 +4,35 @@ import styled from 'styled-components';
 
 import baseStyles from './base-styles';
 import { destinyBaseURL } from "./services/destiny-endpoints";
-import {
-  fetchProfile,
-  fetchCharacters,
-  fetchGroupsForMembers,
-  fetchActivityHistory
-} from "./services/destiny-services";
 import { FETCH_PLAYER_PROFILE, FETCH_PROFILE_CHARACTERS } from "./store/constants";
+import RaidWeekViewer from './components/RaidWeekViewer';
 
-const Wrapper = styled.div`
+const AppWrapper = styled.div`
   display: flex;
+  flex-direction: column;  
   width: 100%;
   height: 100%;
-  flex-direction: row;
   align-items: center;
-  margin-left: 100px;
+ 
+`;
+
+const PlayerSearchSection = styled.div`
+  margin: 75px 0 30px 0;
+  
+  & > h4, p {
+    display: inline-block;
+    margin-top: 15px;
+  }
+`;
+
+const RaidReportSection = styled.section`
 `;
 
 const Input = styled.input`
   width: 300px;
   height: 40px;
   font-size: 24px;
+  margin-left: 10px;
 `;
 
 class App extends Component {
@@ -34,9 +42,6 @@ class App extends Component {
     this.state = {
       playerSearch: 'videoflux',
       searchHistory: [],
-      player: {
-        displayName: ''
-      }
     }
   };
 
@@ -67,46 +72,34 @@ class App extends Component {
     // this.getCharactersRaidReport(); // .then((data) => console.log('raid report'), data);
   };
 
-  getCharactersClan = async () => {
-    const clan = await fetchGroupsForMembers({ filter: 0, groupType: 1, ...this.state.player});
-    this.setState({ player: { clan: clan[0], ...this.state.player } });
-    return clan[0];
-  };
-
-  getCharactersRaidReport = async () => {
-    const { userInfo: { membershipId, membershipType } } = this.state.player;
-    const pathParams = {membershipType, membershipId, characterId: '2305843009261142123'};
-    const queryParams = { page: 0, mode: 'raid', count: 250};
-    const raidReport = await fetchActivityHistory(pathParams, queryParams);
-    console.log('raid report', raidReport);
-  };
-
   render() {
     baseStyles();
 
     const { playerSearch, player } = this.state;
 
+    console.log('player', player);
     return (
-      <Wrapper>
-        <form onSubmit={(e) => this.searchDestinyPlayer(e)}>
-          <Input value={playerSearch} onChange={this.handlePlayerSearch} />
-        </form>
-        <div style={{ marginLeft: 50 }}>
-          {
-            player.iconPath &&
-              <div style={{ width: 100, height: 100 }}>
-                <img src={`${destinyBaseURL}${player.iconPath}`}/>
-              </div>
-          }
-        </div>
-      </Wrapper>
+      <AppWrapper>
+        <PlayerSearchSection>
+          <form onSubmit={(e) => this.searchDestinyPlayer(e)}>
+            <label>Gamer Tag</label>
+            <Input value={playerSearch} onChange={this.handlePlayerSearch} />
+          </form>
+          <h4>EOW: </h4><p>Normal(22) Prestige(50)</p>
+          <br />
+          <h4>Leviathan: </h4><p>Normal(30) Prestige(43)</p>
+        </PlayerSearchSection>
+        <RaidReportSection>
+          <RaidWeekViewer />
+        </RaidReportSection>
+      </AppWrapper>
     );
   }
 }
 
 const mapStateToProps = state => {
   return {
-    player: state.player
+    player: state.playerProfile
   }
 };
 

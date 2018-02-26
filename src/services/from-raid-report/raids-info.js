@@ -6,7 +6,7 @@
 //
 // // Need Class Race and Gender Hash
 //
-// export const LEVIATHAN_LAUNCH_WEEK = '2017-09-12T17:00:00.000Z';
+
 //
 // // tslint:disable:no-require-imports no-var-requires
 // export const LEVIATHAN_IMAGE = require('../images/leviathan.jpg');

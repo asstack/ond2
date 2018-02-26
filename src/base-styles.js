@@ -4,15 +4,12 @@ import reset from 'styled-reset';
 const baseStyles = () => injectGlobal`
   ${reset}
   
-  body {
-    min-height: 100vh;
-    
-    * {
-      box-sizing: border-box;
-    }
+  * {
+    box-sizing: border-box;
   }
   
   #root {
+    min-height: 100vh;
     height: 100vh;
   }
 `;

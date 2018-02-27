@@ -68,8 +68,16 @@ const RaidStack = ({ success }) => {
   return (
     <RaidStackList>
       <RaidStackItems success={success} activityCount={6} >
-        <RaidStackItem na={true} />
-        <RaidStackItem na={true} />
+        <RaidStackItem na />
+        <RaidStackItem na />
+        <RaidStackItem na />
+        <RaidStackItem />
+        <RaidStackItem />
+        <RaidStackItem />
+      </RaidStackItems>
+      <RaidStackItems success={success} activityCount={6}>
+        <RaidStackItem na />
+        <RaidStackItem na />
         <RaidStackItem />
         <RaidStackItem />
         <RaidStackItem />
@@ -83,14 +91,6 @@ const RaidStack = ({ success }) => {
         <RaidStackItem />
         <RaidStackItem />
       </RaidStackItems>
-      <RaidStackItems success={success} activityCount={6}>
-        <RaidStackItem />
-        <RaidStackItem />
-        <RaidStackItem />
-        <RaidStackItem />
-        <RaidStackItem />
-        <RaidStackItem />
-      </RaidStackItems>
     </RaidStackList>
   );
 };
@@ -98,7 +98,7 @@ const RaidStack = ({ success }) => {
 const RaidWeekViewer = (props) => {
   return (
     <RaidWeekContainer>
-      <RaidWeekHeader>Week 22</RaidWeekHeader>
+      <RaidWeekHeader>Current</RaidWeekHeader>
       <RaidWeekCompletions>
         <RaidStack success />
       </RaidWeekCompletions>

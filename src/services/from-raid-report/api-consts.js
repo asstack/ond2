@@ -15,13 +15,6 @@ export const RECENT_RAIDS_DOT_WIDTH = 17.5;
 export const RECENT_RAIDS_CONTAINER_HEIGHT = 50;
 export const RECENT_RAIDS_CHART_HEIGHT = '90%';
 
-export const MATERIAL_ICONS = {
-    cancel: 'cancel',
-    check_circle: 'check_circle',
-    close: 'close',
-    error: 'error',
-    search: 'search',
-};raid
 
 export const SUCCESS_COLOR = '#4CAF50';
 export const ERROR_COLOR = '#F44336';

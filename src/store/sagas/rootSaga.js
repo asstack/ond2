@@ -13,21 +13,21 @@ const createAction = (type, payload = {}) => ({type, ...payload});
 
 function* fetchPlayerProfile({ data }) {
   try {
-    const searchResults = yield call(searchPlayer, data);
-    const playerProfile = yield call(fetchProfile, searchResults);
-    const playersCharacters = yield call(fetchCharacters, searchResults);
-    playerProfile.displayName = playerProfile.userInfo.displayName;
-    playerProfile.iconPath = searchResults.iconPath;
-    playerProfile.characters =  playersCharacters;
+    const player = yield call(searchPlayer, data);
+    const playerProfile = yield call(fetchProfile, player);
+    const playersCharacters = yield call(fetchCharacters, player);
+    player.displayName = playerProfile.userInfo.displayName;
+    player.characterIds = playerProfile.characterIds;
+    player.characters =  playersCharacters;
 
-    const collectPC = yield call(collectProfileCharacters, searchResults);
+    const collectPC = yield call(collectProfileCharacters, player);
     console.log('collectPC', collectPC);
 
     yield put({ type: consts.FETCH_LOG, data: 'Profile Fetch Success' });
-    yield put({ type: consts.SET_PLAYER_PROFILE, data: playerProfile });
+    yield put({ type: consts.SET_PLAYER_PROFILE, data: player });
 
 
-    const raidHistory = yield call(collectRaidData, playerProfile);
+    const raidHistory = yield call(collectRaidData, player);
     console.log('raidHistory', raidHistory);
 
     yield put({ type: consts.SET_RAID_HISTORY, data: raidHistory});

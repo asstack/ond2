@@ -7,30 +7,20 @@ import {
   fetchPostGameCarnageReport
 } from "../../services/destiny-services";
 import * as consts from "../constants";
-import raidDefinition from '../../services/raidDefinition';
-
-const createAction = (type, payload = {}) => ({type, ...payload});
+import normalize from '../normalize';
 
 function* fetchPlayerProfile({ data }) {
   try {
-    const player = yield call(searchPlayer, data);
-    const playerProfile = yield call(fetchProfile, player);
-    const playersCharacters = yield call(fetchCharacters, player);
-    player.displayName = playerProfile.userInfo.displayName;
-    player.characterIds = playerProfile.characterIds;
-    player.characters =  playersCharacters;
+    const searchResults = yield call(searchPlayer, data);
+    const profile = yield call(fetchProfile, searchResults);
+    const playersCharacters = yield call(fetchCharacters, searchResults);
+    const playerProfile = normalize.player(searchResults, profile, playersCharacters);
+    yield put({ type: consts.SET_PLAYER_PROFILE, data: profile });
 
-    const collectPC = yield call(collectProfileCharacters, player);
-    console.log('collectPC', collectPC);
-
-    yield put({ type: consts.FETCH_LOG, data: 'Profile Fetch Success' });
-    yield put({ type: consts.SET_PLAYER_PROFILE, data: player });
-
-
-    const raidHistory = yield call(collectRaidData, player);
-    console.log('raidHistory', raidHistory);
-
+    const activityHistory = yield call(collectRaidData, playerProfile);
+    const raidHistory = normalize.raidHistory(activityHistory);
     yield put({ type: consts.SET_RAID_HISTORY, data: raidHistory});
+    yield put({ type: consts.FETCH_LOG, data: 'Player Profile Fetch Success' });
   }
   catch(error) {
     yield put({ type: consts.FETCH_LOG, data: `Player Profile Fetch Error: ${error}`})

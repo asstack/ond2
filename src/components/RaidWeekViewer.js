@@ -64,7 +64,8 @@ const RaidStackItem = styled.div`
 `;
 
 
-const RaidStack = ({ success }) => {
+const RaidStack = ({ raids, success }) => {
+  const count = 5
   return (
     <RaidStackList>
       <RaidStackItems success={success} activityCount={6} >
@@ -95,7 +96,9 @@ const RaidStack = ({ success }) => {
   );
 };
 
-const RaidWeekViewer = (props) => {
+const RaidWeekViewer = ({ raidHistory }) => {
+  const charId = 2305843009260680049;
+
   return (
     <RaidWeekContainer>
       <RaidWeekHeader>Current</RaidWeekHeader>

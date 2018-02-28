@@ -57,7 +57,6 @@ class App extends Component {
   searchDestinyPlayer = async (e) => {
     e.preventDefault();
     const { searchPlayer } = this.props;
-    console.log('searchPlaya', searchPlayer);
 
     const { playerSearch } = this.state;
     const playerProfile = await searchPlayer({ displayName: playerSearch, membershipType: -1 });
@@ -75,9 +74,9 @@ class App extends Component {
   render() {
     baseStyles();
 
-    const { playerSearch, player } = this.state;
+    const { playerSearch } = this.state;
+    const { playerProfile, raidHistory } = this.props;
 
-    console.log('player', player);
     return (
       <AppWrapper>
         <PlayerSearchSection>
@@ -90,7 +89,7 @@ class App extends Component {
           <h4>Leviathan: </h4><p>Normal(30) Prestige(43)</p>
         </PlayerSearchSection>
         <RaidReportSection>
-          <RaidWeekViewer />
+          <RaidWeekViewer raidHistory={raidHistory} />
         </RaidReportSection>
       </AppWrapper>
     );
@@ -98,8 +97,10 @@ class App extends Component {
 }
 
 const mapStateToProps = state => {
+  console.log('state', state);
   return {
-    player: state.playerProfile
+    playerProfile: state.playerProfile,
+    raidHistory: state.raidHistory
   }
 };
 
@@ -110,20 +111,3 @@ const mapDispatchToProps = dispatch => {
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);
-
-/*
-          {
-            player.displayName ? (
-              <div>
-                <p>{player.displayName}</p>
-                <br/>
-                <p>Versions Owned: {player.versionsOwned}</p><br />
-                <p>Last Played: {player.dateLastPlayed}</p><br />
-                <h2>Characters:</h2>
-                <ul>
-                  { player.characterIds.map((id, idx) => <li key={`${idx}-${id}`}>{id}</li>) }
-                </ul>
-              </div>
-            ) : <p>Search for a player</p>
-          }
- */

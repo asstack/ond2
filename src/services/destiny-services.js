@@ -8,7 +8,6 @@ import {
   getPostGameCarnageReport
 } from "./destiny-endpoints";
 
-
 const destinyHeaders = new Headers({
   'Content-Type': 'application/json',
   'X-API-KEY': 'b4c2d019990f452e8c3d40f5d279ac04'
@@ -25,7 +24,6 @@ const searchPlayer = async pathParams => {
   const url = applyQueryStringParams(searchDestinyPlayer(pathParams), { components: 100 });
   const res = await fetch(url, destinyInit);
   const playerData = await res.json();
-  console.log('playerData', playerData);
   return playerData.Response[0];
 };
 
@@ -40,7 +38,6 @@ const fetchCharacters = async pathParams => {
   const url = applyQueryStringParams(getProfile(pathParams), { components: 200 });
   const res = await fetch(url, destinyInit);
   const characters = await res.json();
-  console.log('chars', characters);
   return characters.Response.characters.data;
 };
 

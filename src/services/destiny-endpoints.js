@@ -1,4 +1,4 @@
-const destinyBaseURL = 'https://www.bungie.net';
+import { destinyBaseURL } from "../actions";
 
 const apiType = {
   destiny2: `${destinyBaseURL}/Platform/Destiny2`,

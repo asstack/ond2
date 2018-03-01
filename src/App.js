@@ -97,7 +97,6 @@ class App extends Component {
 }
 
 const mapStateToProps = state => {
-  console.log('state', state);
   return {
     playerProfile: state.playerProfile,
     raidHistory: state.raidHistory

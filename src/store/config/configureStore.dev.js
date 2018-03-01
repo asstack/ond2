@@ -12,10 +12,10 @@ const configureStore = preloadedState => {
     rootReducer,
     preloadedState,
     composeEnhancers(
-      applyMiddleware(createLogger(), sagaMiddleware),
+      applyMiddleware(sagaMiddleware),
     )
   );
-
+//createLogger()
   sagaMiddleware.run(rootSaga);
 
   if(module.hot) {

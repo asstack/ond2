@@ -20,11 +20,6 @@ export const SET_RAID_HISTORY = 'set_raid_history';
 export const FETCH_PLAYER_PROFILE = createRequestTypes('PROFILE');
 export const FETCH_PROFILE_CHARACTERS = 'fetch_profile_characters';
 
-const action = (type, payload = {}) => ({type, ...payload});
-
-console.log('createRequest', createRequestTypes('USER'));
-// const searchDestinyPlayer = ({ displayName, membershipType }) => `${apiType.destiny2}/SearchDestinyPlayer/${membershipType}/${displayName}/`;
-
 // TODO: Need Class Race and Gender Hash
 export const CLASS_MAP = {
     3655393761: 'Titan',
@@ -32,21 +27,23 @@ export const CLASS_MAP = {
     2271682572: 'Warlock',
 };
 
-export const LEVIATHAN_IMAGE = require('../images/leviathan.jpg');
-export const EATER_OF_WORLDS_IMAGE = require('../images/eater_of_worlds.jpg');
+export const destinyBaseURL = 'https://www.bungie.net';
+export const LEVIATHAN_IMAGE = `${destinyBaseURL}/img/destiny_content/pgcr/raid_gluttony.jpg`;
+export const EATER_OF_WORLDS_IMAGE = `${destinyBaseURL}/img/destiny_content/pgcr/raids_leviathan_eater_of_worlds.jpg`;
 
-export const EATER_OF_WORLDS_LAUNCH_WEEK = '2017-12-08T18:00:00.000Z';
-export const LEVIATHAN_LAUNCH_WEEK = '2017-09-12T17:00:00.000Z';
+export const EATER_OF_WORLDS_LAUNCH_WEEK = '2017-12-08';
+export const LEVIATHAN_LAUNCH_WEEK = '2017-09-12';
 
  export const EATER_OF_WORLDS = {
    hashId: 809170886,
    raidName: 'Eater of Worlds',
    boss: 'Argos',
    image: EATER_OF_WORLDS_IMAGE,
-   launchTime: EATER_OF_WORLDS_LAUNCH_WEEK,
+   launchDate: EATER_OF_WORLDS_LAUNCH_WEEK,
+   activityHashes: [3089205900, 2164432138, 809170886],
    versions: [
      {
-       activityHashes : [ 3089205900 ],
+       activityHashes : [3089205900],
        displayValue : 'Normal',
      },
      {
@@ -64,7 +61,12 @@ export const LEVIATHAN_LAUNCH_WEEK = '2017-09-12T17:00:00.000Z';
    raidName: 'Leviathan',
    boss: 'Calus',
    image: LEVIATHAN_IMAGE,
-   launchTime: LEVIATHAN_LAUNCH_WEEK,
+   launchDate: LEVIATHAN_LAUNCH_WEEK,
+   activityHashes: [
+     417231112, 757116822, 1685065161, 2449714930, 3446541099,
+     3879860661, 2693136600, 2693136601, 2693136602, 2693136603,
+     2693136604, 2693136605, 89727599, 287649202, 1699948563,
+     1875726950, 3916343513, 4039317196],
    versions: [
      {
        activityHashes: [417231112, 757116822, 1685065161, 2449714930, 3446541099, 3879860661],

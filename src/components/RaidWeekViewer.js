@@ -96,10 +96,10 @@ const RaidStack = ({ raids, success }) => {
   );
 };
 
-const RaidWeekViewer = ({ raidHistory }) => {
-  const charId = 2305843009260680049;
-
+const RaidWeekViewer = ({ raidHistory : { mergedHistory = {EOW: false} } }) => {
+  console.log('mergedHistory', mergedHistory.EOW);
   return (
+     mergedHistory.EOW && (
     <RaidWeekContainer>
       <RaidWeekHeader>Current</RaidWeekHeader>
       <RaidWeekCompletions>
@@ -109,7 +109,7 @@ const RaidWeekViewer = ({ raidHistory }) => {
         <RaidStack />
       </RaidWeekFailures>
     </RaidWeekContainer>
-  )
+  ))
 };
 
 export default RaidWeekViewer;

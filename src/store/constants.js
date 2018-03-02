@@ -9,6 +9,9 @@ export const SET_RAID_HISTORY = 'set_raid_history';
 export const FETCH_PLAYER_PROFILE = 'fetch_player_profile';
 export const FETCH_PROFILE_CHARACTERS = 'fetch_profile_characters';
 
+export const LOAD_PUBLIC_MILESTONE_DATA = 'load_public_milestone_data';
+
+
 const activityModes = {
   0: 'none',
   2: 'Story',

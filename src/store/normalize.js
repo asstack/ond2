@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { EATER_OF_WORLDS as EOW, LEVIATHAN as LEV} from "../actions";
+import { RAIDS, EATER_OF_WORLDS as EOW, LEVIATHAN as LEV} from "../actions";
 
 const getRaidWeeks = (raidLaunchDate) => {
   const weeksSinceRelease = moment().diff(moment(raidLaunchDate, 'YYYY-MM-DD'), 'w') + 1;
@@ -76,8 +76,8 @@ const _raidHistory = (activityHistory) => {
   Object.keys(activityHistory).forEach(
     (charId) => {
       const raids = activityHistory[charId].filter((activity) => activity.activityDetails.mode === 4);
-      const EOW_Raids = raids.filter((curr) => EOW.activityHashes.indexOf(curr.activityDetails.directorActivityHash));
-      const LEV_Raids = raids.filter((curr) => LEV.activityHashes.indexOf(curr.activityDetails.directorActivityHash));
+      const EOW_Raids = raids.filter((curr) => EOW.allActivityHashes.indexOf(curr.activityDetails.directorActivityHash));
+      const LEV_Raids = raids.filter((curr) => LEV.allActivityHashes.indexOf(curr.activityDetails.directorActivityHash));
 
       const EOW_RaidsByWeek = splitRaidByWeek(EOW_RaidWeeks, EOW_Raids);
       const LEV_RaidsByWeek = splitRaidByWeek(LEV_RaidWeeks, LEV_Raids);
@@ -106,10 +106,18 @@ const _raidHistory = (activityHistory) => {
   return raidHistory;
   };
 
+const _challenges = (activityName, milestones) => {
+  const challenges = milestones.availableQuests[0].challenges;
+  const activityHashes = challenges.map(curr => curr.activityHash);
+  RAIDS[activityName].allActivityHashes = [...activityHashes];
+  return activityHashes;
+};
+
 const normalize = {
   player: _playerProfile,
   raid: _raid,
-  raidHistory: _raidHistory
+  raidHistory: _raidHistory,
+  challenges: _challenges
 };
 
 export default normalize;

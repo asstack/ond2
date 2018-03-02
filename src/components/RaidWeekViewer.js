@@ -36,15 +36,16 @@ const RaidWeekFailures = styled.div`
 `;
 
 const RaidStackList = styled.div`
-  width: 70%;
-  border-bottom: 1px solid black;
-  border-right: 1px solid black;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
 `;
 
 const RaidStackItems = styled.div`
   display: flex;
   flex-direction: row;
   height: 20px;
+  width: 100%;
   ${({ success }) => success ? 'margin-bottom: -1px' : null};
   ${({ success }) => success ? null: 'margin-top: -1px'};
   
@@ -63,10 +64,7 @@ const RaidStackItem = styled.div`
   border-top: 1px solid black;
 `;
 
-
-const RaidStack = ({ raids, success }) => {
-  const count = 5
-  return (
+/*
     <RaidStackList>
       <RaidStackItems success={success} activityCount={6} >
         <RaidStackItem na />
@@ -93,22 +91,35 @@ const RaidStack = ({ raids, success }) => {
         <RaidStackItem />
       </RaidStackItems>
     </RaidStackList>
+ */
+
+const RaidStack = ({ raid }) => {
+  console.log('raid', raid);
+  return (
+    <RaidWeekContainer>
+      <RaidWeekHeader>Current</RaidWeekHeader>
+      <RaidWeekCompletions>
+        <RaidStackItems activityCount={1} success>
+          <RaidStackItem />
+        </RaidStackItems>
+      </RaidWeekCompletions>
+      <RaidWeekFailures>
+        <RaidStackItems success>
+          <RaidStackItem />
+        </RaidStackItems>
+      </RaidWeekFailures>
+    </RaidWeekContainer>
   );
 };
 
 const RaidWeekViewer = ({ raidHistory : { mergedHistory = {EOW: false} } }) => {
-  console.log('mergedHistory', mergedHistory.EOW);
+  const raidData = mergedHistory.EOW && mergedHistory.EOW.reverse();
+  console.log('mergedHistory', raidData);
   return (
-     mergedHistory.EOW && (
-    <RaidWeekContainer>
-      <RaidWeekHeader>Current</RaidWeekHeader>
-      <RaidWeekCompletions>
-        <RaidStack success />
-      </RaidWeekCompletions>
-      <RaidWeekFailures>
-        <RaidStack />
-      </RaidWeekFailures>
-    </RaidWeekContainer>
+     raidData && (
+       <RaidStackList>
+        { raidData.map((curr) => <RaidStack raid={curr} />) }
+       </RaidStackList>
   ))
 };
 

@@ -4,23 +4,33 @@ import {
   fetchProfile,
   fetchCharacters,
   fetchActivityHistory,
-  fetchPostGameCarnageReport
+  fetchPostGameCarnageReport,
+  fetchPublicMilestones
 } from "../../services/destiny-services";
+import { RAIDS } from "../../actions";
 import * as consts from "../constants";
 import normalize from '../normalize';
 
 function* fetchPlayerProfile({ data }) {
   try {
+    const publicMilestones = yield fetchPublicMilestones();
+    yield all([
+      normalize.challenges('NIGHTFALL', publicMilestones[RAIDS.NIGHTFALL.milestoneHash]),
+      normalize.challenges('LEVIATHAN', publicMilestones[RAIDS.LEVIATHAN.milestoneHash])
+    ]);
+
     const searchResults = yield call(searchPlayer, data);
-    const profile = yield call(fetchProfile, searchResults);
-    const playersCharacters = yield call(fetchCharacters, searchResults);
+    const [profile, playersCharacters] = yield all([ call(fetchProfile, searchResults), call(fetchCharacters, searchResults)]);
     const playerProfile = normalize.player(searchResults, profile, playersCharacters);
-    yield put({ type: consts.SET_PLAYER_PROFILE, data: profile });
+
+    yield put({ type: consts.SET_PLAYER_PROFILE, data: playerProfile });
+    yield put({ type: consts.FETCH_LOG, data: 'Player Profile Fetch Success' });
 
     const activityHistory = yield call(collectRaidData, playerProfile);
     const raidHistory = normalize.raidHistory(activityHistory);
     yield put({ type: consts.SET_RAID_HISTORY, data: raidHistory});
-    yield put({ type: consts.FETCH_LOG, data: 'Player Profile Fetch Success' });
+
+    yield put({ type: consts.FETCH_LOG, data: 'Raid Data Successfully Collected' });
   }
   catch(error) {
     yield put({ type: consts.FETCH_LOG, data: `Player Profile Fetch Error: ${error}`})
@@ -31,18 +41,18 @@ function* collectProfileCharacters(data) {
     yield call(fetchCharacters, data);
 }
 
-function* collectRaidData(data) {
+function* collectRaidData(playerProfile) {
   try {
-    const characters = data.characters;
     const raidHistory = {};
 
-    const activityHistories = yield all(data.characterIds.map(curr => call(fetchActivityHistory, characters[curr])));
+    const activityHistories = yield all(
+      playerProfile.characterIds.map(curr => call(fetchActivityHistory, playerProfile.characters[curr]))
+    );
 
-    data.characterIds.map(curr => {
+    playerProfile.characterIds.map(curr => {
       raidHistory[curr] = activityHistories.shift();
     });
 
-    yield put({ type: consts.FETCH_LOG, data: 'Raid Data Successfully Collected' });
     return raidHistory;
   }
   catch(error) {

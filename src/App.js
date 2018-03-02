@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import baseStyles from './base-styles';
 import { destinyBaseURL } from "./services/destiny-endpoints";
-import { FETCH_PLAYER_PROFILE, FETCH_PROFILE_CHARACTERS } from "./store/constants";
+import { FETCH_PLAYER_PROFILE, FETCH_PROFILE_CHARACTERS, LOAD_PUBLIC_MILESTONE_DATA } from "./store/constants";
 import RaidWeekViewer from './components/RaidWeekViewer';
 
 const AppWrapper = styled.div`
@@ -45,8 +45,10 @@ class App extends Component {
     }
   };
 
-  // Filter: 0 - All
-  // Group Type: 0 - General, 1 - Clan
+  componentDidMount() {
+    const { loadPublicMilestoneData } = this.props;
+    loadPublicMilestoneData();
+  }
 
   handlePlayerSearch = ({ target}) => {
     this.setState({
@@ -105,7 +107,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    searchPlayer: pathParams => dispatch({type: FETCH_PLAYER_PROFILE, data: pathParams})
+    searchPlayer: pathParams => dispatch({type: FETCH_PLAYER_PROFILE, data: pathParams}),
+    loadPublicMilestoneData: () => dispatch({type: LOAD_PUBLIC_MILESTONE_DATA})
   }
 };
 

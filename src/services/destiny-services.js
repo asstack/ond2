@@ -5,7 +5,8 @@ import {
   getGroupsForMember,
   getActivityHistory,
   getAggregateActivityStats,
-  getPostGameCarnageReport
+  getPostGameCarnageReport,
+  getPublicMilestones
 } from "./destiny-endpoints";
 
 const destinyHeaders = new Headers({
@@ -69,6 +70,11 @@ const fetchPostGameCarnageReport = async (activityId) => {
   return carnageReport.Response;
 };
 
+const fetchPublicMilestones = async () => {
+  const res = await fetch(getPublicMilestones(), destinyInit);
+  const publicMilestones = await res.json();
+  return publicMilestones.Response
+};
 export {
   searchPlayer,
   fetchProfile,
@@ -76,5 +82,6 @@ export {
   fetchGroupsForMembers,
   fetchActivityHistory,
   fetchActivityStatsAggregate,
-  fetchPostGameCarnageReport
+  fetchPostGameCarnageReport,
+  fetchPublicMilestones
 };

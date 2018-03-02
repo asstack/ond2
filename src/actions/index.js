@@ -15,6 +15,8 @@ export const FETCH_LOG = 'FETCH_LOG';
 export const SET_PLAYER_PROFILE = 'set_player_profile';
 export const SET_ACTIVITY_HISTORY = 'set_activity_history';
 
+export const LOAD_PUBLIC_MILESTONE_DATA = 'load_public_milestone_data';
+
 export const SET_RAID_HISTORY = 'set_raid_history';
 
 export const FETCH_PLAYER_PROFILE = createRequestTypes('PROFILE');
@@ -34,13 +36,17 @@ export const EATER_OF_WORLDS_IMAGE = `${destinyBaseURL}/img/destiny_content/pgcr
 export const EATER_OF_WORLDS_LAUNCH_WEEK = '2017-12-08';
 export const LEVIATHAN_LAUNCH_WEEK = '2017-09-12';
 
+export const NIGHTFALL = {
+  milestoneHash: 2171429505,
+  allActivityHashes: [], // This data is applied at runtime since it changes weekly.
+};
+
  export const EATER_OF_WORLDS = {
-   hashId: 809170886,
    raidName: 'Eater of Worlds',
    boss: 'Argos',
    image: EATER_OF_WORLDS_IMAGE,
    launchDate: EATER_OF_WORLDS_LAUNCH_WEEK,
-   activityHashes: [3089205900, 2164432138, 809170886],
+   allActivityHashes: [3089205900, 2164432138, 809170886],
    versions: [
      {
        activityHashes : [3089205900],
@@ -62,11 +68,8 @@ export const LEVIATHAN_LAUNCH_WEEK = '2017-09-12';
    boss: 'Calus',
    image: LEVIATHAN_IMAGE,
    launchDate: LEVIATHAN_LAUNCH_WEEK,
-   activityHashes: [
-     417231112, 757116822, 1685065161, 2449714930, 3446541099,
-     3879860661, 2693136600, 2693136601, 2693136602, 2693136603,
-     2693136604, 2693136605, 89727599, 287649202, 1699948563,
-     1875726950, 3916343513, 4039317196],
+   milestoneHash: 3660836525,
+   allActivityHashes: [], // This data is applied at runtime since it changes weekly.
    versions: [
      {
        activityHashes: [417231112, 757116822, 1685065161, 2449714930, 3446541099, 3879860661],
@@ -83,7 +86,7 @@ export const LEVIATHAN_LAUNCH_WEEK = '2017-09-12';
    ],
  };
 
-export const RAIDS = [EATER_OF_WORLDS, LEVIATHAN];
+export const RAIDS = {EATER_OF_WORLDS, LEVIATHAN, NIGHTFALL};
 
 export const activityModes = {
   0: 'none',
@@ -93,5 +96,6 @@ export const activityModes = {
   5: 'allPvP',
   6: 'patrol',
   7: 'allPvE',
-  10: 'control'
+  10: 'control',
+  16: 'Nightfall Strike'
 };

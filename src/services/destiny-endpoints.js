@@ -32,6 +32,7 @@ const getAggregateActivityStats = (pathParams) => {
 
 const getPostGameCarnageReport = (activityId) => `${apiType.destiny2}/Stats/PostGameCarnageReport/${activityId}/`;
 
+const getPublicMilestones = () => `${apiType.destiny2}/Milestones/`;
 
 export {
   destinyBaseURL,
@@ -40,5 +41,6 @@ export {
   getGroupsForMember,
   getActivityHistory,
   getAggregateActivityStats,
-  getPostGameCarnageReport
+  getPostGameCarnageReport,
+  getPublicMilestones
 }

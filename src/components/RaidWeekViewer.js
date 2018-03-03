@@ -17,19 +17,10 @@ const RaidWeekHeader = styled.div`
   vertical-align: middle;
 `;
 
-const RaidWeekCompletions = styled.div`
+const RaidWeek = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  align-items: center;
-  height: 40%;
-  border-top: 1px solid black;
-`;
-
-const RaidWeekFailures = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
   align-items: center;
   height: 40%;
   border-top: 1px solid black;
@@ -98,27 +89,22 @@ const RaidStack = ({ raid }) => {
   return (
     <RaidWeekContainer>
       <RaidWeekHeader>Current</RaidWeekHeader>
-      <RaidWeekCompletions>
+      <RaidWeek>
         <RaidStackItems activityCount={1} success>
           <RaidStackItem />
         </RaidStackItems>
-      </RaidWeekCompletions>
-      <RaidWeekFailures>
-        <RaidStackItems success>
-          <RaidStackItem />
-        </RaidStackItems>
-      </RaidWeekFailures>
+      </RaidWeek>
     </RaidWeekContainer>
   );
 };
 
 const RaidWeekViewer = ({ raidHistory : { mergedHistory = {EOW: false} } }) => {
-  const raidData = mergedHistory.EOW && mergedHistory.EOW.reverse();
-  console.log('mergedHistory', raidData);
+  const weeks = mergedHistory.EOW && Object.keys(mergedHistory.EOW).slice(0, 5);
+  console.log('weeks', weeks);
   return (
-     raidData && (
+     weeks && (
        <RaidStackList>
-        { raidData.map((curr) => <RaidStack raid={curr} />) }
+        { weeks.map(key => <RaidStack raid={mergedHistory[key]} />) }
        </RaidStackList>
   ))
 };

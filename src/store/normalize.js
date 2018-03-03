@@ -27,22 +27,22 @@ const splitRaidByWeek = (raidWeeks, raids) => {
   return raidsByWeek;
 };
 
-const mergeRaidsByWeek = raidHistory => {
-  const mergedRaids = { EOW: [], LEV: [] };
+const mergeRaidsByWeek = raidHistory =>
+  Object.values(raidHistory).reduce((accum, raids) => {
+    Object.entries(raids).forEach(raidGroup => {
+      const [raidName, raids] = raidGroup;
+      accum[raidName] = accum[raidName] ? accum[raidName] : {};
 
-  Object.keys(raidHistory).map((charId) => {
-    Object.keys(raidHistory[charId].EOW).map((curr, idx) => {
-      mergedRaids.EOW[idx] = mergedRaids.EOW[idx] ?
-        [...mergedRaids.EOW[idx], ...raidHistory[charId].EOW[curr]] : [...raidHistory[charId].EOW[curr]]
+      Object.entries(raids).forEach(raidEntries => {
+        const [week, weekRaids ] = raidEntries;
+        accum[raidName][week] = {
+          ...accum[raidName][week],
+          ...weekRaids
+        };
+      });
     });
-
-    Object.keys(raidHistory[charId].LEV).map((curr, idx) => {
-      mergedRaids.LEV[idx] = mergedRaids.LEV[idx] ?
-        [...mergedRaids.LEV[idx], ...raidHistory[charId].LEV[curr]] : [...raidHistory[charId].LEV[curr]]
-    });
-  });
-  return mergedRaids;
-};
+    return accum;
+  }, {});
 
 const _playerProfile = (searchResults, profile, playersCharacters) => {
     return {
@@ -53,19 +53,21 @@ const _playerProfile = (searchResults, profile, playersCharacters) => {
     }
   };
 
-const _raid = (raidData) => {
-  const raid = {};
-  raid.period = raidData.period;
-  raid.date = raidData.period.split('T')[0];
-  raid.details = raidData.activityDetails;
-  raid.stats = {};
-
-  const statIds = Object.keys(raidData.values);
-  statIds.forEach(curr => {
-    raid.stats[curr] = raidData.values[curr].basic.value;
-  });
-
-  return raid;
+const _raidData = (raidData) => {
+  return Object.entries(raidData).reduce((accum, raidWeek) => {
+    const [ week, raids ] = raidWeek;
+    accum[`Week ${+week+1}`] = raids.map(raid => ({
+        ...raid,
+        date: raid.period.split('T')[0],
+        values: Object.entries(raid.values).reduce(
+          (accum, value) => {
+            accum[value[0]] = value[1].basic.value;
+            return accum;
+          }, {})
+      })
+    );
+    return accum;
+  }, {});
 };
 
 const _raidHistory = (activityHistory) => {
@@ -82,17 +84,20 @@ const _raidHistory = (activityHistory) => {
       const EOW_RaidsByWeek = splitRaidByWeek(EOW_RaidWeeks, EOW_Raids);
       const LEV_RaidsByWeek = splitRaidByWeek(LEV_RaidWeeks, LEV_Raids);
 
+      console.log(EOW_RaidsByWeek);
       //raidHistory['EOW'] = (raidHistory['EOW'] ? [...raidHistory['EOW'], EOW_Raids] : EOW_Raids);
       //raidHistory['LEV'] = (raidHistory['LEV'] ? [...raidHistory['LEV'], LEV_Raids] : LEV_Raids);
 
       raidHistory[charId] = {
-        'EOW': EOW_RaidsByWeek,
-        'LEV': LEV_RaidsByWeek
+        'EOW': _raidData(EOW_RaidsByWeek),
+        'LEV': _raidData(LEV_RaidsByWeek)
       };
 
+      console.log('raidHistory', raidHistory);
       //const charRaids = raidHistory[charId] = { completed: [], failed: [] };
       //raids.forEach(raidData =>  {
       //  const raid = _raid(raidData);
+      //  console.log('raid', raid);
       //
       //  if (raid.stats.completed === 1) {
       //    charRaids.completed.push(raid);
@@ -115,7 +120,7 @@ const _challenges = (activityName, milestones) => {
 
 const normalize = {
   player: _playerProfile,
-  raid: _raid,
+  raidData: _raidData,
   raidHistory: _raidHistory,
   challenges: _challenges
 };

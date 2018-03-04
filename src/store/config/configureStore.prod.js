@@ -4,12 +4,16 @@ import rootReducer from '../reducers/rootReducer';
 import rootSaga from "../sagas/rootSaga";
 
 const sagaMiddleware = createSagaMiddleware();
-const configureStore = preloadedState => createStore(
+const configureStore = preloadedState => {
+  const store = createStore(
     rootReducer,
     preloadedState,
     applyMiddleware(sagaMiddleware),
   );
 
-sagaMiddleware.run(rootSaga);
+  sagaMiddleware.run(rootSaga);
+
+  return store;
+};
 
 export default configureStore;

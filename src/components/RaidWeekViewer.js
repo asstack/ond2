@@ -1,10 +1,12 @@
 import React from 'react';
 import styled from 'styled-components';
+import shortid from 'shortid';
 
 const RaidWeekContainer = styled.div`
   width: 200px;
   height: 300px;
   border: 1px solid black;
+  margin: 0 5px;
 `;
 
 const RaidWeekHeader = styled.div`
@@ -15,21 +17,22 @@ const RaidWeekHeader = styled.div`
   font-size: 26px;
   text-align: center;
   vertical-align: middle;
+  padding: 5px;
 `;
 
 const RaidWeek = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
+  justify-content: ${({ fails }) => fails ? 'flex-start' : 'flex-end'};
   align-items: center;
-  height: 40%;
+  height: 45%;
   border-top: 1px solid black;
 `;
 
 const RaidStackList = styled.div`
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
+  justify-content: center;
 `;
 
 const RaidStackItems = styled.div`
@@ -84,29 +87,52 @@ const RaidStackItem = styled.div`
     </RaidStackList>
  */
 
-const RaidStack = ({ raid }) => {
-  console.log('raid', raid);
-  return (
-    <RaidWeekContainer>
-      <RaidWeekHeader>Current</RaidWeekHeader>
-      <RaidWeek>
-        <RaidStackItems activityCount={1} success>
-          <RaidStackItem />
-        </RaidStackItems>
-      </RaidWeek>
-    </RaidWeekContainer>
+const RaidStack = ({ handleShowStats, raidWeek }) => {
+  const [week, raids] = raidWeek;
+  const raidValues = Object.values(raids);
+  const completedRaids = raidValues.filter(raid => raid.values.completed);
+  const failedRaids = raidValues.filter(raid => !raid.values.completed);
+
+  return(
+      <RaidWeekContainer>
+        <RaidWeekHeader>{ week }</RaidWeekHeader>
+        <RaidWeek>
+          { completedRaids && Object.values(completedRaids).map(raid => (
+            <RaidStackItems
+              onClick={() => handleShowStats(raid.values)}
+              key={shortid.generate()}
+              activityCount={1}
+              success={raid.values.completed}>
+              <RaidStackItem />
+            </RaidStackItems>
+          ))
+          }
+        </RaidWeek>
+        <RaidWeek fails >
+          { failedRaids && Object.values(failedRaids).map(raid => (
+            <RaidStackItems
+              onClick={() => handleShowStats(raid.values)}
+              key={shortid.generate()}
+              activityCount={1}
+              success={raid.values.completed}>
+              <RaidStackItem />
+            </RaidStackItems>
+          ))
+          }
+        </RaidWeek>
+      </RaidWeekContainer>
   );
 };
 
-const RaidWeekViewer = ({ raidHistory : { mergedHistory = {EOW: false} } }) => {
-  const weeks = mergedHistory.EOW && Object.keys(mergedHistory.EOW).slice(0, 5);
-  console.log('weeks', weeks);
+const RaidWeekViewer = ({ raidHistory : { mergedHistory = {EOW: false} }, handleShowStats }) => {
+  const raidWeeks = Object.entries(mergedHistory.EOW).reverse().slice(1, 6).reverse();
   return (
-     weeks && (
-       <RaidStackList>
-        { weeks.map(key => <RaidStack raid={mergedHistory[key]} />) }
-       </RaidStackList>
-  ))
+    raidWeeks && (
+      <RaidStackList>
+        { raidWeeks.map(raidWeek => <RaidStack key={shortid.generate()} handleShowStats={handleShowStats} raidWeek={raidWeek} />) }
+      </RaidStackList>
+    )
+  )
 };
 
 export default RaidWeekViewer;

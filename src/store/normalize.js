@@ -61,7 +61,7 @@ const _raidData = (raidData) => {
         date: raid.period.split('T')[0],
         values: Object.entries(raid.values).reduce(
           (accum, value) => {
-            accum[value[0]] = value[1].basic.value;
+            accum[ value[ 0 ] ] = value[ 1 ].basic.value;
             return accum;
           }, {})
       })
@@ -84,16 +84,10 @@ const _raidHistory = (activityHistory) => {
       const EOW_RaidsByWeek = splitRaidByWeek(EOW_RaidWeeks, EOW_Raids);
       const LEV_RaidsByWeek = splitRaidByWeek(LEV_RaidWeeks, LEV_Raids);
 
-      console.log(EOW_RaidsByWeek);
-      //raidHistory['EOW'] = (raidHistory['EOW'] ? [...raidHistory['EOW'], EOW_Raids] : EOW_Raids);
-      //raidHistory['LEV'] = (raidHistory['LEV'] ? [...raidHistory['LEV'], LEV_Raids] : LEV_Raids);
-
       raidHistory[charId] = {
         'EOW': _raidData(EOW_RaidsByWeek),
         'LEV': _raidData(LEV_RaidsByWeek)
       };
-
-      console.log('raidHistory', raidHistory);
       //const charRaids = raidHistory[charId] = { completed: [], failed: [] };
       //raids.forEach(raidData =>  {
       //  const raid = _raid(raidData);

@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
+import shortid from 'shortid';
 
 import baseStyles from './base-styles';
 import { destinyBaseURL } from "./services/destiny-endpoints";
 import { FETCH_PLAYER_PROFILE, FETCH_PROFILE_CHARACTERS, LOAD_PUBLIC_MILESTONE_DATA } from "./store/constants";
 import RaidWeekViewer from './components/RaidWeekViewer';
+import RaidStats from './components/RaidStats';
 
 const AppWrapper = styled.div`
   display: flex;
@@ -26,6 +28,7 @@ const PlayerSearchSection = styled.div`
 `;
 
 const RaidReportSection = styled.section`
+  width: 100%;
 `;
 
 const Input = styled.input`
@@ -42,6 +45,7 @@ class App extends Component {
     this.state = {
       playerSearch: 'videoflux',
       searchHistory: [],
+      stats: []
     }
   };
 
@@ -56,28 +60,32 @@ class App extends Component {
     });
   };
 
+  showStats = (stats) => {
+    this.setState({
+      stats: stats
+    });
+  };
+
+  clearStats = () => {
+    this.setState({
+      stats: []
+    })
+  };
+
   searchDestinyPlayer = async (e) => {
     e.preventDefault();
     const { searchPlayer } = this.props;
 
     const { playerSearch } = this.state;
     const playerProfile = await searchPlayer({ displayName: playerSearch, membershipType: -1 });
-
-    // console.log('playerProfile', playerProfile);
-    // this.setState({
-    //   searchHistory: [playerSearch, ...this.state.searchHistory],
-    //   player: playerProfile
-    // });
-
-    // this.getCharactersClan().then((data) => console.log('clan', data));
-    // this.getCharactersRaidReport(); // .then((data) => console.log('raid report'), data);
   };
 
   render() {
     baseStyles();
 
-    const { playerSearch } = this.state;
+    const { playerSearch, stats } = this.state;
     const { playerProfile, raidHistory } = this.props;
+    const statEntries = Object.entries(stats);
 
     return (
       <AppWrapper>
@@ -86,13 +94,25 @@ class App extends Component {
             <label>Gamer Tag</label>
             <Input value={playerSearch} onChange={this.handlePlayerSearch} />
           </form>
-          <h4>EOW: </h4><p>Normal(22) Prestige(50)</p>
+          <h4>EOW: </h4><p>Normal(#) Prestige(#)</p>
           <br />
-          <h4>Leviathan: </h4><p>Normal(30) Prestige(43)</p>
+          <h4>Leviathan: </h4><p>Normal(#) Prestige(#)</p>
         </PlayerSearchSection>
         <RaidReportSection>
-          <RaidWeekViewer raidHistory={raidHistory} />
+          <RaidWeekViewer handleShowStats={this.showStats} raidHistory={raidHistory} />
         </RaidReportSection>
+        {!!statEntries.length &&
+          <RaidStats>
+            <button onClick={this.clearStats}>Clear</button>
+            <ul>
+              {statEntries.map((entry) => {
+                const [name, stat] = entry;
+                return <li key={shortid.generate()}>{name} : {stat}</li>
+              })
+              }
+            </ul>
+          </RaidStats>
+        }
       </AppWrapper>
     );
   }

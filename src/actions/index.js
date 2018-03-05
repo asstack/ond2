@@ -21,6 +21,7 @@ export const SET_RAID_HISTORY = 'set_raid_history';
 
 export const FETCH_PLAYER_PROFILE = createRequestTypes('PROFILE');
 export const FETCH_PROFILE_CHARACTERS = 'fetch_profile_characters';
+export const FETCH_PGCR = 'fetch_pgcr';
 
 // TODO: Need Class Race and Gender Hash
 export const CLASS_MAP = {

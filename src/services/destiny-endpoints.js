@@ -5,9 +5,11 @@ const apiType = {
   group: `${destinyBaseURL}/Platform/GroupV2`
 };
 
-const searchDestinyPlayer = ({ displayName, membershipType }) => `${apiType.destiny2}/SearchDestinyPlayer/${membershipType}/${displayName}/`;
+const searchDestinyPlayer = ({ displayName, membershipType }) =>
+  `${apiType.destiny2}/SearchDestinyPlayer/${membershipType}/${displayName}/`;
 
-const getProfile = ({ membershipId, membershipType, }) => `${apiType.destiny2}/${membershipType}/Profile/${membershipId}/`;
+const getProfile = ({ membershipId, membershipType, }) =>
+  `${apiType.destiny2}/${membershipType}/Profile/${membershipId}/`;
 
 const getGroupsForMember = (pathParams) => {
   const { filter, groupType, userInfo: { membershipId, membershipType } } = pathParams;
@@ -30,7 +32,7 @@ const getAggregateActivityStats = (pathParams) => {
   return `${apiType.destiny2}/${membershipType}/Account/${membershipId}/Character/${characterId}/Stats/AggregateActivityStats/`;
 };
 
-const getPostGameCarnageReport = (activityId) => `${apiType.destiny2}/Stats/PostGameCarnageReport/${activityId}/`;
+const getPostGameCarnageReport = (instanceId) => `${apiType.destiny2}/Stats/PostGameCarnageReport/${instanceId}/`;
 
 const getPublicMilestones = () => `${apiType.destiny2}/Milestones/`;
 

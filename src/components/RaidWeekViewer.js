@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import shortid from 'shortid';
+import { fetchPostGameCarnageReport } from "../services/destiny-services";
 
 const RaidWeekContainer = styled.div`
   width: 200px;
@@ -87,7 +88,7 @@ const RaidStackItem = styled.div`
     </RaidStackList>
  */
 
-const RaidStack = ({ handleShowStats, raidWeek }) => {
+const RaidStack = ({ handleShowStats, handleFetchPGCR, raidWeek }) => {
   const [week, raids] = raidWeek;
   const raidValues = Object.values(raids);
   const completedRaids = raidValues.filter(raid => raid.values.completed);
@@ -99,7 +100,10 @@ const RaidStack = ({ handleShowStats, raidWeek }) => {
         <RaidWeek>
           { completedRaids && Object.values(completedRaids).map(raid => (
             <RaidStackItems
-              onClick={() => handleShowStats(raid.values)}
+              onClick={() => {
+                handleShowStats(raid.values);
+                handleFetchPGCR(raid.activityDetails.instanceId)
+              }}
               key={shortid.generate()}
               activityCount={1}
               success={raid.values.completed}>
@@ -124,12 +128,17 @@ const RaidStack = ({ handleShowStats, raidWeek }) => {
   );
 };
 
-const RaidWeekViewer = ({ raidHistory : { mergedHistory = {EOW: false} }, handleShowStats }) => {
+const RaidWeekViewer = ({ raidHistory : { mergedHistory = {EOW: false} }, handleShowStats, handleFetchPGCR }) => {
   const raidWeeks = Object.entries(mergedHistory.EOW).reverse().slice(1, 6).reverse();
   return (
     raidWeeks && (
       <RaidStackList>
-        { raidWeeks.map(raidWeek => <RaidStack key={shortid.generate()} handleShowStats={handleShowStats} raidWeek={raidWeek} />) }
+        { raidWeeks.map(raidWeek =>
+          <RaidStack
+            key={shortid.generate()}
+            handleShowStats={handleShowStats}
+            handleFetchPGCR={handleFetchPGCR}
+            raidWeek={raidWeek} />) }
       </RaidStackList>
     )
   )

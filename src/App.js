@@ -4,10 +4,10 @@ import styled from 'styled-components';
 import shortid from 'shortid';
 
 import baseStyles from './base-styles';
-import { destinyBaseURL } from "./services/destiny-endpoints";
-import { FETCH_PLAYER_PROFILE, FETCH_PROFILE_CHARACTERS, LOAD_PUBLIC_MILESTONE_DATA } from "./store/constants";
+import { FETCH_PLAYER_PROFILE, LOAD_PUBLIC_MILESTONE_DATA, FETCH_PCGR } from "./store/constants";
 import RaidWeekViewer from './components/RaidWeekViewer';
 import RaidStats from './components/RaidStats';
+import { fetchPostGameCarnageReport } from "./services/destiny-services";
 
 const AppWrapper = styled.div`
   display: flex;
@@ -72,12 +72,16 @@ class App extends Component {
     })
   };
 
-  searchDestinyPlayer = async (e) => {
+  searchDestinyPlayer = (e) => {
     e.preventDefault();
-    const { searchPlayer } = this.props;
-
     const { playerSearch } = this.state;
-    const playerProfile = await searchPlayer({ displayName: playerSearch, membershipType: -1 });
+    const { searchPlayer } = this.props;
+    searchPlayer({ displayName: playerSearch, membershipType: -1 });
+  };
+
+  fetchPGCR = (instanceId) => {
+    const { fetchPostGameCarnageReport } = this.props;
+    fetchPostGameCarnageReport(instanceId)
   };
 
   render() {
@@ -99,7 +103,7 @@ class App extends Component {
           <h4>Leviathan: </h4><p>Normal(#) Prestige(#)</p>
         </PlayerSearchSection>
         <RaidReportSection>
-          <RaidWeekViewer handleShowStats={this.showStats} raidHistory={raidHistory} />
+          <RaidWeekViewer handleFetchPGCR={this.fetchPGCR} handleShowStats={this.showStats} raidHistory={raidHistory} />
         </RaidReportSection>
         {!!statEntries.length &&
           <RaidStats>
@@ -128,7 +132,8 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     searchPlayer: pathParams => dispatch({type: FETCH_PLAYER_PROFILE, data: pathParams}),
-    loadPublicMilestoneData: () => dispatch({type: LOAD_PUBLIC_MILESTONE_DATA})
+    loadPublicMilestoneData: () => dispatch({type: LOAD_PUBLIC_MILESTONE_DATA}),
+    fetchPostGameCarnageReport: pathParams => dispatch({type: FETCH_PCGR, data: pathParams})
   }
 };
 

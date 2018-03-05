@@ -60,19 +60,22 @@ function* collectRaidData(playerProfile) {
   }
 }
 
-function* collectCarnageReport(referenceId) {
+function* collectPGCR({ data }) {
+  console.log('instanceId', data);
   try{
-    yield fork(fetchPostGameCarnageReport, referenceId);
+    const pgcr = yield call(fetchPostGameCarnageReport, data);
+    yield put({ type: consts.SET_PCGR, data: pgcr });
     yield put({ type: consts.FETCH_LOG, data: 'Post Game Carnage Report Fetch Success' });
   }
   catch(error) {
-    yield put({ type: consts.FETCH_LOG, data: `Error fetching report ${referenceId}: ${error}`})
+    yield put({ type: consts.FETCH_LOG, data: `Error fetching report ${data}: ${error}`})
   }
 }
 
 function* watchProfileCharacters() {
   yield takeEvery(consts.FETCH_PROFILE_CHARACTERS, collectProfileCharacters);
   yield takeEvery(consts.FETCH_PLAYER_PROFILE, fetchPlayerProfile);
+  yield takeEvery(consts.FETCH_PCGR, collectPGCR);
 }
 
 export default function* rootSaga() {

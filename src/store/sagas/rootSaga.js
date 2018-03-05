@@ -61,9 +61,9 @@ function* collectRaidData(playerProfile) {
 }
 
 function* collectPGCR({ data }) {
-  console.log('instanceId', data);
   try{
     const pgcr = yield call(fetchPostGameCarnageReport, data);
+    console.table(pgcr);
     yield put({ type: consts.SET_PCGR, data: pgcr });
     yield put({ type: consts.FETCH_LOG, data: 'Post Game Carnage Report Fetch Success' });
   }

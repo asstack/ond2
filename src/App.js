@@ -103,7 +103,12 @@ class App extends Component {
           <h4>Leviathan: </h4><p>Normal(#) Prestige(#)</p>
         </PlayerSearchSection>
         <RaidReportSection>
-          <RaidWeekViewer handleFetchPGCR={this.fetchPGCR} handleShowStats={this.showStats} raidHistory={raidHistory} />
+          <RaidWeekViewer
+            handleFetchPGCR={this.fetchPGCR}
+            handleShowStats={this.showStats}
+            handleClearStats={this.clearStats}
+            raidHistory={raidHistory}
+          />
         </RaidReportSection>
         {!!statEntries.length &&
           <RaidStats>

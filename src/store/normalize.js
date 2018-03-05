@@ -13,19 +13,16 @@ const getRaidWeeks = (raidLaunchDate) => {
   return raidWeeks;
 };
 
-const splitRaidByWeek = (raidWeeks, raids) => {
-  const raidsByWeek = {};
-  raidWeeks.forEach((raidWeek, idx, arr) => {
+const splitRaidByWeek = (raidWeeks, raids) =>
+  raidWeeks.reduce((accum, raidWeek, idx, arr) => {
     const nextRaidWeek = arr[idx+1] || {};
-    const filteredByWeek = raids.filter((raid) => {
+    accum[idx] = raids.filter((raid) => {
       const raidTime = moment(raid.period.split('T')[0], 'YYYY-MM-DD');
       return raidTime.isSameOrAfter(raidWeek) && raidTime.isBefore(nextRaidWeek);
     });
-    raidsByWeek[idx] = filteredByWeek;
-  });
 
-  return raidsByWeek;
-};
+    return accum;
+  }, {});
 
 const mergeRaidsByWeek = raidHistory =>
   Object.values(raidHistory).reduce((accum, raids) => {

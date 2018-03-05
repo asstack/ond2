@@ -1,7 +1,12 @@
-import React from 'react';
+import React, { Component } from 'react';
 import styled from 'styled-components';
 import shortid from 'shortid';
 import { fetchPostGameCarnageReport } from "../services/destiny-services";
+
+const RaidView = styled.div`
+  display: flex;
+  justify-content: center;
+`;
 
 const RaidWeekContainer = styled.div`
   width: 200px;
@@ -58,6 +63,14 @@ const RaidStackItem = styled.div`
   border-left: 1px solid black;
   border-top: 1px solid black;
 `;
+
+const RaidButton = styled.button`
+  width: 100px;
+  height: 50px;
+  background-color: ${({ selected }) => selected ? 'black' : 'white'};
+  color: ${({ selected }) => selected ? 'white' : 'black'};
+`;
+
 
 /*
     <RaidStackList>
@@ -128,20 +141,57 @@ const RaidStack = ({ handleShowStats, handleFetchPGCR, raidWeek }) => {
   );
 };
 
-const RaidWeekViewer = ({ raidHistory : { mergedHistory = {EOW: false} }, handleShowStats, handleFetchPGCR }) => {
-  const raidWeeks = Object.entries(mergedHistory.EOW).reverse().slice(1, 6).reverse();
-  return (
-    raidWeeks && (
-      <RaidStackList>
-        { raidWeeks.map(raidWeek =>
-          <RaidStack
-            key={shortid.generate()}
-            handleShowStats={handleShowStats}
-            handleFetchPGCR={handleFetchPGCR}
-            raidWeek={raidWeek} />) }
-      </RaidStackList>
+class RaidWeekViewer extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      raid: 'EOW'
+    }
+  }
+
+  setRaid = (raid) => {
+    this.props.handleClearStats();
+    this.setState({
+      raid
+    })
+  };
+
+  render() {
+    const { raid } = this.state;
+    const {
+      raidHistory : { mergedHistory = {EOW: false, LEV: false} },
+      handleShowStats,
+      handleFetchPGCR
+    } = this.props;
+
+  const raidWeeks = (
+    raid === 'EOW'
+      ? Object.entries(mergedHistory.EOW).reverse().slice(1, 6).reverse()
+      : Object.entries(mergedHistory.LEV).reverse().slice(1, 6).reverse()
+  );
+
+    return (
+      <div>
+      <RaidView>
+        <RaidButton onClick={() => this.setRaid('EOW')} selected={raid==='EOW'}>Eater of Worlds</RaidButton>
+        <RaidButton onClick={() => this.setRaid('LEV')} selected={raid==='LEV'}>Leviathan</RaidButton>
+      </RaidView>
+      { raidWeeks && (
+          <RaidStackList>
+            { raidWeeks.map(raidWeek =>
+                <RaidStack
+                  key={shortid.generate()}
+                  handleShowStats={handleShowStats}
+                  handleFetchPGCR={handleFetchPGCR}
+                  raidWeek={raidWeek}
+                />)
+            }
+          </RaidStackList>
+      )}
+      </div>
     )
-  )
-};
+  }
+}
 
 export default RaidWeekViewer;

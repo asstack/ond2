@@ -1,11 +1,30 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import shortid from 'shortid';
-import { fetchPostGameCarnageReport } from "../services/destiny-services";
+
+const RAID_HASHES = {
+  eow: {
+    prestige: [ 417231112, 757116822, 1685065161, 2449714930, 3446541099, 3879860661 ],
+    normal: [ 417231112, 757116822, 1685065161, 2449714930, 3446541099, 3879860661 ]
+  },
+  lev: {
+    prestige: [ 809170886 ],
+    normal: [ 3089205900 ]
+  }
+};
 
 const RaidView = styled.div`
   display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+`;
+
+const RaidButtonWrapper = styled.div`
+  display: flex;
   justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin-bottom: 10px;
 `;
 
 const RaidWeekContainer = styled.div`
@@ -65,7 +84,7 @@ const RaidStackItem = styled.div`
 `;
 
 const RaidButton = styled.button`
-  width: 100px;
+  width: 125px;
   height: 50px;
   background-color: ${({ selected }) => selected ? 'black' : 'white'};
   color: ${({ selected }) => selected ? 'white' : 'black'};
@@ -113,10 +132,7 @@ const RaidStack = ({ handleShowStats, handleFetchPGCR, raidWeek }) => {
         <RaidWeek>
           { completedRaids && Object.values(completedRaids).map(raid => (
             <RaidStackItems
-              onClick={() => {
-                handleShowStats(raid.values);
-                handleFetchPGCR(raid.activityDetails.instanceId)
-              }}
+              onClick={() => handleFetchPGCR(raid.activityDetails.instanceId)}
               key={shortid.generate()}
               activityCount={1}
               success={raid.values.completed}>
@@ -128,7 +144,7 @@ const RaidStack = ({ handleShowStats, handleFetchPGCR, raidWeek }) => {
         <RaidWeek fails >
           { failedRaids && Object.values(failedRaids).map(raid => (
             <RaidStackItems
-              onClick={() => handleShowStats(raid.values)}
+              onClick={() => handleFetchPGCR(raid.activityDetails.instanceId)}
               key={shortid.generate()}
               activityCount={1}
               success={raid.values.completed}>
@@ -146,50 +162,89 @@ class RaidWeekViewer extends Component {
     super(props);
 
     this.state = {
-      raid: 'EOW'
+      raid: 'eow',
+      mode: 'both',
     }
   }
 
   setRaid = (raid) => {
-    this.props.handleClearStats();
     this.setState({
       raid
     })
   };
 
+  setMode = (mode) => {
+    this.setState({
+      mode
+    })
+  };
+
   render() {
-    const { raid } = this.state;
+    const { raid, mode } = this.state;
     const {
       raidHistory : { mergedHistory = {EOW: false, LEV: false} },
-      handleShowStats,
       handleFetchPGCR
     } = this.props;
 
-  const raidWeeks = (
-    raid === 'EOW'
-      ? Object.entries(mergedHistory.EOW).reverse().slice(0, 5).reverse()
-      : Object.entries(mergedHistory.LEV).reverse().slice(0, 5).reverse()
-  );
+  const raidWeeks = (() => {
+    const slicedRaid = (
+      raid === 'EATER_OF_WORLDS'
+        ? Object.entries(mergedHistory.EOW).reverse().slice(0, 5).reverse()
+        : Object.entries(mergedHistory.LEV).reverse().slice(0, 5).reverse()
+    );
+
+    console.log('slicedArray', slicedRaid);
+    console.log('raidHash', RAID_HASHES[raid]);
+
+    return mode === 'both' ?
+      slicedRaid
+      : mode === 'prestige' ?
+        slicedRaid.map(curr =>
+          [
+            curr[0],
+            Object.entries(curr[1])
+              .filter(data => RAID_HASHES[raid].prestige.indexOf(data.activityDetails.referenceId) >= 0)
+          ])
+        :slicedRaid.map(curr =>
+          [
+            curr[0],
+            Object.values(curr[1])
+              .filter(data => RAID_HASHES[raid].normal.indexOf(data.activityDetails.referenceId) >= 0)
+          ])
+  })();
+
+  console.log('raidWeeks', raidWeeks);
 
     return (
-      <div>
       <RaidView>
-        <RaidButton onClick={() => this.setRaid('EOW')} selected={raid==='EOW'}>Eater of Worlds</RaidButton>
-        <RaidButton onClick={() => this.setRaid('LEV')} selected={raid==='LEV'}>Leviathan</RaidButton>
-      </RaidView>
+        <RaidButtonWrapper>
+          <div>
+            <RaidButton onClick={() => this.setRaid('eow')} selected={raid==='eow'}>Eater of Worlds</RaidButton>
+            <RaidButton onClick={() => this.setRaid('lev')} selected={raid==='lev'}>Leviathan</RaidButton>
+          </div>
+          <div style={{ marginTop: 10 }}>
+            <RaidButton onClick={() => this.setMode('normal')} selected={mode==='normal'}>Normal</RaidButton>
+            <RaidButton onClick={() => this.setMode('both')} selected={mode==='both'}>Both</RaidButton>
+            <RaidButton onClick={() => this.setMode('prestige')} selected={mode==='prestige'}>Prestige</RaidButton>
+          </div>
+        </RaidButtonWrapper>
+
       { raidWeeks && (
           <RaidStackList>
-            { raidWeeks.map(raidWeek =>
+            { raidWeeks.map(raidWeek => {
+              console.log('raidWeek', raidWeek);
+              return (
                 <RaidStack
                   key={shortid.generate()}
-                  handleShowStats={handleShowStats}
                   handleFetchPGCR={handleFetchPGCR}
                   raidWeek={raidWeek}
-                />)
+                />
+              )
+            })
             }
           </RaidStackList>
       )}
-      </div>
+      </RaidView>
     )
   }
 }

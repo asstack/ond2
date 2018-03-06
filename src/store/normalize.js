@@ -110,8 +110,25 @@ const normalizePGCREntries = (entries) => (
 
 const _normalizePostGameCarnageReport = (pgcr) => ({
     activityDetails: {...pgcr.activityDetails},
-    date: pgcr.period.split('T')[ 0 ],
-    entries: normalizePGCREntries(pgcr.entries)
+    raidDate: pgcr.period.split('T')[ 0 ],
+    entries: normalizePGCREntries(pgcr.entries),
+    raid: (() => {
+      const activityHash = pgcr.activityDetails.referenceId;
+      if(LEV.allActivityHashes.indexOf(activityHash) >= 0) {
+        console.log('lev');
+        return {
+          ...LEV,
+          mode: (() => LEV.versions.prestige.activityHashes.indexOf(activityHash) ? 'Prestige' : 'Normal')()
+        };
+      }
+      else if(EOW.allActivityHashes.indexOf(pgcr.activityDetails.referenceId) >= 0) {
+        return {
+          ...EOW,
+          mode: (() => EOW.versions.prestige.activityHashes.indexOf(activityHash) ? 'Prestige' : 'Normal')()
+        };
+      }
+      return false;
+    })(),
   }
 );
 

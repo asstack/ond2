@@ -305,16 +305,16 @@ export const NIGHTFALL = {
    image: EATER_OF_WORLDS_IMAGE,
    launchDate: EATER_OF_WORLDS_LAUNCH_WEEK,
    allActivityHashes: [ 3089205900, 809170886 ],
-   versions: [
-     {
-       activityHashes: [ 3089205900 ],
-       displayValue: 'Normal',
-     },
-     {
+   versions: {
+     prestige: {
        activityHashes: [ 809170886 ],
        displayValue: 'Prestige',
+     },
+     normal: {
+       activityHashes: [ 3089205900 ],
+       displayValue: 'Normal'
      }
-   ]
+   }
  };
 
  export const LEVIATHAN = {
@@ -323,7 +323,11 @@ export const NIGHTFALL = {
    image: LEVIATHAN_IMAGE,
    launchDate: LEVIATHAN_LAUNCH_WEEK,
    milestoneHash: 3660836525,
-   allActivityHashes: [], // This data is applied at runtime since it changes weekly.
+   allActivityHashes: [
+     417231112, 757116822, 1685065161,
+     2449714930, 3446541099, 3879860661,
+     2693136600, 2693136601, 2693136602,
+     2693136603, 2693136604, 2693136605],
    versions: {
      prestige: {
        activityHashes: [ 417231112, 757116822, 1685065161, 2449714930, 3446541099, 3879860661 ],
@@ -333,6 +337,17 @@ export const NIGHTFALL = {
        activityHashes: [ 2693136600, 2693136601, 2693136602, 2693136603, 2693136604, 2693136605 ],
        displayValue: 'Normal',
      }
+   }
+ };
+
+ export const RAID_HASHES = {
+   eow: {
+     prestige: [ 417231112, 757116822, 1685065161, 2449714930, 3446541099, 3879860661 ],
+     normal: [ 417231112, 757116822, 1685065161, 2449714930, 3446541099, 3879860661 ]
+   },
+   lev: {
+     prestige: [ 809170886 ],
+     normal: [ 3089205900 ]
    }
  };
 

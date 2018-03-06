@@ -56,16 +56,25 @@ function* collectRaidData(playerProfile) {
 }
 
 function* collectPGCR({ data }) {
-  try{
-    const pgcr = yield call(fetchPostGameCarnageReport, data);
-    const normalizedPGCR = normalize.postGameCarnageReport(pgcr);
-    yield put({ type: consts.SET_PCGR, data: normalizedPGCR });
-    yield put({ type: consts.FETCH_LOG, data: 'Post Game Carnage Report Fetch Success' });
+  try {
+     const pgcrHistory = yield select(state => state.pgcrHistory);
+
+     if(pgcrHistory[data]) {
+       yield put({ type: consts.SET_PGCR, data: pgcrHistory[data] });
+     }
+     else {
+       const pgcr = yield call(fetchPostGameCarnageReport, data);
+       const normalizedPGCR = normalize.postGameCarnageReport(pgcr);
+       pgcrHistory[data] = normalizedPGCR;
+       yield put({ type: consts.SET_PGCR, data: normalizedPGCR });
+       yield put({ type: consts.FETCH_LOG, data: 'Post Game Carnage Report Fetch Success' });
+     }
   }
   catch(error) {
     yield put({ type: consts.FETCH_LOG, data: `Error fetching report ${data}: ${error}`})
   }
 }
+
 
 function* collectPublicMilestoneData() {
   try {
@@ -90,7 +99,7 @@ function* collectPublicMilestoneData() {
 function* watchProfileCharacters() {
   yield takeEvery(consts.FETCH_PROFILE_CHARACTERS, collectProfileCharacters);
   yield takeEvery(consts.FETCH_PLAYER_PROFILE, fetchPlayerProfile);
-  yield takeEvery(consts.FETCH_PCGR, collectPGCR);
+  yield takeEvery(consts.FETCH_PGCR, collectPGCR);
   yield takeEvery(consts.LOAD_PUBLIC_MILESTONE_DATA, collectPublicMilestoneData);
 }
 

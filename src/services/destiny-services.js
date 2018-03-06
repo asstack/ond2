@@ -73,7 +73,6 @@ const fetchPostGameCarnageReport = async (activityId) => {
 const fetchPublicMilestones = async () => {
   const res = await fetch(getPublicMilestones(), destinyInit);
   const publicMilestones = await res.json();
-  console.log('publicMilestones resp', publicMilestones.Response);
   return publicMilestones.Response
 };
 export {

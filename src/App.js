@@ -1,77 +1,24 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import shortid from 'shortid';
-
 import baseStyles from './base-styles';
-import { FETCH_PLAYER_PROFILE, LOAD_PUBLIC_MILESTONE_DATA, FETCH_PCGR } from "./store/constants";
-import RaidWeekViewer from './components/RaidWeekViewer';
-import RaidStats from './components/RaidStats';
-import { fetchPostGameCarnageReport } from "./services/destiny-services";
+
+import PlayerSearchContainer from './containers/PlayerSearchContainer/PlayerSearchContainer';
+import PostGameCarnageReportContainer from './containers/PostGameCarnageReportContainer/PostGameCarnageReportContainer';
+import { FETCH_PGCR, SET_PGCR } from "./store/constants";
 
 const AppWrapper = styled.div`
   display: flex;
-  flex-direction: column;  
+  flex-direction: column;
   width: 100%;
   height: 100%;
   align-items: center;
- 
-`;
-
-const PlayerSearchSection = styled.div`
-  margin: 75px 0 30px 0;
-  
-  & > h4, p {
-    display: inline-block;
-    margin-top: 15px;
-  }
-`;
-
-const RaidReportSection = styled.section`
-  width: 100%;
-`;
-
-const Input = styled.input`
-  width: 300px;
-  height: 40px;
-  font-size: 24px;
-  margin-left: 10px;
 `;
 
 class App extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-      playerSearch: 'videoflux',
-      searchHistory: [],
-      stats: []
-    }
-  };
-
-  handlePlayerSearch = ({ target}) => {
-    this.setState({
-      playerSearch: target.value
-    });
-  };
-
-  showStats = (stats) => {
-    this.setState({
-      stats: stats
-    });
-  };
-
-  clearStats = () => {
-    this.setState({
-      stats: []
-    })
-  };
-
-  searchDestinyPlayer = (e) => {
-    e.preventDefault();
-    const { playerSearch } = this.state;
-    const { searchPlayer } = this.props;
-    searchPlayer({ displayName: playerSearch, membershipType: -1 });
   };
 
   fetchPGCR = (instanceId) => {
@@ -82,40 +29,17 @@ class App extends Component {
   render() {
     baseStyles();
 
-    const { playerSearch, stats } = this.state;
-    const { playerProfile, raidHistory } = this.props;
-    const statEntries = Object.entries(stats);
+    const { pgcr, clearPostGameCarnageReport } = this.props;
 
     return (
       <AppWrapper>
-        <PlayerSearchSection>
-          <form onSubmit={(e) => this.searchDestinyPlayer(e)}>
-            <label>Gamer Tag</label>
-            <Input value={playerSearch} onChange={this.handlePlayerSearch} />
-          </form>
-          <h4>EOW: </h4><p>Normal(#) Prestige(#)</p>
-          <br />
-          <h4>Leviathan: </h4><p>Normal(#) Prestige(#)</p>
-        </PlayerSearchSection>
-        <RaidReportSection>
-          <RaidWeekViewer
+        { pgcr ?
+          <PostGameCarnageReportContainer pgcr={pgcr} handleClearPGCR={() => clearPostGameCarnageReport()} />
+          :<PlayerSearchContainer
+            handleClearPGCR={() => clearPostGameCarnageReport()}
             handleFetchPGCR={this.fetchPGCR}
-            handleShowStats={this.showStats}
-            handleClearStats={this.clearStats}
-            raidHistory={raidHistory}
+            {...this.props}
           />
-        </RaidReportSection>
-        {!!statEntries.length &&
-          <RaidStats>
-            <button onClick={this.clearStats}>Clear</button>
-            <ul>
-              {statEntries.map((entry) => {
-                const [name, stat] = entry;
-                return <li key={shortid.generate()}>{name} : {stat}</li>
-              })
-              }
-            </ul>
-          </RaidStats>
         }
       </AppWrapper>
     );
@@ -124,15 +48,14 @@ class App extends Component {
 
 const mapStateToProps = state => {
   return {
-    playerProfile: state.playerProfile,
-    raidHistory: state.raidHistory
+    pgcr: state.postGameCarnageReport
   }
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    searchPlayer: pathParams => dispatch({type: FETCH_PLAYER_PROFILE, data: pathParams}),
-    fetchPostGameCarnageReport: pathParams => dispatch({type: FETCH_PCGR, data: pathParams})
+    fetchPostGameCarnageReport: pathParams => dispatch({type: FETCH_PGCR, data: pathParams}),
+    clearPostGameCarnageReport: () => dispatch({ type: SET_PGCR, data: false})
   }
 };
 

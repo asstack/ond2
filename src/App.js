@@ -49,11 +49,6 @@ class App extends Component {
     }
   };
 
-  componentDidMount() {
-    const { loadPublicMilestoneData } = this.props;
-    loadPublicMilestoneData();
-  }
-
   handlePlayerSearch = ({ target}) => {
     this.setState({
       playerSearch: target.value
@@ -137,7 +132,6 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     searchPlayer: pathParams => dispatch({type: FETCH_PLAYER_PROFILE, data: pathParams}),
-    loadPublicMilestoneData: () => dispatch({type: LOAD_PUBLIC_MILESTONE_DATA}),
     fetchPostGameCarnageReport: pathParams => dispatch({type: FETCH_PCGR, data: pathParams})
   }
 };

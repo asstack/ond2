@@ -2,18 +2,12 @@ import moment from 'moment';
 import { RAIDS, EATER_OF_WORLDS as EOW, LEVIATHAN as LEV} from "../actions";
 
 const getRaidWeeks = (raidLaunchDate) => {
-  const weeksSinceRelease = moment().diff(moment(raidLaunchDate, 'YYYY-MM-DD'), 'w') + 1;
-
+  const weeksSinceRelease = moment().diff(moment(raidLaunchDate, 'YYYY-MM-DD'), 'w');
   const launchDate = moment(raidLaunchDate, 'YYYY-MM-DD');
-
-  const raidWeeks = Array.apply(null, {length: weeksSinceRelease}).map((_, index) => {
-    const addedIndexWeeks = moment(launchDate).add(index+1, 'week');
-    return addedIndexWeeks;
-  });
-  return raidWeeks;
+  return Array.apply(null, {length: weeksSinceRelease}).map((_, index) => moment(launchDate).add(index+1, 'week'));
 };
 
-const splitRaidByWeek = (raidWeeks, raids) =>
+const splitRaidByWeek = (raidWeeks, raids) => (
   raidWeeks.reduce((accum, raidWeek, idx, arr) => {
     const nextRaidWeek = arr[idx+1] || {};
     accum[idx] = raids.filter((raid) => {
@@ -22,7 +16,8 @@ const splitRaidByWeek = (raidWeeks, raids) =>
     });
 
     return accum;
-  }, {});
+  }, {})
+);
 
 const mergeRaidsByWeek = raidHistory =>
   Object.values(raidHistory).reduce((accum, raids) => {
@@ -41,7 +36,7 @@ const mergeRaidsByWeek = raidHistory =>
     return accum;
   }, {});
 
-const _playerProfile = (searchResults, profile, playersCharacters) => {
+const _normalizePlayerProfile = (searchResults, profile, playersCharacters) => {
     return {
       ...searchResults,
       displayName: profile.userInfo.displayName,
@@ -50,78 +45,92 @@ const _playerProfile = (searchResults, profile, playersCharacters) => {
     }
   };
 
-const _raidData = (raidData) => {
-  return Object.entries(raidData).reduce((accum, raidWeek) => {
+const _normalizeRaidValues = (values) => (
+  Object.entries(values).reduce(
+    (accum, value) => {
+      accum[ value[ 0 ] ] = value[ 1 ].basic.value;
+      return accum;
+    }, {})
+);
+
+const _normalizeRaidData = (raidData) => (
+  Object.entries(raidData).reduce((accum, raidWeek) => {
     const [ week, raids ] = raidWeek;
     accum[`Week ${+week+1}`] = raids.map(raid => ({
         ...raid,
         date: raid.period.split('T')[0],
-        values: Object.entries(raid.values).reduce(
-          (accum, value) => {
-            accum[ value[ 0 ] ] = value[ 1 ].basic.value;
-            return accum;
-          }, {})
+        values: _normalizeRaidValues(raid.values)
       })
     );
     return accum;
-  }, {});
-};
+  }, {})
+);
 
-const _raidHistory = (activityHistory) => {
-  const raidHistory = {};
+const _normalizeRaidHistory = (activityHistory, activityHashes) => {
   const EOW_RaidWeeks = getRaidWeeks(EOW.launchDate);
   const LEV_RaidWeeks = getRaidWeeks(LEV.launchDate);
 
-  Object.keys(activityHistory).forEach(
-    (charId) => {
-      const raids = activityHistory[charId].filter((activity) => activity.activityDetails.mode === 4);
+  const raidHistory = Object.entries(activityHistory).reduce(
+    (accum, entry) => {
+      const [charId, charRaids] = entry;
+      const raids = charRaids.filter((activity) => activity.activityDetails.mode === 4);
       const EOW_Raids = raids.filter((curr) => EOW.allActivityHashes.indexOf(curr.activityDetails.directorActivityHash));
       const LEV_Raids = raids.filter((curr) => LEV.allActivityHashes.indexOf(curr.activityDetails.directorActivityHash));
 
       const EOW_RaidsByWeek = splitRaidByWeek(EOW_RaidWeeks, EOW_Raids);
       const LEV_RaidsByWeek = splitRaidByWeek(LEV_RaidWeeks, LEV_Raids);
 
-      raidHistory[charId] = {
-        'EOW': _raidData(EOW_RaidsByWeek),
-        'LEV': _raidData(LEV_RaidsByWeek)
+      accum[charId] = {
+        'EOW': _normalizeRaidData(EOW_RaidsByWeek),
+        'LEV': _normalizeRaidData(LEV_RaidsByWeek)
       };
-      //const charRaids = raidHistory[charId] = { completed: [], failed: [] };
-      //raids.forEach(raidData =>  {
-      //  const raid = _raid(raidData);
-      //  console.log('raid', raid);
-      //
-      //  if (raid.stats.completed === 1) {
-      //    charRaids.completed.push(raid);
-      //  } else {
-      //    charRaids.failed.push(raid);
-      //  }
-      //});
-    });
+
+      return accum;
+    }, {});
 
   raidHistory['mergedHistory'] = mergeRaidsByWeek(raidHistory);
   return raidHistory;
   };
 
-const _challenges = (activityName, milestones) => {
-  const challenges = milestones.availableQuests[0].challenges;
-  const activityHashes = challenges.map(curr => curr.activityHash);
-  RAIDS[activityName].allActivityHashes = [...activityHashes];
-  return activityHashes;
-};
+const normalizePGCREntries = (entries) => (
+  entries.map((curr) => ({
+      player: {
+        characterClass: curr.player.characterClass,
+        characterLevel: curr.player.characterLevel,
+        lightLevel: curr.player.lightLevel,
+        classHash: curr.player.classHash,
+        raceHash: curr.player.raceHash,
+        ...curr.player.destinyUserInfo
+      },
+      score: curr.score.basic.value,
+      values: _normalizeRaidValues(curr.values),
+      extended: {...curr.extended },
+  }))
+);
+
+const _normalizePostGameCarnageReport = (pgcr) => ({
+    activityDetails: {...pgcr.activityDetails},
+    date: pgcr.period.split('T')[ 0 ],
+    entries: normalizePGCREntries(pgcr.entries)
+  }
+);
+
+const _normalizeMilestoneData = (milestones, mshObj) => (
+  Object.entries(milestones)
+    .filter(entry => (entry[0] === mshObj.lev_msh.toString() || entry[0] === mshObj.nf_msh.toString()))
+    .reduce((accum, msh) => {
+      accum[msh[0]] = msh[1].availableQuests[0].activity.variants.map(curr => curr.activityHash);
+      return accum;
+    }, {})
+);
 
 const normalize = {
-  player: _playerProfile,
-  raidData: _raidData,
-  raidHistory: _raidHistory,
-  challenges: _challenges
+  player: _normalizePlayerProfile,
+  raidData: _normalizeRaidData,
+  raidValues: _normalizeRaidValues,
+  raidHistory: _normalizeRaidHistory,
+  postGameCarnageReport: _normalizePostGameCarnageReport,
+  milestoneData: _normalizeMilestoneData
 };
 
 export default normalize;
-
-
-/*
-  [{
-    week: "Week 22"
-    []
-  }]
- */

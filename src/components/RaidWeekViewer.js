@@ -167,8 +167,8 @@ class RaidWeekViewer extends Component {
 
   const raidWeeks = (
     raid === 'EOW'
-      ? Object.entries(mergedHistory.EOW).reverse().slice(1, 6).reverse()
-      : Object.entries(mergedHistory.LEV).reverse().slice(1, 6).reverse()
+      ? Object.entries(mergedHistory.EOW).reverse().slice(0, 5).reverse()
+      : Object.entries(mergedHistory.LEV).reverse().slice(0, 5).reverse()
   );
 
     return (

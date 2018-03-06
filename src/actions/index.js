@@ -37,6 +37,263 @@ export const EATER_OF_WORLDS_IMAGE = `${destinyBaseURL}/img/destiny_content/pgcr
 export const EATER_OF_WORLDS_LAUNCH_WEEK = '2017-12-08';
 export const LEVIATHAN_LAUNCH_WEEK = '2017-09-12';
 
+export const tier = {
+  0: 'Normal',
+  1: 'Guided Games',
+  2: 'Prestige',
+  normal: 0,
+  guidedGames: 1,
+  prestige: 2
+};
+
+const NIGHTFALL_ACTIVITIES = {
+    2416546450: {
+      description: "Contain a rampant army of Red Legion within the Infinite Forest.",
+      name: "Nightfall: Tree of Probabilities",
+      icon: "/common/destiny2_content/icons/fff30113ebf7a49f7e26152e7b7d95ff.png",
+      hasIcon: true,
+      releaseIcon: "/common/destiny2_content/icons/43b8c3624c55631a6ddb0497dcc5bd3a.png",
+      activityLightLevel: 330,
+      tier: 2,
+      pgcrImage: "/img/destiny_content/pgcr/rituals_tree_of_probabilities.jpg",
+      modifiers: [
+        {"activityModifierHash": 3215384520},
+        {"activityModifierHash": 2558957669},
+        {"activityModifierHash": 3362074814},
+        {"activityModifierHash": 945795273},
+        {"activityModifierHash": 3029674484}
+      ],
+      minParty: 1,
+      maxParty: 3,
+      maxPlayers: 3,
+      requiresGuardianOath: false,
+      directActivityModeHash: 1350109474,
+      directActivityModeType: 17,
+      activityModeHashes: [ 1350109474, 2394616003, 1164760493 ],
+      activityModeTypes: [ 17, 18, 7 ]
+    },
+    585071442: {
+      "description": "Delve deep into the Hive-infested Arcology in search of missing fireteams.",
+      "name": "Nightfall: Savathûn's Song",
+      "icon": "/common/destiny2_content/icons/fff30113ebf7a49f7e26152e7b7d95ff.png",
+      "hasIcon": true,
+      "releaseIcon": "/common/destiny2_content/icons/43b8c3624c55631a6ddb0497dcc5bd3a.png",
+      "activityLevel": 30,
+      "activityLightLevel": 330,
+      "destinationHash": 2388758973,
+      "placeHash": 386951460,
+      "activityTypeHash": 575572995,
+      "tier": 2,
+      "pgcrImage": "/img/destiny_content/pgcr/strike_savanthuns_song.jpg",
+      "directActivityModeHash": 1350109474,
+      "directActivityModeType": 17,
+      "activityModeHashes": [ 1350109474, 2394616003, 1164760493 ],
+      "activityModeTypes": [ 17, 18, 7 ],
+    },
+    601540706: {
+      "description": "Shut down the operations of an ironmonger providing weapons to the Red Legion.",
+      "name": "Nightfall: The Arms Dealer",
+      "icon": "/common/destiny2_content/icons/fff30113ebf7a49f7e26152e7b7d95ff.png",
+      "hasIcon": true,
+      "releaseIcon": "/common/destiny2_content/icons/43b8c3624c55631a6ddb0497dcc5bd3a.png",
+      "activityLevel": 30,
+      "activityLightLevel": 330,
+      "destinationHash": 1199524104,
+      "placeHash": 3747705955,
+      "activityTypeHash": 575572995,
+      "tier": 2,
+      "pgcrImage": "/img/destiny_content/pgcr/strike_the_arms_dealer.jpg",
+      "directActivityModeHash": 1350109474,
+      "directActivityModeType": 17,
+      "activityModeHashes": [ 1350109474, 2394616003, 1164760493 ],
+      "activityModeTypes": [ 17, 18, 7 ],
+    },
+    1129066976: {
+      "description": "Seek vengeance against the Vex Mind that corrupted Asher's arm.",
+      "name": "Nightfall: The Pyramidion",
+      "icon": "/common/destiny2_content/icons/fff30113ebf7a49f7e26152e7b7d95ff.png",
+      "hasIcon": true,
+      "releaseIcon": "/common/destiny2_content/icons/43b8c3624c55631a6ddb0497dcc5bd3a.png",
+      "activityLevel": 30,
+      "activityLightLevel": 330,
+      "destinationHash": 2218917881,
+      "placeHash": 4251857532,
+      "activityTypeHash": 575572995,
+      "tier": 2,
+      "pgcrImage": "/img/destiny_content/pgcr/strike_the_pyramdion.jpg",
+      "directActivityModeHash": 1350109474,
+      "directActivityModeType": 17,
+      "activityModeHashes": [ 1350109474, 2394616003, 1164760493 ],
+      "activityModeTypes": [ 17, 18, 7 ],
+    },
+    1792985204: {
+      "description": "Purge the Fallen infestation of the Exodus Black.",
+      "name": "Nightfall: Exodus Crash",
+      "icon": "/common/destiny2_content/icons/fff30113ebf7a49f7e26152e7b7d95ff.png",
+      "hasIcon": true,
+      "releaseIcon": "/common/destiny2_content/icons/43b8c3624c55631a6ddb0497dcc5bd3a.png",
+      "activityLevel": 30,
+      "activityLightLevel": 330,
+      "destinationHash": 2218917881,
+      "placeHash": 4251857532,
+      "activityTypeHash": 575572995,
+      "tier": 2,
+      "pgcrImage": "/img/destiny_content/pgcr/strike_exodus_crash.jpg",
+      "directActivityModeHash": 1350109474,
+      "directActivityModeType": 17,
+      "activityModeHashes": [ 1350109474, 2394616003, 1164760493 ],
+      "activityModeTypes": [ 17, 18, 7 ]
+    },
+    2688061647: {
+      "description": "Help Osiris cut back an out-of-control Vex Mind.",
+      "name": "Nightfall: A Garden World",
+      "icon": "/common/destiny2_content/icons/fff30113ebf7a49f7e26152e7b7d95ff.png",
+      "hasIcon": true,
+      "releaseIcon": "/common/destiny2_content/icons/43b8c3624c55631a6ddb0497dcc5bd3a.png",
+      "activityLevel": 30,
+      "activityLightLevel": 330,
+      "destinationHash": 1993421442,
+      "placeHash": 1259908504,
+      "activityTypeHash": 575572995,
+      "tier": 2,
+      "pgcrImage": "/img/destiny_content/pgcr/rituals_a_garden_world.jpg",
+      "directActivityModeHash": 1350109474,
+      "directActivityModeType": 17,
+      "activityModeHashes": [ 1350109474, 2394616003, 1164760493 ],
+      "activityModeTypes": [ 17, 18, 7 ]
+    },
+    3050465729: {
+      "description": "End the Red Legion expedition that has ripped open the planet's surface.",
+      "name": "Nightfall: The Inverted Spire",
+      "icon": "/common/destiny2_content/icons/fff30113ebf7a49f7e26152e7b7d95ff.png",
+      "hasIcon": true,
+      "releaseIcon": "/common/destiny2_content/icons/43b8c3624c55631a6ddb0497dcc5bd3a.png",
+      "activityLevel": 30,
+      "activityLightLevel": 330,
+      "destinationHash": 126924919,
+      "placeHash": 3526908984,
+      "activityTypeHash": 575572995,
+      "tier": 2,
+      "pgcrImage": "/img/destiny_content/pgcr/strike_inverted_spire.jpg",
+      "directActivityModeHash": 1350109474,
+      "directActivityModeType": 17,
+      "activityModeHashes": [ 1350109474, 2394616003, 1164760493 ],
+      "activityModeTypes": [ 17, 18, 7 ]
+    },
+    145302664: {
+       "description": "Shut down the operations of an ironmonger providing weapons to the Red Legion.",
+       "name": "Nightfall: The Arms Dealer",
+       "icon": "/common/destiny2_content/icons/fff30113ebf7a49f7e26152e7b7d95ff.png",
+       "hasIcon": true,
+       "releaseIcon": "/img/misc/missing_icon_d2.png",
+       "activityLevel": 27,
+       "activityLightLevel": 270,
+       "destinationHash": 1199524104,
+       "placeHash": 3747705955,
+       "activityTypeHash": 575572995,
+       "tier": 0,
+       "pgcrImage": "/img/destiny_content/pgcr/strike_the_arms_dealer.jpg",
+       "modifiers": [
+         { "activityModifierHash": 3029674484 }
+       ],
+       "directActivityModeHash": 3789021730,
+       "directActivityModeType": 16,
+       "activityModeHashes": [ 3789021730, 2394616003, 1164760493 ],
+       "activityModeTypes": [ 16, 18, 7 ]
+     },
+    926940962: {
+      "description": "Seek vengeance against the Vex Mind that corrupted Asher's arm.",
+      "name": "Nightfall: The Pyramidion",
+      "icon": "/common/destiny2_content/icons/fff30113ebf7a49f7e26152e7b7d95ff.png",
+      "hasIcon": true,
+      "releaseIcon": "/img/misc/missing_icon_d2.png",
+      "activityLevel": 27,
+      "activityLightLevel": 270,
+      "destinationHash": 2218917881,
+      "placeHash": 4251857532,
+      "activityTypeHash": 575572995,
+      "tier": 0,
+      "pgcrImage": "/img/destiny_content/pgcr/strike_the_pyramdion.jpg",
+      "directActivityModeHash": 3789021730,
+      "directActivityModeType": 16,
+      "activityModeHashes": [ 3789021730, 2394616003, 1164760493 ],
+      "activityModeTypes": [ 16, 18, 7 ],
+    },
+    1357019430: {
+      "description": "Purge the Fallen infestation of the Exodus Black.",
+      "name": "Nightfall: Exodus Crash",
+      "icon": "/common/destiny2_content/icons/fff30113ebf7a49f7e26152e7b7d95ff.png",
+      "hasIcon": true,
+      "releaseIcon": "/img/misc/missing_icon_d2.png",
+      "activityLevel": 27,
+      "activityLightLevel": 270,
+      "destinationHash": 126924919,
+      "placeHash": 3526908984,
+      "activityTypeHash": 575572995,
+      "tier": 0,
+      "pgcrImage": "/img/destiny_content/pgcr/strike_exodus_crash.jpg",
+      "directActivityModeHash": 3789021730,
+      "directActivityModeType": 16,
+      "activityModeHashes": [ 3789021730, 2394616003, 1164760493 ],
+      "activityModeTypes": [ 16, 18, 7 ]
+    },
+    1975064760: {
+    "description": "Delve deep into the Hive-infested Arcology in search of missing fireteams.",
+    "name": "Nightfall: Savathûn's Song",
+    "icon": "/common/destiny2_content/icons/fff30113ebf7a49f7e26152e7b7d95ff.png",
+    "hasIcon": true,
+    "releaseIcon": "/img/misc/missing_icon_d2.png",
+    "activityLevel": 27,
+    "activityLightLevel": 270,
+    "destinationHash": 2388758973,
+    "placeHash": 386951460,
+    "activityTypeHash": 575572995,
+    "tier": 0,
+    "pgcrImage": "/img/destiny_content/pgcr/strike_savanthuns_song.jpg",
+    "directActivityModeHash": 3789021730,
+    "directActivityModeType": 16,
+    "activityModeHashes": [ 3789021730, 2394616003, 1164760493 ],
+    "activityModeTypes": [ 16, 18, 7 ],
+    },
+    2322829199: {
+    "description": "Help Osiris cut back an out-of-control Vex Mind.",
+    "name": "Nightfall: A Garden World",
+    "icon": "/common/destiny2_content/icons/fff30113ebf7a49f7e26152e7b7d95ff.png",
+    "hasIcon": true,
+    "releaseIcon": "/common/destiny2_content/icons/43b8c3624c55631a6ddb0497dcc5bd3a.png",
+    "activityLevel": 27,
+    "activityLightLevel": 270,
+    "destinationHash": 1993421442,
+    "placeHash": 1259908504,
+    "activityTypeHash": 575572995,
+    "tier": 0,
+    "pgcrImage": "/img/destiny_content/pgcr/rituals_a_garden_world.jpg",
+    "directActivityModeHash": 3789021730,
+    "directActivityModeType": 16,
+    "activityModeHashes": [ 3789021730, 2394616003, 1164760493 ],
+    "activityModeTypes": [ 16, 18, 7 ],
+    },
+    3368226533: {
+      "description": "End the Red Legion expedition that has ripped open the planet's surface.",
+      "name": "Nightfall: The Inverted Spire",
+      "icon": "/common/destiny2_content/icons/fff30113ebf7a49f7e26152e7b7d95ff.png",
+      "hasIcon": true,
+      "releaseIcon": "/img/misc/missing_icon_d2.png",
+      "activityLevel": 27,
+      "activityLightLevel": 270,
+      "destinationHash": 126924919,
+      "placeHash": 3526908984,
+      "activityTypeHash": 575572995,
+      "tier": 0,
+      "pgcrImage": "/img/destiny_content/pgcr/strike_inverted_spire.jpg",
+      "directActivityModeHash": 3789021730,
+      "directActivityModeType": 16,
+      "activityModeHashes": [ 3789021730, 2394616003, 1164760493 ],
+      "activityModeTypes": [ 16, 18, 7 ]
+    }
+
+};
+
 export const NIGHTFALL = {
   milestoneHash: 2171429505,
   allActivityHashes: [], // This data is applied at runtime since it changes weekly.
@@ -47,18 +304,14 @@ export const NIGHTFALL = {
    boss: 'Argos',
    image: EATER_OF_WORLDS_IMAGE,
    launchDate: EATER_OF_WORLDS_LAUNCH_WEEK,
-   allActivityHashes: [3089205900, 2164432138, 809170886],
+   allActivityHashes: [ 3089205900, 809170886 ],
    versions: [
      {
-       activityHashes : [3089205900],
-       displayValue : 'Normal',
+       activityHashes: [ 3089205900 ],
+       displayValue: 'Normal',
      },
      {
-       activityHashes: [2164432138],
-       displayValue: 'Guided Games',
-     },
-     {
-       activityHashes: [809170886],
+       activityHashes: [ 809170886 ],
        displayValue: 'Prestige',
      }
    ]
@@ -71,20 +324,16 @@ export const NIGHTFALL = {
    launchDate: LEVIATHAN_LAUNCH_WEEK,
    milestoneHash: 3660836525,
    allActivityHashes: [], // This data is applied at runtime since it changes weekly.
-   versions: [
-     {
-       activityHashes: [417231112, 757116822, 1685065161, 2449714930, 3446541099, 3879860661],
+   versions: {
+     prestige: {
+       activityHashes: [ 417231112, 757116822, 1685065161, 2449714930, 3446541099, 3879860661 ],
        displayValue: 'Prestige',
      },
-     {
-       activityHashes: [2693136600, 2693136601, 2693136602, 2693136603, 2693136604, 2693136605],
+     normal: {
+       activityHashes: [ 2693136600, 2693136601, 2693136602, 2693136603, 2693136604, 2693136605 ],
        displayValue: 'Normal',
-     },
-     {
-       activityHashes: [89727599, 287649202, 1699948563, 1875726950, 3916343513, 4039317196],
-       displayValue: 'Guided Games',
      }
-   ],
+   }
  };
 
 export const RAIDS = {EATER_OF_WORLDS, LEVIATHAN, NIGHTFALL};
@@ -98,5 +347,5 @@ export const activityModes = {
   6: 'patrol',
   7: 'allPvE',
   10: 'control',
-  16: 'Nightfall Strike'
+  16: 'Prestige Nightfall Strike'
 };

@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import { FETCH_LOG, SET_PLAYER_PROFILE, SET_ACTIVITY_HISTORY, SET_RAID_HISTORY, SET_PCGR } from "../constants";
+import { FETCH_LOG, SET_PLAYER_PROFILE, SET_ACTIVITY_HISTORY, SET_RAID_HISTORY, SET_PCGR, SET_PUBLIC_MILESTONES } from "../constants";
 
 const fetchLogs = (state=[], action) =>
   action.type === FETCH_LOG ? [...state, action.data] : state;
@@ -31,11 +31,19 @@ const setPostGameCarnageReport = (state={}, action) => {
   return state;
 };
 
+const setPublicMilestones = (state = false, action) => {
+  if(action.type === SET_PUBLIC_MILESTONES) {
+    return action.data;
+  }
+  return state;
+};
+
 const rootReducer = combineReducers({
   fetchLogs,
   playerProfile: setPlayerProfile,
   raidHistory: setRaidHistory,
-  postGameCarnageReport: setPostGameCarnageReport
+  postGameCarnageReport: setPostGameCarnageReport,
+  publicMilestones: setPublicMilestones
 });
 
 export default rootReducer;

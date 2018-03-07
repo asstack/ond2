@@ -157,14 +157,50 @@ const RaidStack = ({ handleShowStats, handleFetchPGCR, raidWeek }) => {
   );
 };
 
+const determineRaidWeeks = (raid, history, mode) => {
+  const slicedRaid = (
+    raid === 'EATER_OF_WORLDS'
+      ? Object.entries(history.EOW).reverse().slice(0, 5).reverse()
+      : Object.entries(history.LEV).reverse().slice(0, 5).reverse()
+  );
+
+  console.log('mode', mode);
+  console.log('slicedArray', slicedRaid);
+  console.log('raidHash', RAID_HASHES[raid]);
+
+  return mode === 'both' ?
+    slicedRaid
+    : mode === 'prestige' ?
+      slicedRaid.map(curr =>
+        [
+          curr[0],
+          Object.entries(curr[1])
+            .filter(data => RAID_HASHES[raid].prestige.indexOf(data.activityDetails.referenceId) >= 0)
+        ])
+      :slicedRaid.map(curr =>
+        [
+          curr[0],
+          Object.values(curr[1])
+            .filter(data => {
+              console.log('checkzzz', RAID_HASHES[raid].normal.indexOf(data.activityDetails.referenceId) >= 0);
+              return RAID_HASHES[raid].normal.indexOf(data.activityDetails.referenceId) >= 0
+            })
+        ])
+};
+
 class RaidWeekViewer extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
       raid: 'eow',
-      mode: 'both',
+      mode: false,
+      raidWeeks: []
     }
+  }
+
+  componentDidMount() {
+    !this.state.mode && this.setMode('both');
   }
 
   setRaid = (raid) => {
@@ -174,47 +210,34 @@ class RaidWeekViewer extends Component {
   };
 
   setMode = (mode) => {
+    console.log('mode', mode);
+    console.log('state', this.state);
+    console.log('props', this.props);
+    console.log('check', this.state.mode === mode);
+    // if(this.state.mode === mode) return;
+
+    console.log('after');
+    const { raid } = this.state;
+    const { mergedHistory = {EOW: false, LEV: false}} = this.props;
+
+    console.log('mergedHistory', mergedHistory);
+    const newRaidWeeks = determineRaidWeeks(raid, mergedHistory, mode);
+    console.log('newRaidWeeks', newRaidWeeks);
     this.setState({
-      mode
+      mode,
+      raidWeeks: newRaidWeeks
     })
   };
 
   render() {
-    const { raid, mode } = this.state;
+    const { raid, mode, raidWeeks } = this.state;
     const {
       raidHistory : { mergedHistory = {EOW: false, LEV: false} },
       handleFetchPGCR
     } = this.props;
 
-  const raidWeeks = (() => {
-    const slicedRaid = (
-      raid === 'EATER_OF_WORLDS'
-        ? Object.entries(mergedHistory.EOW).reverse().slice(0, 5).reverse()
-        : Object.entries(mergedHistory.LEV).reverse().slice(0, 5).reverse()
-    );
-
-    console.log('slicedArray', slicedRaid);
-    console.log('raidHash', RAID_HASHES[raid]);
-
-    return mode === 'both' ?
-      slicedRaid
-      : mode === 'prestige' ?
-        slicedRaid.map(curr =>
-          [
-            curr[0],
-            Object.entries(curr[1])
-              .filter(data => RAID_HASHES[raid].prestige.indexOf(data.activityDetails.referenceId) >= 0)
-          ])
-        :slicedRaid.map(curr =>
-          [
-            curr[0],
-            Object.values(curr[1])
-              .filter(data => RAID_HASHES[raid].normal.indexOf(data.activityDetails.referenceId) >= 0)
-          ])
-  })();
-
-  console.log('raidWeeks', raidWeeks);
-
+    console.log('mode', mode);
+    console.log('raidWeeks', raidWeeks);
     return (
       <RaidView>
         <RaidButtonWrapper>
@@ -232,7 +255,6 @@ class RaidWeekViewer extends Component {
       { raidWeeks && (
           <RaidStackList>
             { raidWeeks.map(raidWeek => {
-              console.log('raidWeek', raidWeek);
               return (
                 <RaidStack
                   key={shortid.generate()}

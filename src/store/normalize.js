@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { RAIDS, EATER_OF_WORLDS as EOW, LEVIATHAN as LEV} from "../actions";
+import { RAID_HASHES, EATER_OF_WORLDS as EOW, LEVIATHAN as LEV} from "../actions";
 
 const getRaidWeeks = (raidLaunchDate) => {
   const weeksSinceRelease = moment().diff(moment(raidLaunchDate, 'YYYY-MM-DD'), 'w');
@@ -74,8 +74,8 @@ const _normalizeRaidHistory = (activityHistory, activityHashes) => {
     (accum, entry) => {
       const [charId, charRaids] = entry;
       const raids = charRaids.filter((activity) => activity.activityDetails.mode === 4);
-      const EOW_Raids = raids.filter((curr) => EOW.allActivityHashes.indexOf(curr.activityDetails.directorActivityHash));
-      const LEV_Raids = raids.filter((curr) => LEV.allActivityHashes.indexOf(curr.activityDetails.directorActivityHash));
+      const EOW_Raids = raids.filter((curr) => RAID_HASHES.EOW.indexOf(curr.activityDetails.referenceId) >= 0);
+      const LEV_Raids = raids.filter((curr) => RAID_HASHES.LEV.indexOf(curr.activityDetails.referenceId) >= 0);
 
       const EOW_RaidsByWeek = splitRaidByWeek(EOW_RaidWeeks, EOW_Raids);
       const LEV_RaidsByWeek = splitRaidByWeek(LEV_RaidWeeks, LEV_Raids);
@@ -115,7 +115,6 @@ const _normalizePostGameCarnageReport = (pgcr) => ({
     raid: (() => {
       const activityHash = pgcr.activityDetails.referenceId;
       if(LEV.allActivityHashes.indexOf(activityHash) >= 0) {
-        console.log('lev');
         return {
           ...LEV,
           mode: (() => LEV.versions.prestige.activityHashes.indexOf(activityHash) ? 'Prestige' : 'Normal')()
@@ -141,13 +140,44 @@ const _normalizeMilestoneData = (milestones, mshObj) => (
     }, {})
 );
 
+const _normalizeRaidWeeks = (raid, history, mode) => {
+  const slicedRaid = (
+    raid === 'eow'
+      ? Object.entries(history.EOW).reverse().slice(0, 5).reverse()
+      : Object.entries(history.LEV).reverse().slice(0, 5).reverse()
+  );
+
+  if(mode === 'both') {
+    return slicedRaid;
+  }
+  else if(mode === 'prestige') {
+    return (
+      slicedRaid.map(curr => [
+        curr[0],
+        Object.values(curr[1])
+          .filter(data => RAID_HASHES[raid].prestige.indexOf(data.activityDetails.referenceId) >= 0)
+      ])
+    )
+  }
+  else {
+    return (
+      slicedRaid.map(curr => [
+        curr[0],
+        Object.values(curr[1])
+          .filter(data => RAID_HASHES[raid].normal.indexOf(data.activityDetails.referenceId) >= 0)
+       ])
+    )
+  }
+};
+
 const normalize = {
   player: _normalizePlayerProfile,
   raidData: _normalizeRaidData,
   raidValues: _normalizeRaidValues,
   raidHistory: _normalizeRaidHistory,
   postGameCarnageReport: _normalizePostGameCarnageReport,
-  milestoneData: _normalizeMilestoneData
+  milestoneData: _normalizeMilestoneData,
+  raidWeeks: _normalizeRaidWeeks
 };
 
 export default normalize;

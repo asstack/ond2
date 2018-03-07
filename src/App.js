@@ -17,10 +17,6 @@ const AppWrapper = styled.div`
 
 class App extends Component {
 
-  constructor(props) {
-    super(props);
-  };
-
   fetchPGCR = (instanceId) => {
     const { fetchPostGameCarnageReport } = this.props;
     fetchPostGameCarnageReport(instanceId)
@@ -33,14 +29,12 @@ class App extends Component {
 
     return (
       <AppWrapper>
-        { pgcr ?
-          <PostGameCarnageReportContainer pgcr={pgcr} handleClearPGCR={() => clearPostGameCarnageReport()} />
-          :<PlayerSearchContainer
-            handleClearPGCR={() => clearPostGameCarnageReport()}
-            handleFetchPGCR={this.fetchPGCR}
-            {...this.props}
+        <PostGameCarnageReportContainer pgcr={pgcr} handleClearPGCR={() => clearPostGameCarnageReport()} />
+        <PlayerSearchContainer
+          handleClearPGCR={() => clearPostGameCarnageReport()}
+          handleFetchPGCR={this.fetchPGCR}
+          {...this.props}
           />
-        }
       </AppWrapper>
     );
   }

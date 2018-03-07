@@ -2,16 +2,7 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 import shortid from 'shortid';
 
-const RAID_HASHES = {
-  eow: {
-    prestige: [ 417231112, 757116822, 1685065161, 2449714930, 3446541099, 3879860661 ],
-    normal: [ 417231112, 757116822, 1685065161, 2449714930, 3446541099, 3879860661 ]
-  },
-  lev: {
-    prestige: [ 809170886 ],
-    normal: [ 3089205900 ]
-  }
-};
+import normalize from '../store/normalize';
 
 const RaidView = styled.div`
   display: flex;
@@ -123,8 +114,8 @@ const RaidButton = styled.button`
 const RaidStack = ({ handleShowStats, handleFetchPGCR, raidWeek }) => {
   const [week, raids] = raidWeek;
   const raidValues = Object.values(raids);
-  const completedRaids = raidValues.filter(raid => raid.values.completed);
-  const failedRaids = raidValues.filter(raid => !raid.values.completed);
+  const completedRaids = raidValues.filter(raid => raid.values.completed === 1);
+  const failedRaids = raidValues.filter(raid => raid.values.completed === 0);
 
   return(
       <RaidWeekContainer>
@@ -157,87 +148,85 @@ const RaidStack = ({ handleShowStats, handleFetchPGCR, raidWeek }) => {
   );
 };
 
-const determineRaidWeeks = (raid, history, mode) => {
-  const slicedRaid = (
-    raid === 'EATER_OF_WORLDS'
-      ? Object.entries(history.EOW).reverse().slice(0, 5).reverse()
-      : Object.entries(history.LEV).reverse().slice(0, 5).reverse()
-  );
-
-  console.log('mode', mode);
-  console.log('slicedArray', slicedRaid);
-  console.log('raidHash', RAID_HASHES[raid]);
-
-  return mode === 'both' ?
-    slicedRaid
-    : mode === 'prestige' ?
-      slicedRaid.map(curr =>
-        [
-          curr[0],
-          Object.entries(curr[1])
-            .filter(data => RAID_HASHES[raid].prestige.indexOf(data.activityDetails.referenceId) >= 0)
-        ])
-      :slicedRaid.map(curr =>
-        [
-          curr[0],
-          Object.values(curr[1])
-            .filter(data => {
-              console.log('checkzzz', RAID_HASHES[raid].normal.indexOf(data.activityDetails.referenceId) >= 0);
-              return RAID_HASHES[raid].normal.indexOf(data.activityDetails.referenceId) >= 0
-            })
-        ])
-};
-
 class RaidWeekViewer extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      raid: 'eow',
+      raid: 'lev',
       mode: false,
-      raidWeeks: []
+      raidWeeks: [],
+      normalize: false
     }
   }
 
-  componentDidMount() {
-    !this.state.mode && this.setMode('both');
-  }
+  componentWillMount = () => {
+    if(!this.state.mode) {
+      this.setState({ mode: 'both'});
+    }
+  };
+
+  componentDidUpdate = () => {
+    const { raid, mode, normalize } = this.state;
+    const { raidHistory } = this.props;
+    const { mergedHistory } = raidHistory;
+
+    if(normalize) {
+      this.setState({
+        raidWeeks: this.normalizeRaidWeeks(raid, mergedHistory, mode),
+        normalize: false
+      })
+    }
+  };
+
+  normalizeRaidWeeks = (raid, history, mode) => normalize.raidWeeks(raid, history, mode);
+
+  setRaidWeeks = (raidWeeks) => {
+    this.setState({
+      raidWeeks,
+      normalize
+    });
+  };
 
   setRaid = (raid) => {
     this.setState({
-      raid
+      raid,
+      normalize: true
     })
   };
 
   setMode = (mode) => {
-    console.log('mode', mode);
-    console.log('state', this.state);
-    console.log('props', this.props);
-    console.log('check', this.state.mode === mode);
-    // if(this.state.mode === mode) return;
-
-    console.log('after');
-    const { raid } = this.state;
-    const { mergedHistory = {EOW: false, LEV: false}} = this.props;
-
-    console.log('mergedHistory', mergedHistory);
-    const newRaidWeeks = determineRaidWeeks(raid, mergedHistory, mode);
-    console.log('newRaidWeeks', newRaidWeeks);
     this.setState({
       mode,
-      raidWeeks: newRaidWeeks
+      normalize: true
     })
   };
 
-  render() {
-    const { raid, mode, raidWeeks } = this.state;
-    const {
-      raidHistory : { mergedHistory = {EOW: false, LEV: false} },
-      handleFetchPGCR
-    } = this.props;
+  toggleNormalized = () => {
+    this.setState({
+      normalize: !this.state.normalize
+    })
+  };
 
-    console.log('mode', mode);
-    console.log('raidWeeks', raidWeeks);
+  shouldComponentUpdate = (nextProps) => Object.keys(nextProps.raidHistory).length !== 0;
+
+  componentWillReceiveProps = (nextProps) => {
+    const { mode } = this.props;
+    if(!mode || mode !== nextProps.mode) {
+      this.toggleNormalized();
+    }
+  };
+
+
+  render() {
+    const { raid, mode, raidWeeks, normalize } = this.state;
+    const { raidHistory, handleFetchPGCR } = this.props;
+    const { mergedHistory = {EOW: false, LEV: false} } = raidHistory;
+
+    //if(normalize) {
+    //  this.setRaidWeeks(this.normalizeRaidWeeks(raid, mergedHistory, mode));
+    //}
+
     return (
       <RaidView>
         <RaidButtonWrapper>

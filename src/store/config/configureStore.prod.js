@@ -12,7 +12,6 @@ const configureStore = preloadedState => {
   );
 
   sagaMiddleware.run(rootSaga);
-
   return store;
 };
 

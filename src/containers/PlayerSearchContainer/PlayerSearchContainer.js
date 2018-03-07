@@ -8,7 +8,7 @@ import RaidStats from '../../components/RaidStats';
 import { FETCH_PGCR, FETCH_PLAYER_PROFILE } from "../../store/constants";
 
 const PlayerSearchWrapper = styled.section`
-  display: flex;
+  display: ${({ pgcr }) => pgcr ? 'none' : 'flex' };
   flex-direction: column;
   width: 100%;
   height: 100%;
@@ -41,12 +41,11 @@ class PlayerSearchContainer extends Component {
     super(props);
 
     this.state = {
-      playerSearch: 'videoflux',
-      searchHistory: [],
+      playerSearch: '',
     }
   }
 
-  handlePlayerSearch = ({ target}) => {
+  handlePlayerInput = ({ target}) => {
     this.setState({
       playerSearch: target.value
     });
@@ -56,19 +55,19 @@ class PlayerSearchContainer extends Component {
     e.preventDefault();
     const { playerSearch } = this.state;
     const { searchPlayer } = this.props;
-    searchPlayer({ displayName: playerSearch, membershipType: -1 });
+    searchPlayer({ displayName: playerSearch.replace(' ', '%20'), membershipType: -1 });
   };
 
   render() {
     const { playerSearch } = this.state;
-    const { playerProfile, raidHistory, handleFetchPGCR, handleClearPGCR } = this.props;
+    const { raidHistory, handleFetchPGCR, handleClearPGCR, pgcr } = this.props;
 
     return(
-      <PlayerSearchWrapper>
+      <PlayerSearchWrapper pgcr={pgcr}>
         <PlayerSearchSection>
           <form onSubmit={(e) => this.searchDestinyPlayer(e)}>
             <label>Gamer Tag</label>
-            <Input value={playerSearch} onChange={this.handlePlayerSearch} />
+            <Input value={playerSearch} onChange={this.handlePlayerInput} />
           </form>
           <h4>EOW: </h4><p>Normal(#) Prestige(#)</p>
           <br />
@@ -81,18 +80,6 @@ class PlayerSearchContainer extends Component {
             raidHistory={raidHistory}
           />
         </RaidReportSection>
-        {/*{!!statEntries.length &&*/}
-          {/*<RaidStats>*/}
-            {/*<button onClick={this.clearStats}>Clear</button>*/}
-            {/*<ul>*/}
-              {/*{statEntries.map((entry) => {*/}
-                {/*const [name, stat] = entry;*/}
-                {/*return <li key={shortid.generate()}>{name} : {stat}</li>*/}
-              {/*})*/}
-              {/*}*/}
-            {/*</ul>*/}
-          {/*</RaidStats>*/}
-        {/*}*/}
       </PlayerSearchWrapper>
     )
   }

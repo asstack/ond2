@@ -6,6 +6,7 @@ export const SET_ACTIVITY_HISTORY = 'set_activity_history';
 export const SET_PGCR = 'set_pgcr';
 export const SET_PGCR_HISTORY = 'set_pgcr_history';
 export const SET_RAID_HISTORY = 'set_raid_history';
+export const SET_NF_HISTORY = 'set_nightfall_history';
 export const SET_PUBLIC_MILESTONES = 'set_public_milestones';
 
 

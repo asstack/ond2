@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { RAID_HASHES, EATER_OF_WORLDS as EOW, LEVIATHAN as LEV} from "../actions";
+import { NF_HASHES, RAID_HASHES, EATER_OF_WORLDS as EOW, LEVIATHAN as LEV} from "../actions";
 
 const getRaidWeeks = (raidLaunchDate) => {
   const weeksSinceRelease = moment().diff(moment(raidLaunchDate, 'YYYY-MM-DD'), 'w');
@@ -66,14 +66,39 @@ const _normalizeRaidData = (raidData) => (
   }, {})
 );
 
-const _normalizeRaidHistory = (activityHistory, activityHashes) => {
+const _normalizeNightfallData = (nfData) => {
+  const nfs = Object.values(nfData).reduce((nfsAccum, run) =>
+    [...nfsAccum, { ...run, values: _normalizeRaidValues(run.values)}], []);
+
+  const normalRaids = Object.entries(NF_HASHES.normal).reduce((accum, nfHash) => {
+    const [ id, nfStrike ] = nfHash;
+    const name = nfStrike.name.substring(11);
+
+    accum[name] = nfs.filter((run) => run.activityDetails.referenceId == id);
+
+    return accum;
+
+  }, {});
+
+  const prestigeRaids = Object.entries(NF_HASHES.prestige).reduce((accum, nfHash) => {
+    const [ id, nfStrike ] = nfHash;
+    const name = nfStrike.name.substring(11);
+
+    accum[name] = nfs.filter((run) => run.activityDetails.referenceId == id);
+    return accum;
+
+  }, {});
+  return ({ normal: normalRaids, prestige: prestigeRaids });
+};
+
+const _normalizeRaidHistory = (activityHistory) => {
   const EOW_RaidWeeks = getRaidWeeks(EOW.launchDate);
   const LEV_RaidWeeks = getRaidWeeks(LEV.launchDate);
 
   const raidHistory = Object.entries(activityHistory).reduce(
     (accum, entry) => {
-      const [charId, charRaids] = entry;
-      const raids = charRaids.filter((activity) => activity.activityDetails.mode === 4);
+      const [charId, raids] = entry;
+
       const EOW_Raids = raids.filter((curr) => RAID_HASHES.EOW.indexOf(curr.activityDetails.referenceId) >= 0);
       const LEV_Raids = raids.filter((curr) => RAID_HASHES.LEV.indexOf(curr.activityDetails.referenceId) >= 0);
 
@@ -91,6 +116,16 @@ const _normalizeRaidHistory = (activityHistory, activityHashes) => {
   raidHistory['mergedHistory'] = mergeRaidsByWeek(raidHistory);
   return raidHistory;
   };
+
+const _normalizeNightfallHistory = (nightfallHistory) =>
+  Object.values(nightfallHistory).reduce((accum, history) => {
+    Object.entries(history).forEach((data) => {
+      const [ mode, strikeData ] = data;
+      const nStrikeData = _normalizeNightfallData(strikeData);
+      accum[mode] = accum[mode] ? { ...accum[mode], ...nStrikeData[mode] } : { ...nStrikeData[mode] };
+    });
+    return accum;
+  }, {});
 
 const normalizePGCREntries = (entries) => (
   entries.map((curr) => ({
@@ -147,10 +182,7 @@ const _normalizeRaidWeeks = (raid, history, mode) => {
       : Object.entries(history.LEV).reverse().slice(0, 5).reverse()
   );
 
-  if(mode === 'both') {
-    return slicedRaid;
-  }
-  else if(mode === 'prestige') {
+  if(mode === 'prestige') {
     return (
       slicedRaid.map(curr => [
         curr[0],
@@ -173,8 +205,10 @@ const _normalizeRaidWeeks = (raid, history, mode) => {
 const normalize = {
   player: _normalizePlayerProfile,
   raidData: _normalizeRaidData,
+  nightfallData: _normalizeNightfallData,
   raidValues: _normalizeRaidValues,
   raidHistory: _normalizeRaidHistory,
+  nightfall: _normalizeNightfallHistory,
   postGameCarnageReport: _normalizePostGameCarnageReport,
   milestoneData: _normalizeMilestoneData,
   raidWeeks: _normalizeRaidWeeks

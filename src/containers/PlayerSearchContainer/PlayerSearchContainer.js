@@ -60,24 +60,21 @@ class PlayerSearchContainer extends Component {
 
   render() {
     const { playerSearch } = this.state;
-    const { raidHistory, handleFetchPGCR, handleClearPGCR, pgcr } = this.props;
+    const { raidHistory, nightfallHistory, handleFetchPGCR, handleClearPGCR, pgcr } = this.props;
 
     return(
       <PlayerSearchWrapper pgcr={pgcr}>
         <PlayerSearchSection>
           <form onSubmit={(e) => this.searchDestinyPlayer(e)}>
-            <label>Gamer Tag</label>
-            <Input value={playerSearch} onChange={this.handlePlayerInput} />
+            <Input placeholder="Gamer Tag" value={playerSearch} onChange={this.handlePlayerInput} />
           </form>
-          <h4>EOW: </h4><p>Normal(#) Prestige(#)</p>
-          <br />
-          <h4>Leviathan: </h4><p>Normal(#) Prestige(#)</p>
         </PlayerSearchSection>
         <RaidReportSection>
           <RaidWeekViewer
             handleClearPGCR={handleClearPGCR}
             handleFetchPGCR={handleFetchPGCR}
             raidHistory={raidHistory}
+            nightfallHistory={nightfallHistory}
           />
         </RaidReportSection>
       </PlayerSearchWrapper>
@@ -85,10 +82,17 @@ class PlayerSearchContainer extends Component {
   }
 }
 
+/*
+          <h4>EOW:</h4><p> Normal(#) Prestige(#)</p><br />
+          <h4>Leviathan:</h4><p> Normal(#) Prestige(#)</p><br />
+          <h4>Nightfall:</h4><p> Normal(#) Prestige(#)</p>
+ */
+
 const mapStateToProps = state => {
   return {
     playerProfile: state.playerProfile,
-    raidHistory: state.raidHistory
+    raidHistory: state.raidHistory,
+    nightfallHistory: state.nightfallHistory
   }
 };
 

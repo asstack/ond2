@@ -5,7 +5,7 @@ import shortid from 'shortid';
 const PGCRWrapper = styled.div`
   display: flex;
   flex-direction: column;  
-  justify-content: center;  
+  margin-top: 100px;
   width: 100%;
   height: 100%;
   align-items: center;
@@ -40,12 +40,14 @@ class PostGameCarnageReportContainer extends Component {
     const { pgcr, handleClearPGCR } = this.props;
     const { entries } = pgcr;
 
+    console.log(pgcr);
     return(
       pgcr && (
         <PGCRWrapper>
           <Nav>
           <button onClick={handleClearPGCR}>{'< Back'}</button>
           </Nav>
+          <h2 style={{ marginBottom: 5 }}>Raid Date: {pgcr.raidDate}</h2>
           <PGCRTable>
             <thead>
               <tr>

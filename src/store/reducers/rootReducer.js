@@ -4,6 +4,7 @@ import {
   SET_PLAYER_PROFILE,
   SET_ACTIVITY_HISTORY,
   SET_RAID_HISTORY,
+  SET_NF_HISTORY,
   SET_PGCR,
   SET_PGCR_HISTORY,
   SET_PUBLIC_MILESTONES
@@ -53,13 +54,21 @@ const setPublicMilestones = (state = false, action) => {
   return state;
 };
 
+const setNightfallHistory = (state = false, action) => {
+  if(action.type === SET_NF_HISTORY) {
+    return action.data;
+  }
+  return state
+};
+
 const rootReducer = combineReducers({
   fetchLogs,
   playerProfile: setPlayerProfile,
   raidHistory: setRaidHistory,
   postGameCarnageReport: setPostGameCarnageReport,
   pgcrHistory: setPGCRHistory,
-  publicMilestones: setPublicMilestones
+  publicMilestones: setPublicMilestones,
+  nightfallHistory: setNightfallHistory
 });
 
 export default rootReducer;

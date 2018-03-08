@@ -30,7 +30,7 @@ const RaidWeekHeader = styled.div`
   flex-direction: column;
   justify-content: center;
   height: 10%;
-  font-size: 26px;
+  font-size: ${({ raid }) => raid === 'nf' ? '20px' : '26px;'};
   text-align: center;
   vertical-align: middle;
   padding: 5px;
@@ -55,7 +55,7 @@ const RaidStackItems = styled.div`
   display: flex;
   flex-direction: row;
   height: 20px;
-  width: 100%;
+  width: 60%;
   ${({ success }) => success ? 'margin-bottom: -1px' : null};
   ${({ success }) => success ? null: 'margin-top: -1px'};
   
@@ -77,6 +77,7 @@ const RaidStackItem = styled.div`
 const RaidButton = styled.button`
   width: 125px;
   height: 50px;
+  margin-right: 5px;
   background-color: ${({ selected }) => selected ? 'black' : 'white'};
   color: ${({ selected }) => selected ? 'white' : 'black'};
 `;
@@ -111,7 +112,7 @@ const RaidButton = styled.button`
     </RaidStackList>
  */
 
-const RaidStack = ({ handleShowStats, handleFetchPGCR, raidWeek }) => {
+const RaidStack = ({ handleShowStats, handleFetchPGCR, raidWeek, raid }) => {
   const [week, raids] = raidWeek;
   const raidValues = Object.values(raids);
   const completedRaids = raidValues.filter(raid => raid.values.completed === 1);
@@ -119,7 +120,7 @@ const RaidStack = ({ handleShowStats, handleFetchPGCR, raidWeek }) => {
 
   return(
       <RaidWeekContainer>
-        <RaidWeekHeader>{ week }</RaidWeekHeader>
+        <RaidWeekHeader raid={raid}>{ week }</RaidWeekHeader>
         <RaidWeek>
           { completedRaids && Object.values(completedRaids).map(raid => (
             <RaidStackItems
@@ -161,19 +162,23 @@ class RaidWeekViewer extends Component {
   }
 
   componentWillMount = () => {
-    if(!this.state.mode) {
-      this.setState({ mode: 'both'});
-    }
+    //if(!this.state.mode) {
+    //  this.setState({ mode: 'prestige'});
+    //}
   };
 
   componentDidUpdate = () => {
     const { raid, mode, normalize } = this.state;
-    const { raidHistory } = this.props;
+    const { raidHistory, nightfallHistory } = this.props;
     const { mergedHistory } = raidHistory;
+
+    const raidWeeks = raid === 'nf'
+      ? Object.entries(nightfallHistory[mode]).map((item) => [item[0], item[1]])
+      : this.normalizeRaidWeeks(raid, mergedHistory, mode);
 
     if(normalize) {
       this.setState({
-        raidWeeks: this.normalizeRaidWeeks(raid, mergedHistory, mode),
+        raidWeeks,
         normalize: false
       })
     }
@@ -204,7 +209,14 @@ class RaidWeekViewer extends Component {
 
   toggleNormalized = () => {
     this.setState({
-      normalize: !this.state.normalize
+      normalize: !this.state.normalize,
+    })
+  };
+
+  setUp = () => {
+    this.setState({
+      normalize: true,
+      mode: 'prestige'
     })
   };
 
@@ -212,20 +224,18 @@ class RaidWeekViewer extends Component {
 
   componentWillReceiveProps = (nextProps) => {
     const { mode } = this.props;
-    if(!mode || mode !== nextProps.mode) {
+    if(!mode) {
+      this.setUp();
+    }
+    else if(mode !== nextProps.mode) {
       this.toggleNormalized();
     }
   };
 
 
   render() {
-    const { raid, mode, raidWeeks, normalize } = this.state;
-    const { raidHistory, handleFetchPGCR } = this.props;
-    const { mergedHistory = {EOW: false, LEV: false} } = raidHistory;
-
-    //if(normalize) {
-    //  this.setRaidWeeks(this.normalizeRaidWeeks(raid, mergedHistory, mode));
-    //}
+    const { raid, mode, raidWeeks } = this.state;
+    const { handleFetchPGCR } = this.props;
 
     return (
       <RaidView>
@@ -233,10 +243,10 @@ class RaidWeekViewer extends Component {
           <div>
             <RaidButton onClick={() => this.setRaid('eow')} selected={raid==='eow'}>Eater of Worlds</RaidButton>
             <RaidButton onClick={() => this.setRaid('lev')} selected={raid==='lev'}>Leviathan</RaidButton>
+            <RaidButton onClick={() => this.setRaid('nf')} selected={raid==='nf'}> Nightfall</RaidButton>
           </div>
           <div style={{ marginTop: 10 }}>
             <RaidButton onClick={() => this.setMode('normal')} selected={mode==='normal'}>Normal</RaidButton>
-            <RaidButton onClick={() => this.setMode('both')} selected={mode==='both'}>Both</RaidButton>
             <RaidButton onClick={() => this.setMode('prestige')} selected={mode==='prestige'}>Prestige</RaidButton>
           </div>
         </RaidButtonWrapper>
@@ -249,6 +259,7 @@ class RaidWeekViewer extends Component {
                   key={shortid.generate()}
                   handleFetchPGCR={handleFetchPGCR}
                   raidWeek={raidWeek}
+                  raid={raid}
                 />
               )
             })

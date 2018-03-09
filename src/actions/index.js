@@ -47,7 +47,6 @@ export const tier = {
 };
 
 export const NF_HASHES = {
-  tOne: {
     373475104: {
       "description": "Help Osiris cut back an out-of-control Vex Mind.",
       "name": "Nightfall: A Garden World",
@@ -207,9 +206,7 @@ export const NF_HASHES = {
     "directActivityModeType": 46,
     "activityModeHashes": [ 547513715, 2394616003, 1164760493 ],
     "activityModeTypes": [ 46, 18, 7 ]
-    }
-  },
-  prestige: {
+    },
     585071442: {
       "description": "Delve deep into the Hive-infested Arcology in search of missing fireteams.",
       "name": "Nightfall: Savathûn's Song",
@@ -343,8 +340,6 @@ export const NF_HASHES = {
       "activityModeHashes": [ 1350109474, 2394616003, 1164760493 ],
       "activityModeTypes": [ 17, 18, 7 ]
     },
-  },
-  normal: {
     145302664: {
       "description": "Shut down the operations of an ironmonger providing weapons to the Red Legion.",
       "name": "Nightfall: The Arms Dealer",
@@ -456,7 +451,6 @@ export const NF_HASHES = {
       "activityModeHashes": [ 3789021730, 2394616003, 1164760493 ],
       "activityModeTypes": [ 16, 18, 7 ]
     }
-  }
 };
 
 export const NIGHTFALL = {
@@ -531,5 +525,6 @@ export const activityModes = {
   6: 'patrol',
   7: 'allPvE',
   10: 'control',
-  16: 'Prestige Nightfall Strike'
+  16: 'Nightfall',
+  17: "heroicNightfall"
 };

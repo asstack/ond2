@@ -17,7 +17,7 @@ export const FETCH_PGCR = 'fetch_pgcr';
 export const LOAD_PUBLIC_MILESTONE_DATA = 'load_public_milestone_data';
 
 
-const activityModes = {
+export const activityModes = {
   0: 'none',
   2: 'Story',
   3: 'Strike',
@@ -25,5 +25,7 @@ const activityModes = {
   5: 'allPvP',
   6: 'patrol',
   7: 'allPvE',
-  10: 'control'
+  10: 'control',
+  16: 'nightfall',
+  17: 'heroicNightfall'
 };

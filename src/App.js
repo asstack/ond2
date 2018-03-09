@@ -5,6 +5,7 @@ import baseStyles from './base-styles';
 
 import PlayerSearchContainer from './containers/PlayerSearchContainer/PlayerSearchContainer';
 import PostGameCarnageReportContainer from './containers/PostGameCarnageReportContainer/PostGameCarnageReportContainer';
+import DestinyLoader from './components/DestinyLoader/DestinyLoader';
 import { FETCH_PGCR, SET_PGCR } from "./store/constants";
 
 const AppWrapper = styled.div`
@@ -35,10 +36,15 @@ class App extends Component {
           handleFetchPGCR={this.fetchPGCR}
           {...this.props}
           />
+
       </AppWrapper>
     );
   }
 }
+
+/*
+<DestinyLoader />
+ */
 
 const mapStateToProps = state => {
   return {

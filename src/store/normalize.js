@@ -14,25 +14,49 @@ const splitRaidByWeek = (raidWeeks, raids) => (
       const raidTime = moment(raid.period.split('T')[0], 'YYYY-MM-DD');
       return raidTime.isSameOrAfter(raidWeek) && raidTime.isBefore(nextRaidWeek);
     });
-
     return accum;
   }, {})
 );
 
+const splitNightfallByStrike = ({ normal, prestige }) => {
+  console.log('normal clean', normal);
+  console.log('prestige clean', prestige);
+
+  const back = Object.entries(NF_HASHES).reduce((accum, nfHash) => {
+    const [ id, nfStrike ] = nfHash;
+    const name = nfStrike.name.substring(11);
+
+    const normalNightfall = Object.values(normal).filter((run) => run.activityDetails.referenceId == id);
+    accum['normal'][name] = accum['normal'][name] ? [...accum['normal'][name], ...normalNightfall]: [...normalNightfall];
+
+
+    const prestigeNightfall = Object.values(prestige).filter((run) => run.activityDetails.referenceId == id);
+    accum['prestige'][name] = accum['prestige'][name] ? [...accum['prestige'][name], ...prestigeNightfall] : [...prestigeNightfall];
+
+    return accum;
+  }, {normal: [], prestige: []});
+
+  console.log('normal l', Object.values(normal).length);
+
+  console.log('back n l', Object.values(back.normal).length);
+
+  console.log('back', back);
+
+  return back;
+};
+
 const mergeRaidsByWeek = raidHistory =>
-  Object.values(raidHistory).reduce((accum, raids) => {
-    Object.entries(raids).forEach(raidGroup => {
-      const [raidName, raids] = raidGroup;
+  Object.values(raidHistory).reduce((accum, charRaids) => {
+    Object.entries(charRaids).map(raidGroup => {
+      const [ raidName, raids ] = raidGroup;
       accum[raidName] = accum[raidName] ? accum[raidName] : {};
 
       Object.entries(raids).forEach(raidEntries => {
-        const [week, weekRaids ] = raidEntries;
-        accum[raidName][week] = {
-          ...accum[raidName][week],
-          ...weekRaids
-        };
+        const [ week, weekRaids ] = raidEntries;
+        accum[raidName][week] = accum[raidName][week] ? [...accum[raidName][week], ...weekRaids ] : [ ...weekRaids ];
       });
     });
+
     return accum;
   }, {});
 
@@ -48,7 +72,7 @@ const _normalizePlayerProfile = (searchResults, profile, playersCharacters) => {
 const _normalizeRaidValues = (values) => (
   Object.entries(values).reduce(
     (accum, value) => {
-      accum[ value[ 0 ] ] = value[ 1 ].basic.value;
+      accum[value[0]] = value[1].basic.value;
       return accum;
     }, {})
 );
@@ -65,31 +89,6 @@ const _normalizeRaidData = (raidData) => (
     return accum;
   }, {})
 );
-
-const _normalizeNightfallData = (nfData) => {
-  const nfs = Object.values(nfData).reduce((nfsAccum, run) =>
-    [...nfsAccum, { ...run, values: _normalizeRaidValues(run.values)}], []);
-
-  const normalRaids = Object.entries(NF_HASHES.normal).reduce((accum, nfHash) => {
-    const [ id, nfStrike ] = nfHash;
-    const name = nfStrike.name.substring(11);
-
-    accum[name] = nfs.filter((run) => run.activityDetails.referenceId == id);
-
-    return accum;
-
-  }, {});
-
-  const prestigeRaids = Object.entries(NF_HASHES.prestige).reduce((accum, nfHash) => {
-    const [ id, nfStrike ] = nfHash;
-    const name = nfStrike.name.substring(11);
-
-    accum[name] = nfs.filter((run) => run.activityDetails.referenceId == id);
-    return accum;
-
-  }, {});
-  return ({ normal: normalRaids, prestige: prestigeRaids });
-};
 
 const _normalizeRaidHistory = (activityHistory) => {
   const EOW_RaidWeeks = getRaidWeeks(EOW.launchDate);
@@ -117,15 +116,25 @@ const _normalizeRaidHistory = (activityHistory) => {
   return raidHistory;
   };
 
-const _normalizeNightfallHistory = (nightfallHistory) =>
-  Object.values(nightfallHistory).reduce((accum, history) => {
+const _normalizeNightfallHistory = (nightfallHistory) => {
+  const allNightfall = Object.values(nightfallHistory).reduce((accum, history) => {
     Object.entries(history).forEach((data) => {
       const [ mode, strikeData ] = data;
-      const nStrikeData = _normalizeNightfallData(strikeData);
-      accum[mode] = accum[mode] ? { ...accum[mode], ...nStrikeData[mode] } : { ...nStrikeData[mode] };
+      accum[mode] = !!accum[mode] ? [ ...accum[mode], ...strikeData ] : [ ...strikeData ];
     });
+
     return accum;
   }, {});
+
+  const combinedNightfall = Object.entries(allNightfall).reduce((accum, normalized) => {
+    const [key, nf] = normalized;
+    const nightfallRaids = nf.map(strike => ({...strike, values: _normalizeRaidValues(strike.values)}));
+    accum[key] = {...nightfallRaids};
+    return accum;
+  }, {});
+
+  return splitNightfallByStrike(combinedNightfall);
+};
 
 const normalizePGCREntries = (entries) => (
   entries.map((curr) => ({
@@ -205,7 +214,6 @@ const _normalizeRaidWeeks = (raid, history, mode) => {
 const normalize = {
   player: _normalizePlayerProfile,
   raidData: _normalizeRaidData,
-  nightfallData: _normalizeNightfallData,
   raidValues: _normalizeRaidValues,
   raidHistory: _normalizeRaidHistory,
   nightfall: _normalizeNightfallHistory,

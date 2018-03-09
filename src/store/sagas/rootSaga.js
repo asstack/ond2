@@ -26,6 +26,7 @@ function* fetchPlayerProfile({ data }) {
     yield put({ type: consts.SET_RAID_HISTORY, data: raidHistory});
 
     const nightfallHistory = normalize.nightfall(nfHistory);
+    console.log('nfh saga', nightfallHistory);
     yield put({ type: consts.SET_NF_HISTORY, data: nightfallHistory});
 
     yield put({ type: consts.FETCH_LOG, data: 'Raid Data Successfully Collected' });
@@ -113,7 +114,6 @@ function* collectPublicMilestoneData() {
     return publicMilestones;
   }
   catch(error) {
-    console.log('error', error);
     yield put({ type: consts.FETCH_LOG, data: `Error fetching public milestone data: ${error}`})
   }
 }

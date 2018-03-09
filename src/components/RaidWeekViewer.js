@@ -237,21 +237,23 @@ class RaidWeekViewer extends Component {
     const { raid, mode, raidWeeks } = this.state;
     const { handleFetchPGCR } = this.props;
 
+    const shouldRender = raidWeeks.length > 0;
     return (
       <RaidView>
-        <RaidButtonWrapper>
-          <div>
-            <RaidButton onClick={() => this.setRaid('eow')} selected={raid==='eow'}>Eater of Worlds</RaidButton>
-            <RaidButton onClick={() => this.setRaid('lev')} selected={raid==='lev'}>Leviathan</RaidButton>
-            <RaidButton onClick={() => this.setRaid('nf')} selected={raid==='nf'}> Nightfall</RaidButton>
-          </div>
-          <div style={{ marginTop: 10 }}>
-            <RaidButton onClick={() => this.setMode('normal')} selected={mode==='normal'}>Normal</RaidButton>
-            <RaidButton onClick={() => this.setMode('prestige')} selected={mode==='prestige'}>Prestige</RaidButton>
-          </div>
-        </RaidButtonWrapper>
-
-      { raidWeeks && (
+        { shouldRender && (
+          <RaidButtonWrapper>
+            <div>
+              <RaidButton onClick={() => this.setRaid('eow')} selected={raid==='eow'}>Eater of Worlds</RaidButton>
+              <RaidButton onClick={() => this.setRaid('lev')} selected={raid==='lev'}>Leviathan</RaidButton>
+              <RaidButton onClick={() => this.setRaid('nf')} selected={raid==='nf'}> Nightfall</RaidButton>
+            </div>
+            <div style={{ marginTop: 10 }}>
+              <RaidButton onClick={() => this.setMode('normal')} selected={mode==='normal'}>Normal</RaidButton>
+              <RaidButton onClick={() => this.setMode('prestige')} selected={mode==='prestige'}>Prestige</RaidButton>
+            </div>
+          </RaidButtonWrapper>
+        )}
+      { shouldRender && (
           <RaidStackList>
             { raidWeeks.map(raidWeek => {
               return (

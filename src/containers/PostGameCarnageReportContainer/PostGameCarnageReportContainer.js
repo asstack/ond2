@@ -40,7 +40,6 @@ class PostGameCarnageReportContainer extends Component {
     const { pgcr, handleClearPGCR } = this.props;
     const { entries } = pgcr;
 
-    console.log(pgcr);
     return(
       pgcr && (
         <PGCRWrapper>

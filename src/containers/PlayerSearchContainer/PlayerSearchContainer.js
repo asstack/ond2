@@ -1,11 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import shortid from 'shortid';
 
 import RaidWeekViewer from '../../components/RaidWeekViewer';
-import RaidStats from '../../components/RaidStats';
-import { FETCH_PGCR, FETCH_PLAYER_PROFILE } from "../../store/constants";
+import { FETCH_PLAYER_PROFILE } from "../../store/constants";
 
 const PlayerSearchWrapper = styled.section`
   display: ${({ pgcr }) => pgcr ? 'none' : 'flex' };
@@ -34,6 +32,8 @@ const Input = styled.input`
   height: 40px;
   font-size: 24px;
   margin-left: 10px;
+  border-radius: 3px;
+  padding: 5px;
 `;
 
 class PlayerSearchContainer extends Component {
@@ -55,12 +55,12 @@ class PlayerSearchContainer extends Component {
     e.preventDefault();
     const { playerSearch } = this.state;
     const { searchPlayer } = this.props;
-    searchPlayer({ displayName: playerSearch.replace(' ', '%20'), membershipType: -1 });
+    searchPlayer({ displayName: playerSearch, membershipType: -1 });
   };
 
   render() {
     const { playerSearch } = this.state;
-    const { raidHistory, nightfallHistory, handleFetchPGCR, handleClearPGCR, pgcr } = this.props;
+    const { playerProfile, raidHistory, nightfallHistory, handleFetchPGCR, handleClearPGCR, pgcr } = this.props;
 
     return(
       <PlayerSearchWrapper pgcr={pgcr}>
@@ -71,6 +71,7 @@ class PlayerSearchContainer extends Component {
         </PlayerSearchSection>
         <RaidReportSection>
           <RaidWeekViewer
+            playerNotFound={playerProfile.notFound}
             handleClearPGCR={handleClearPGCR}
             handleFetchPGCR={handleFetchPGCR}
             raidHistory={raidHistory}

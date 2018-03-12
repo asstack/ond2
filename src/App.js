@@ -9,11 +9,18 @@ import DestinyLoader from './components/DestinyLoader/DestinyLoader';
 import { FETCH_PGCR, SET_PGCR } from "./store/constants";
 
 const AppWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
+
   width: 100%;
   height: 100%;
   align-items: center;
+`;
+
+const PlayerInfoWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  ${(props) => props.loading ? "div { display: none; }" : ''}
 `;
 
 class App extends Component {
@@ -26,29 +33,32 @@ class App extends Component {
   render() {
     baseStyles();
 
-    const { pgcr, clearPostGameCarnageReport } = this.props;
+    const { pgcr, clearPostGameCarnageReport, loading } = this.props;
 
     return (
       <AppWrapper>
-        <PostGameCarnageReportContainer pgcr={pgcr} handleClearPGCR={() => clearPostGameCarnageReport()} />
-        <PlayerSearchContainer
-          handleClearPGCR={() => clearPostGameCarnageReport()}
-          handleFetchPGCR={this.fetchPGCR}
-          {...this.props}
-          />
-
+        { loading && <DestinyLoader /> }
+        <PlayerInfoWrapper loading={loading}>
+          <PostGameCarnageReportContainer pgcr={pgcr} handleClearPGCR={() => clearPostGameCarnageReport()} />
+          <PlayerSearchContainer
+            handleClearPGCR={() => clearPostGameCarnageReport()}
+            handleFetchPGCR={this.fetchPGCR}
+            {...this.props}
+           />
+        </PlayerInfoWrapper>
       </AppWrapper>
     );
   }
 }
 
 /*
-<DestinyLoader />
+
  */
 
 const mapStateToProps = state => {
   return {
-    pgcr: state.postGameCarnageReport
+    pgcr: state.postGameCarnageReport,
+    loading: state.loading
   }
 };
 

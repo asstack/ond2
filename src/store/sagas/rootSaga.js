@@ -11,29 +11,45 @@ import * as consts from "../constants";
 import { RAIDS } from '../../actions/index';
 import normalize from '../normalize';
 
+function* handleSearchPlayerFailure() {
+  yield put({ type: consts.SET_PLAYER_PROFILE, data: { notFound: true } });
+  yield put({ type: consts.SET_RAID_HISTORY, data: {} });
+  yield put({ type: consts.SET_ACTIVITY_HISTORY, data: {} });
+  yield put({ type: consts.SET_NF_HISTORY, data: {} });
+  yield put({ type: consts.TOGGLE_LOADING });
+}
+
 function* fetchPlayerProfile({ data }) {
   try {
+    yield put({ type: consts.TOGGLE_LOADING });
     const searchResults = yield call(searchPlayer, data);
+
+    if(searchResults === undefined ) {
+      return yield call(handleSearchPlayerFailure);
+    }
+
     const [profile, playersCharacters] = yield all([ call(fetchProfile, searchResults), call(fetchCharacters, searchResults)]);
     const playerProfile = normalize.player(searchResults, profile, playersCharacters);
 
     yield put({ type: consts.SET_PLAYER_PROFILE, data: playerProfile });
     yield put({ type: consts.FETCH_LOG, data: 'Player Profile Fetch Success' });
 
-    const [activityHistory, nfHistory] = yield all([call(collectRaidData, playerProfile), call(collectNightFallData, playerProfile)]);
+    const [raidHistory, nightfallHistory] = yield all([call(collectRaidData, playerProfile), call(collectNightFallData, playerProfile)]);
 
-    const raidHistory = normalize.raidHistory(activityHistory);
     yield put({ type: consts.SET_RAID_HISTORY, data: raidHistory});
-
-    const nightfallHistory = normalize.nightfall(nfHistory);
-    console.log('nfh saga', nightfallHistory);
     yield put({ type: consts.SET_NF_HISTORY, data: nightfallHistory});
 
-    yield put({ type: consts.FETCH_LOG, data: 'Raid Data Successfully Collected' });
+    yield put({ type: consts.TOGGLE_LOADING });
+
   }
   catch(error) {
     yield put({ type: consts.FETCH_LOG, data: `Player Profile Fetch Error: ${error}`})
+    yield put({ type: consts.TOGGLE_LOADING });
   }
+}
+
+function* collectActivityHistory(historyParam, queryParams={ page: 0, mode: 'raid', count: 250 }) {
+  return yield call(fetchActivityHistory, historyParam, queryParams);
 }
 
 function* collectProfileCharacters(data) {
@@ -41,40 +57,63 @@ function* collectProfileCharacters(data) {
 }
 
 function* collectNightFallData(playerProfile) {
-  //const activityHashes = yield collectPublicMilestoneData();
   try {
-    const nfActivities = yield all(
-      playerProfile.characterIds.map(curr => call(fetchActivityHistory, playerProfile.characters[curr], { page: 0, mode: '16', count: 250 })),
+    const nfNormalActivities = yield all(
+      [
+        ...playerProfile.characterIds.map(curr => collectActivityHistory(playerProfile.characters[curr], { page: 0, mode: 16, count: 250 })),
+        ...playerProfile.characterIds.map(curr => collectActivityHistory(playerProfile.characters[curr], { page: 0, mode: 46, count: 250 })),
+      ]
     );
 
-    const nfHeroicActivities = yield all(
-      playerProfile.characterIds.map(curr => call(fetchActivityHistory, playerProfile.characters[curr], { page: 0, mode: '17', count: 250 }))
+    const nfPrestigeActivities = yield all(
+      [
+        ...playerProfile.characterIds.map(curr => call(collectActivityHistory, playerProfile.characters[curr], { page: 0, mode: 17, count: 250 })),
+        ...playerProfile.characterIds.map(curr => call(collectActivityHistory, playerProfile.characters[curr], { page: 0, mode: 47, count: 250 }))
+      ]
     );
 
-    return playerProfile.characterIds.reduce((accum, charId, idx) => {
-      accum[charId] = { prestige: [...nfHeroicActivities[idx]], normal: [...nfActivities[idx]] };
+    const nfNormalData = nfNormalActivities.reduce((accum, data) => {
+      accum = [...accum, ...data];
       return accum;
-    }, {});
+    }, []);
+
+    const nfPrestigeData = nfPrestigeActivities.reduce((accum, data) => {
+      accum = [...accum, ...data];
+      return accum;
+    }, []);
+
+    const nfHistory = normalize.nightfall({ normal: nfNormalData, prestige: nfPrestigeData });
+
+    yield put({ type: consts.FETCH_LOG, data: `Nightfall data successfully collected`});
+
+    return nfHistory;
   }
   catch(error) {
     yield put({ type: consts.FETCH_LOG, data: `NightFall Data Fetch Error: ${error}`})
+    yield put({ type: consts.TOGGLE_LOADING });
   }
 }
 
 function* collectRaidData(playerProfile) {
   try {
-    const activityHistories = yield all(
-      playerProfile.characterIds.map(curr => call(fetchActivityHistory, playerProfile.characters[curr])),
+    const raidData = yield all(
+      playerProfile.characterIds.map(curr => call(collectActivityHistory, playerProfile.characters[curr])),
     );
 
-    return playerProfile.characterIds.reduce((accum, charId, idx) => {
-      accum[charId] = [...activityHistories[idx]];
+    const activityHistory = playerProfile.characterIds.reduce((accum, charId, idx) => {
+      accum[charId] = [...raidData[idx]];
       return accum;
     }, {});
 
+    const normalizedRaidData = normalize.raidHistory(activityHistory);
+
+    yield put({ type: consts.FETCH_LOG, data: 'Raid Data Successfully Collected' });
+
+    return normalizedRaidData;
   }
   catch(error) {
     yield put({ type: consts.FETCH_LOG, data: `Raid Data Fetch Error: ${error}`})
+    yield put({ type: consts.TOGGLE_LOADING });
   }
 }
 
@@ -95,6 +134,7 @@ function* collectPGCR({ data }) {
   }
   catch(error) {
     yield put({ type: consts.FETCH_LOG, data: `Error fetching report ${data}: ${error}`})
+    yield put({ type: consts.TOGGLE_LOADING });
   }
 }
 
@@ -115,6 +155,7 @@ function* collectPublicMilestoneData() {
   }
   catch(error) {
     yield put({ type: consts.FETCH_LOG, data: `Error fetching public milestone data: ${error}`})
+    yield put({ type: consts.TOGGLE_LOADING });
   }
 }
 

@@ -19,30 +19,32 @@ const splitRaidByWeek = (raidWeeks, raids) => (
 );
 
 const splitNightfallByStrike = ({ normal, prestige }) => {
-  console.log('normal clean', normal);
-  console.log('prestige clean', prestige);
-
-  const back = Object.entries(NF_HASHES).reduce((accum, nfHash) => {
+  const prestigeData = Object.entries(NF_HASHES.all).reduce((accum, nfHash) => {
     const [ id, nfStrike ] = nfHash;
     const name = nfStrike.name.substring(11);
 
-    const normalNightfall = Object.values(normal).filter((run) => run.activityDetails.referenceId == id);
-    accum['normal'][name] = accum['normal'][name] ? [...accum['normal'][name], ...normalNightfall]: [...normalNightfall];
-
-
-    const prestigeNightfall = Object.values(prestige).filter((run) => run.activityDetails.referenceId == id);
-    accum['prestige'][name] = accum['prestige'][name] ? [...accum['prestige'][name], ...prestigeNightfall] : [...prestigeNightfall];
+    const prestigeNightfall = Object.values(prestige).filter((run) => run.activityDetails.referenceId.toString() === id);
+    accum[name] = !!accum[name] ? [...accum[name], ...prestigeNightfall] : [...prestigeNightfall];
 
     return accum;
-  }, {normal: [], prestige: []});
+  }, {});
 
-  console.log('normal l', Object.values(normal).length);
+  const normalData = Object.entries(NF_HASHES.all).reduce((accum, nfHash) => {
+    const [ id, rawName ] = nfHash;
+    const name = rawName.name.substring(11);
 
-  console.log('back n l', Object.values(back.normal).length);
+    const normalNightfall = Object.values(normal).filter((run) => run.activityDetails.referenceId.toString() === id);
+    accum[name] = !!accum[name] ? [...accum[name], ...normalNightfall] : [...normalNightfall];
 
-  console.log('back', back);
+    return accum;
+  }, {});
 
-  return back;
+  const returnData = {
+    normal: normalData,
+    prestige: prestigeData
+  };
+
+  return returnData;
 };
 
 const mergeRaidsByWeek = raidHistory =>
@@ -116,24 +118,12 @@ const _normalizeRaidHistory = (activityHistory) => {
   return raidHistory;
   };
 
-const _normalizeNightfallHistory = (nightfallHistory) => {
-  const allNightfall = Object.values(nightfallHistory).reduce((accum, history) => {
-    Object.entries(history).forEach((data) => {
-      const [ mode, strikeData ] = data;
-      accum[mode] = !!accum[mode] ? [ ...accum[mode], ...strikeData ] : [ ...strikeData ];
-    });
+const _normalizeNightfallHistory = ({ prestige, normal }) => {
 
-    return accum;
-  }, {});
+  const nPrestige = Object.values(prestige).map(nf => ({ ...nf, values: _normalizeRaidValues(nf.values)}));
+  const nNormal = Object.values(normal).map(nf => ({ ...nf, values: _normalizeRaidValues(nf.values)}));
 
-  const combinedNightfall = Object.entries(allNightfall).reduce((accum, normalized) => {
-    const [key, nf] = normalized;
-    const nightfallRaids = nf.map(strike => ({...strike, values: _normalizeRaidValues(strike.values)}));
-    accum[key] = {...nightfallRaids};
-    return accum;
-  }, {});
-
-  return splitNightfallByStrike(combinedNightfall);
+  return splitNightfallByStrike({ prestige: nPrestige, normal: nNormal });
 };
 
 const normalizePGCREntries = (entries) => (
@@ -184,7 +174,7 @@ const _normalizeMilestoneData = (milestones, mshObj) => (
     }, {})
 );
 
-const _normalizeRaidWeeks = (raid, history, mode) => {
+const _normalizeRaidWeeks = (raid='', history={EOW: {}, LEV: {}}, mode='') => {
   const slicedRaid = (
     raid === 'eow'
       ? Object.entries(history.EOW).reverse().slice(0, 5).reverse()

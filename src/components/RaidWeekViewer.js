@@ -6,12 +6,14 @@ import normalize from '../store/normalize';
 
 const RaidView = styled.div`
   display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
+  flex-flow: row wrap;
+  justify-content: center;
+  align-items: center;
 `;
 
 const RaidButtonWrapper = styled.div`
   display: flex;
+  flex: 1 100%;
   justify-content: center;
   align-items: center;
   flex-direction: column;
@@ -22,6 +24,7 @@ const RaidWeekContainer = styled.div`
   width: 200px;
   height: 300px;
   border: 1px solid black;
+  border-radius: 5px;
   margin: 0 5px;
 `;
 
@@ -48,6 +51,7 @@ const RaidWeek = styled.div`
 const RaidStackList = styled.div`
   display: flex;
   flex-direction: row;
+  flex-flow: row wrap;
   justify-content: center;
 `;
 
@@ -78,6 +82,7 @@ const RaidButton = styled.button`
   width: 125px;
   height: 50px;
   margin-right: 5px;
+  border-radius: 5px;
   background-color: ${({ selected }) => selected ? 'black' : 'white'};
   color: ${({ selected }) => selected ? 'white' : 'black'};
 `;
@@ -115,8 +120,11 @@ const RaidButton = styled.button`
 const RaidStack = ({ handleShowStats, handleFetchPGCR, raidWeek, raid }) => {
   const [week, raids] = raidWeek;
   const raidValues = Object.values(raids);
-  const completedRaids = raidValues.filter(raid => raid.values.completed === 1);
-  const failedRaids = raidValues.filter(raid => raid.values.completed === 0);
+
+  const completedRaids = raidValues.filter(raid => (raid.values.completed === 1 && raid.values.completionReason === 0));
+  const failedRaids = raidValues.filter(raid =>
+    raid.values.completed === 0 || (raid.values.completed === 1 && raid.values.completionReason !== 0)
+  );
 
   return(
       <RaidWeekContainer>
@@ -127,7 +135,7 @@ const RaidStack = ({ handleShowStats, handleFetchPGCR, raidWeek, raid }) => {
               onClick={() => handleFetchPGCR(raid.activityDetails.instanceId)}
               key={shortid.generate()}
               activityCount={1}
-              success={raid.values.completed}>
+              success={true}>
               <RaidStackItem />
             </RaidStackItems>
           ))
@@ -138,8 +146,7 @@ const RaidStack = ({ handleShowStats, handleFetchPGCR, raidWeek, raid }) => {
             <RaidStackItems
               onClick={() => handleFetchPGCR(raid.activityDetails.instanceId)}
               key={shortid.generate()}
-              activityCount={1}
-              success={raid.values.completed}>
+              activityCount={1}>
               <RaidStackItem />
             </RaidStackItems>
           ))
@@ -160,12 +167,6 @@ class RaidWeekViewer extends Component {
       normalize: false
     }
   }
-
-  componentWillMount = () => {
-    //if(!this.state.mode) {
-    //  this.setState({ mode: 'prestige'});
-    //}
-  };
 
   componentDidUpdate = () => {
     const { raid, mode, normalize } = this.state;
@@ -220,7 +221,13 @@ class RaidWeekViewer extends Component {
     })
   };
 
-  shouldComponentUpdate = (nextProps) => Object.keys(nextProps.raidHistory).length !== 0;
+  shouldComponentUpdate = (nextProps) => {
+    return (
+      Object.keys(nextProps.raidHistory).length !== 0 ||
+      Object.keys(nextProps.nightfallHistory).length !== 0 ||
+      nextProps.playerNotFound
+    );
+  };
 
   componentWillReceiveProps = (nextProps) => {
     const { mode } = this.props;
@@ -235,11 +242,12 @@ class RaidWeekViewer extends Component {
 
   render() {
     const { raid, mode, raidWeeks } = this.state;
-    const { handleFetchPGCR } = this.props;
+    const { handleFetchPGCR, playerNotFound } = this.props;
 
-    const shouldRender = raidWeeks.length > 0;
+    const shouldRender = raidWeeks.length > 0 && !playerNotFound;
     return (
       <RaidView>
+        { playerNotFound && <h1 style={{ fontSize: 24 }}>Sorry player not found</h1> }
         { shouldRender && (
           <RaidButtonWrapper>
             <div>

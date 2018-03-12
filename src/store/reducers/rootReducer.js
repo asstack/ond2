@@ -7,16 +7,21 @@ import {
   SET_NF_HISTORY,
   SET_PGCR,
   SET_PGCR_HISTORY,
-  SET_PUBLIC_MILESTONES
+  SET_PUBLIC_MILESTONES,
+  TOGGLE_LOADING
 } from "../constants";
 
 const fetchLogs = (state=[], action) =>
   action.type === FETCH_LOG ? [...state, action.data] : state;
 
-const setPlayerProfile = (state={}, action) => {
+const setLoading = (state=false, action) => {
+  return action.type === TOGGLE_LOADING ? !state : state;
+};
+
+const setPlayerProfile = (state={ notFound: false }, action) => {
   switch(action.type) {
     case SET_PLAYER_PROFILE:
-      return Object.assign({}, state, action.data);
+      return Object.assign({ notFound: false }, action.data);
 
     case SET_ACTIVITY_HISTORY:
       return Object.assign({}, state, { characters: action.data });
@@ -68,7 +73,8 @@ const rootReducer = combineReducers({
   postGameCarnageReport: setPostGameCarnageReport,
   pgcrHistory: setPGCRHistory,
   publicMilestones: setPublicMilestones,
-  nightfallHistory: setNightfallHistory
+  nightfallHistory: setNightfallHistory,
+  loading: setLoading
 });
 
 export default rootReducer;

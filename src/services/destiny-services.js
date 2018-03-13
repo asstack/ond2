@@ -56,7 +56,7 @@ const fetchActivityHistory = async (pathParams, queryParams) => {
   const url = applyQueryStringParams(getActivityHistory(pathParams), queryParams);
   const res = await fetch(url, destinyInit);
   const activityHistory = await res.json();
-  return Object.keys(activityHistory.Response).length > 0 ? activityHistory.Response.activities : {}
+  return Object.keys(activityHistory.Response).length > 0 ? activityHistory.Response.activities : []
 };
 
 const fetchActivityStatsAggregate = async (pathParams) => {

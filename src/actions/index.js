@@ -458,7 +458,6 @@ export const NF_HASHES = {
         },
   },
   all: {
-    // Normal
     145302664: {
           "description": "Shut down the operations of an ironmonger providing weapons to the Red Legion.",
           "name": "Nightfall: The Arms Dealer",
@@ -570,8 +569,6 @@ export const NF_HASHES = {
           "activityModeHashes": [ 3789021730, 2394616003, 1164760493 ],
           "activityModeTypes": [ 16, 18, 7 ]
         },
-
-    // Prestige
     585071442: {
           "description": "Delve deep into the Hive-infested Arcology in search of missing fireteams.",
           "name": "Nightfall: Savathûn's Song",

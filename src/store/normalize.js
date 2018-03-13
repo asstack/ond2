@@ -18,16 +18,34 @@ const splitRaidByWeek = (raidWeeks, raids) => (
   }, {})
 );
 
+//let keyStore = [];
+
 const splitNightfallByStrike = ({ normal, prestige }) => {
   const prestigeData = Object.entries(NF_HASHES.all).reduce((accum, nfHash) => {
     const [ id, nfStrike ] = nfHash;
     const name = nfStrike.name.substring(11);
 
     const prestigeNightfall = Object.values(prestige).filter((run) => run.activityDetails.referenceId.toString() === id);
+    //
+    //keyStore = [...keyStore, ...Object.values(prestigeNightfall).map(curr =>  {
+    //  if(curr.activityDetails) {
+    //    return curr.activityDetails.instanceId
+    //  }
+    //
+    //  return {};
+    //})];
+
     accum[name] = !!accum[name] ? [...accum[name], ...prestigeNightfall] : [...prestigeNightfall];
 
     return accum;
   }, {});
+
+  ////console.log('keyStore', keyStore);
+  //const flakka = Object.values(prestige).filter(item => item.activityDetails.referenceId == 2416546450);
+  //const wakka = Object.values(prestigeData).map(curr => [...curr.filter(item => item.activityDetails.referenceId == 2416546450)]);
+  ////
+  //console.log('flakka', flakka);
+  //console.log('wakka', wakka);
 
   const normalData = Object.entries(NF_HASHES.all).reduce((accum, nfHash) => {
     const [ id, rawName ] = nfHash;

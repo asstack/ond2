@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import shortid from 'shortid';
 
@@ -18,6 +19,12 @@ const RaidButtonWrapper = styled.div`
   align-items: center;
   flex-direction: column;
   margin-bottom: 10px;
+  
+  p {
+    font-size: 20px;
+    margin-right: 10px;
+    text-align: right;
+  }
 `;
 
 const RaidWeekContainer = styled.div`
@@ -63,19 +70,13 @@ const RaidStackItems = styled.div`
   ${({ success }) => success ? 'margin-bottom: -1px' : null};
   ${({ success }) => success ? null: 'margin-top: -1px'};
   
-  & > div {
+  & > a {
+    height: 100%;
+    border-left: 1px solid black;
+    border-top: 1px solid black;
     background-color: ${({ success }) => !!success ? 'green' : 'red'};
     width: ${({ activityCount }) => (100 / activityCount)}%;
   }
-`;
-
-const RaidStackItem = styled.div`
-  && {
-    ${({ na }) => na ? 'background-color: gray' : null};
-  }
-  height: 100%;
-  border-left: 1px solid black;
-  border-top: 1px solid black;
 `;
 
 const RaidButton = styled.button`
@@ -85,6 +86,16 @@ const RaidButton = styled.button`
   border-radius: 5px;
   background-color: ${({ selected }) => selected ? 'black' : 'white'};
   color: ${({ selected }) => selected ? 'white' : 'black'};
+`;
+
+const RaidDivs = styled.div`
+  width: 150px;
+  height: 32px;
+  margin-right: 5px;
+  p {
+    font-size: 18px;
+    color: ${(props) => props.selected ? 'blue' : 'black'};
+  }
 `;
 
 
@@ -121,10 +132,8 @@ const RaidStack = ({ handleShowStats, handleFetchPGCR, raidWeek, raid }) => {
   const [week, raids] = raidWeek;
   const raidValues = Object.values(raids);
 
-  const completedRaids = raidValues.filter(raid => (raid.values.completed === 1 && raid.values.completionReason === 0));
-  const failedRaids = raidValues.filter(raid =>
-    raid.values.completed === 0 || (raid.values.completed === 1 && raid.values.completionReason !== 0)
-  );
+  const completedRaids = raidValues.filter(raid => raid.values.completed === 1);
+  const failedRaids = raidValues.filter(raid => raid.values.completed === 0);
 
   return(
       <RaidWeekContainer>
@@ -136,7 +145,7 @@ const RaidStack = ({ handleShowStats, handleFetchPGCR, raidWeek, raid }) => {
               key={shortid.generate()}
               activityCount={1}
               success={true}>
-              <RaidStackItem />
+              <Link className="raidStackItem" to={`destiny/pgcr/${raid.activityDetails.instanceId}`} />
             </RaidStackItems>
           ))
           }
@@ -147,7 +156,7 @@ const RaidStack = ({ handleShowStats, handleFetchPGCR, raidWeek, raid }) => {
               onClick={() => handleFetchPGCR(raid.activityDetails.instanceId)}
               key={shortid.generate()}
               activityCount={1}>
-              <RaidStackItem />
+              <Link className="raidStackItem" to={`destiny/pgcr/${raid.activityDetails.instanceId}`} />
             </RaidStackItems>
           ))
           }
@@ -163,6 +172,7 @@ class RaidWeekViewer extends Component {
     this.state = {
       raid: 'lev',
       mode: false,
+      deepLink: false,
       raidWeeks: [],
       normalize: false
     }
@@ -221,11 +231,16 @@ class RaidWeekViewer extends Component {
     })
   };
 
+  toggleDeepLink = () => {
+    this.setState({ deepLink: !this.state.deepLink })
+  };
+
   shouldComponentUpdate = (nextProps) => {
     return (
       Object.keys(nextProps.raidHistory).length !== 0 ||
       Object.keys(nextProps.nightfallHistory).length !== 0 ||
-      nextProps.playerNotFound
+      nextProps.playerProfile.notFound &&
+      nextProps.match.params.playerId !== this.props.match.params.playerId
     );
   };
 
@@ -241,23 +256,59 @@ class RaidWeekViewer extends Component {
 
 
   render() {
-    const { raid, mode, raidWeeks } = this.state;
-    const { handleFetchPGCR, playerNotFound } = this.props;
+    const { raid, mode, raidWeeks, deepLink } = this.state;
+    const { match, handleDeepLink, searchPlayer, handleFetchPGCR, handleClearPGCR, playerProfile: { notFound } } = this.props;
 
-    const shouldRender = raidWeeks.length > 0 && !playerNotFound;
+   if(match.params.playerId && raidWeeks.length === 0 && !deepLink) {
+     handleClearPGCR();
+     handleDeepLink(match.params.playerId, searchPlayer);
+     this.toggleDeepLink();
+   }
+
+    const shouldRender = raidWeeks.length > 0 && !notFound;
     return (
       <RaidView>
-        { playerNotFound && <h1 style={{ fontSize: 24 }}>Sorry player not found</h1> }
+        { notFound && <h1 style={{ fontSize: 24 }}>Sorry player not found</h1> }
         { shouldRender && (
           <RaidButtonWrapper>
-            <div>
-              <RaidButton onClick={() => this.setRaid('eow')} selected={raid==='eow'}>Eater of Worlds</RaidButton>
-              <RaidButton onClick={() => this.setRaid('lev')} selected={raid==='lev'}>Leviathan</RaidButton>
-              <RaidButton onClick={() => this.setRaid('nf')} selected={raid==='nf'}> Nightfall</RaidButton>
+            <div style={{display: 'flex', flexDirection: 'row'}}>
+              <p>EOW:</p>
+              <RaidDivs
+                selected={raid==='eow' && mode ==='normal'}
+                onClick={() => { this.setRaid('eow'); this.setMode('normal');}}>
+                <p>Normal(#)</p>
+              </RaidDivs>
+              <RaidDivs
+                selected={raid==='eow' && mode ==='prestige'}
+                onClick={() => { this.setRaid('eow'); this.setMode('prestige');}}>
+                <p>Prestige(#)</p>
+              </RaidDivs><br />
             </div>
-            <div style={{ marginTop: 10 }}>
-              <RaidButton onClick={() => this.setMode('normal')} selected={mode==='normal'}>Normal</RaidButton>
-              <RaidButton onClick={() => this.setMode('prestige')} selected={mode==='prestige'}>Prestige</RaidButton>
+            <div style={{display: 'flex', flexDirection: 'row'}}>
+              <p>Leviathan:</p>
+              <RaidDivs
+                selected={raid==='lev' && mode ==='normal'}
+                onClick={() => { this.setRaid('lev'); this.setMode('normal');}}>
+                <p>Normal(#)</p>
+              </RaidDivs>
+              <RaidDivs
+                selected={raid==='lev' && mode ==='prestige'}
+                onClick={() => { this.setRaid('lev'); this.setMode('prestige');}}>
+                <p>Prestige(#)</p>
+              </RaidDivs>
+            </div>
+            <div style={{display: 'flex', flexDirection: 'row'}}>
+              <p>Nightfall:</p>
+              <RaidDivs
+                selected={raid==='nf' && mode ==='normal'}
+                onClick={() => { this.setRaid('nf'); this.setMode('normal');}}>
+                <p>Normal(#)</p>
+              </RaidDivs>
+              <RaidDivs
+                selected={raid==='nf' && mode ==='prestige'}
+                onClick={() => { this.setRaid('nf'); this.setMode('prestige');}}>
+                <p>Prestige(#)</p>
+              </RaidDivs><br />
             </div>
           </RaidButtonWrapper>
         )}

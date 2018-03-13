@@ -1,9 +1,70 @@
 import React, { Component } from 'react';
+import { Route } from 'react-router-dom';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import RaidWeekViewer from '../../components/RaidWeekViewer';
 import { FETCH_PLAYER_PROFILE } from "../../store/constants";
+
+class PlayerSearchContainer extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      playerSearch: '',
+    }
+  }
+
+  handlePlayerInput = ({ target}) => {
+    this.setState({
+      playerSearch: target.value
+    });
+  };
+
+  searchDestinyPlayer = (playerSearch) => {
+    const { searchPlayer } = this.props;
+    this.setState({ playerSearch: playerSearch});
+    searchPlayer({ displayName: playerSearch, membershipType: -1 });
+  };
+
+  render() {
+    const { playerSearch } = this.state;
+    const { pgcr } = this.props;
+
+    return(
+      <PlayerSearchWrapper pgcr={pgcr}>
+        <PlayerSearchSection>
+          <form onSubmit={(e) => { e.preventDefault(); return this.searchDestinyPlayer(playerSearch) }}>
+            <Input placeholder="Gamer Tag" value={playerSearch} onChange={this.handlePlayerInput} />
+          </form>
+        </PlayerSearchSection>
+        <RaidReportSection>
+
+        <Route path="/destiny/player/:playerId" render={({ ...rest }) => (
+          <RaidWeekViewer {...rest} handleDeepLink={this.searchDestinyPlayer} {...this.props} />
+        )} />
+
+        </RaidReportSection>
+      </PlayerSearchWrapper>
+    )
+  }
+}
+
+const mapStateToProps = state => {
+  return {
+    playerProfile: state.playerProfile,
+    raidHistory: state.raidHistory,
+    nightfallHistory: state.nightfallHistory
+  }
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    searchPlayer: pathParams => dispatch({type: FETCH_PLAYER_PROFILE, data: pathParams}),
+  }
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(PlayerSearchContainer);
 
 const PlayerSearchWrapper = styled.section`
   display: ${({ pgcr }) => pgcr ? 'none' : 'flex' };
@@ -35,72 +96,3 @@ const Input = styled.input`
   border-radius: 3px;
   padding: 5px;
 `;
-
-class PlayerSearchContainer extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      playerSearch: '',
-    }
-  }
-
-  handlePlayerInput = ({ target}) => {
-    this.setState({
-      playerSearch: target.value
-    });
-  };
-
-  searchDestinyPlayer = (e) => {
-    e.preventDefault();
-    const { playerSearch } = this.state;
-    const { searchPlayer } = this.props;
-    searchPlayer({ displayName: playerSearch, membershipType: -1 });
-  };
-
-  render() {
-    const { playerSearch } = this.state;
-    const { playerProfile, raidHistory, nightfallHistory, handleFetchPGCR, handleClearPGCR, pgcr } = this.props;
-
-    return(
-      <PlayerSearchWrapper pgcr={pgcr}>
-        <PlayerSearchSection>
-          <form onSubmit={(e) => this.searchDestinyPlayer(e)}>
-            <Input placeholder="Gamer Tag" value={playerSearch} onChange={this.handlePlayerInput} />
-          </form>
-        </PlayerSearchSection>
-        <RaidReportSection>
-          <RaidWeekViewer
-            playerNotFound={playerProfile.notFound}
-            handleClearPGCR={handleClearPGCR}
-            handleFetchPGCR={handleFetchPGCR}
-            raidHistory={raidHistory}
-            nightfallHistory={nightfallHistory}
-          />
-        </RaidReportSection>
-      </PlayerSearchWrapper>
-    )
-  }
-}
-
-/*
-          <h4>EOW:</h4><p> Normal(#) Prestige(#)</p><br />
-          <h4>Leviathan:</h4><p> Normal(#) Prestige(#)</p><br />
-          <h4>Nightfall:</h4><p> Normal(#) Prestige(#)</p>
- */
-
-const mapStateToProps = state => {
-  return {
-    playerProfile: state.playerProfile,
-    raidHistory: state.raidHistory,
-    nightfallHistory: state.nightfallHistory
-  }
-};
-
-const mapDispatchToProps = dispatch => {
-  return {
-    searchPlayer: pathParams => dispatch({type: FETCH_PLAYER_PROFILE, data: pathParams}),
-  }
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(PlayerSearchContainer);

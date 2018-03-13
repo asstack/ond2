@@ -36,6 +36,7 @@ function* fetchPlayerProfile({ data }) {
 
     const [raidHistory, nightfallHistory] = yield all([call(collectRaidData, playerProfile), call(collectNightFallData, playerProfile)]);
 
+
     yield put({ type: consts.SET_RAID_HISTORY, data: raidHistory});
     yield put({ type: consts.SET_NF_HISTORY, data: nightfallHistory});
 
@@ -58,19 +59,37 @@ function* collectProfileCharacters(data) {
 
 function* collectNightFallData(playerProfile) {
   try {
-    const nfNormalActivities = yield all(
-      [
-        ...playerProfile.characterIds.map(curr => collectActivityHistory(playerProfile.characters[curr], { page: 0, mode: 16, count: 250 })),
-        ...playerProfile.characterIds.map(curr => collectActivityHistory(playerProfile.characters[curr], { page: 0, mode: 46, count: 250 })),
-      ]
+    //const compare = yield all(
+    //  playerProfile.characterIds.map(curr => collectActivityHistory(playerProfile.characters[curr], { page: 0, mode: 18, count: 250 }))
+    //);
+
+    const normalScored = yield all(
+      playerProfile.characterIds.map(curr => collectActivityHistory(playerProfile.characters[curr], { page: 0, mode: 46, count: 250 }))
     );
 
-    const nfPrestigeActivities = yield all(
-      [
-        ...playerProfile.characterIds.map(curr => call(collectActivityHistory, playerProfile.characters[curr], { page: 0, mode: 17, count: 250 })),
-        ...playerProfile.characterIds.map(curr => call(collectActivityHistory, playerProfile.characters[curr], { page: 0, mode: 47, count: 250 }))
-      ]
+
+    const normal = yield all(
+      playerProfile.characterIds.map(curr => collectActivityHistory(playerProfile.characters[curr], { page: 0, mode: 16, count: 250 }))
     );
+
+
+    const prestigeScored = yield all(
+      playerProfile.characterIds.map(curr => call(collectActivityHistory, playerProfile.characters[curr], { page: 0, mode: 47, count: 250 }))
+    );
+
+
+    const prestige = yield all(
+        playerProfile.characterIds.map(curr => call(collectActivityHistory, playerProfile.characters[curr], { page: 0, mode: 17, count: 250 })),
+    );
+
+
+    const nfPrestigeActivities = [...prestigeScored.map(item => [...item]), ...prestige.map(item => [...item])];
+    const nfNormalActivities = [...normalScored.map(item => [...item]), ...normal.map(item => [...item])];
+
+    //const compareNormalData = compare.reduce((accum, data) => {
+    //   accum = [...accum, ...data];
+    //   return accum;
+    // }, []);
 
     const nfNormalData = nfNormalActivities.reduce((accum, data) => {
       accum = [...accum, ...data];
@@ -82,6 +101,9 @@ function* collectNightFallData(playerProfile) {
       return accum;
     }, []);
 
+    //console.log('used', [...nfNormalData, ...nfPrestigeData]);
+    //console.log('compare', compareNormalData);
+
     const nfHistory = normalize.nightfall({ normal: nfNormalData, prestige: nfPrestigeData });
 
     yield put({ type: consts.FETCH_LOG, data: `Nightfall data successfully collected`});
@@ -89,7 +111,7 @@ function* collectNightFallData(playerProfile) {
     return nfHistory;
   }
   catch(error) {
-    yield put({ type: consts.FETCH_LOG, data: `NightFall Data Fetch Error: ${error}`})
+    yield put({ type: consts.FETCH_LOG, data: `NightFall Data Fetch Error: ${error}`});
     yield put({ type: consts.TOGGLE_LOADING });
   }
 }

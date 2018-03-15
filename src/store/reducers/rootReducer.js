@@ -8,7 +8,8 @@ import {
   SET_PGCR,
   SET_PGCR_HISTORY,
   SET_PUBLIC_MILESTONES,
-  TOGGLE_LOADING
+  TOGGLE_LOADING,
+  SET_PLAYER_PRIVACY
 } from "../constants";
 
 const fetchLogs = (state=[], action) =>
@@ -66,6 +67,13 @@ const setNightfallHistory = (state = false, action) => {
   return state
 };
 
+const setPlayerPrivacy = (state = false, action) => {
+  if(action.type === SET_PLAYER_PRIVACY) {
+    return action.data;
+  }
+  return state;
+};
+
 const rootReducer = combineReducers({
   fetchLogs,
   playerProfile: setPlayerProfile,
@@ -74,7 +82,8 @@ const rootReducer = combineReducers({
   pgcrHistory: setPGCRHistory,
   publicMilestones: setPublicMilestones,
   nightfallHistory: setNightfallHistory,
-  loading: setLoading
+  loading: setLoading,
+  playerPrivacy: setPlayerPrivacy
 });
 
 export default rootReducer;

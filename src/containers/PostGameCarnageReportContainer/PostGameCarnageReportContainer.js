@@ -4,6 +4,9 @@ import styled from 'styled-components';
 import shortid from 'shortid';
 
 const PGCRWrapper = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
   display: flex;
   flex-direction: column;  
   margin-top: 100px;
@@ -76,7 +79,7 @@ const PostGameCarnageReportTable = ({ handleClearPGCR, pgcr }) => (
             const { player: { displayName }, values } = entry;
             return (
               <tr key={shortid.generate()}>
-                <td><Link to={`destiny/player/${displayName.toLowerCase()}`}>{displayName}</Link></td>
+                <td><Link to={`/destiny/player/${displayName.toLowerCase()}`}>{displayName}</Link></td>
                 <td>{values.kills}</td>
                 <td>{values.deaths}</td>
                 <td>{values.assists}</td>
@@ -112,9 +115,7 @@ class PostGameCarnageReportContainer extends Component {
     const { deepLink } = this.state;
     const { match, handleDeepLink } = this.props;
 
-    console.log('this.props', this.props);
     if(match.params.instanceId && !deepLink) {
-      console.log('match.history', match.params.instanceId);
       this.toggleDeepLink();
       handleDeepLink(match.params.instanceId);
     }

@@ -11,13 +11,13 @@ import DestinyLoader from './components/DestinyLoader/DestinyLoader';
 import { FETCH_PGCR, SET_PGCR } from "./store/constants";
 
 const AppWrapper = styled.div`
-
   width: 100%;
   height: 100%;
   align-items: center;
 `;
 
 const PlayerInfoWrapper = styled.div`
+  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -29,8 +29,8 @@ class App extends Component {
 
   constructor(props) {
     super(props);
-
   }
+
   fetchPGCR = (instanceId) => {
     const { fetchPostGameCarnageReport } = this.props;
     fetchPostGameCarnageReport(instanceId)
@@ -45,30 +45,30 @@ class App extends Component {
       <Router>
         <AppWrapper>
           { loading && <DestinyLoader /> }
-            <PlayerInfoWrapper loading={loading}>
+          {!pgcr &&
+            <PlayerInfoWrapper loading={loading || pgcr}>
               <PlayerSearchContainer
                 handleClearPGCR={() => clearPostGameCarnageReport()}
                 handleFetchPGCR={this.fetchPGCR}
                 {...this.props}
               />
             </PlayerInfoWrapper>
-            <Route path="/destiny/pgcr/:instanceId" render={({ ...rest }) => (
+          }
+          { pgcr &&
+            <Route path="/destiny/pgcr/:instanceId" render={({...rest}) => (
               <PostGameCarnageReportContainer
                 {...rest}
                 pgcr={pgcr}
                 handleDeepLink={this.fetchPGCR}
                 handleClearPGCR={() => clearPostGameCarnageReport()}
               />
-            )} />
+            )}/>
+          }
         </AppWrapper>
       </Router>
     );
   }
 }
-
-/*
-
- */
 
 const mapStateToProps = state => {
   return {

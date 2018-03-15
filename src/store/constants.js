@@ -8,7 +8,7 @@ export const SET_PGCR_HISTORY = 'set_pgcr_history';
 export const SET_RAID_HISTORY = 'set_raid_history';
 export const SET_NF_HISTORY = 'set_nightfall_history';
 export const SET_PUBLIC_MILESTONES = 'set_public_milestones';
-
+export const SET_PLAYER_PRIVACY = 'set_player_privacy';
 
 export const FETCH_PLAYER_PROFILE = 'fetch_player_profile';
 export const FETCH_PROFILE_CHARACTERS = 'fetch_profile_characters';

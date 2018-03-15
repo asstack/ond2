@@ -36,6 +36,7 @@ export const EATER_OF_WORLDS_IMAGE = `${destinyBaseURL}/img/destiny_content/pgcr
 
 export const EATER_OF_WORLDS_LAUNCH_WEEK = '2017-12-11';
 export const LEVIATHAN_LAUNCH_WEEK = '2017-09-12';
+export const NF_START_DATE = '2018-02-06';
 
 export const tier = {
   0: 'Normal',

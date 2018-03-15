@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Route } from 'react-router-dom';
+import { Route, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
@@ -12,6 +12,7 @@ class PlayerSearchContainer extends Component {
 
     this.state = {
       playerSearch: '',
+      internal: false,
     }
   }
 
@@ -22,28 +23,29 @@ class PlayerSearchContainer extends Component {
   };
 
   searchDestinyPlayer = (playerSearch) => {
-    const { searchPlayer } = this.props;
+    const { history, searchPlayer } = this.props;
     this.setState({ playerSearch: playerSearch});
+    history.push(`/destiny/player/${playerSearch}`);
     searchPlayer({ displayName: playerSearch, membershipType: -1 });
   };
 
   render() {
     const { playerSearch } = this.state;
-    const { pgcr } = this.props;
+
+    const internalRouting = playerSearch.length > 0;
 
     return(
-      <PlayerSearchWrapper pgcr={pgcr}>
+      <PlayerSearchWrapper>
         <PlayerSearchSection>
           <form onSubmit={(e) => { e.preventDefault(); return this.searchDestinyPlayer(playerSearch) }}>
             <Input placeholder="Gamer Tag" value={playerSearch} onChange={this.handlePlayerInput} />
           </form>
         </PlayerSearchSection>
+
         <RaidReportSection>
-
-        <Route path="/destiny/player/:playerId" render={({ ...rest }) => (
-          <RaidWeekViewer {...rest} handleDeepLink={this.searchDestinyPlayer} {...this.props} />
-        )} />
-
+          <Route path="/destiny/player/:playerId" render={(data) => (
+            <RaidWeekViewer internalRouting={internalRouting} handleDeepLink={this.searchDestinyPlayer} {...this.props} {...data} />
+          )}/>
         </RaidReportSection>
       </PlayerSearchWrapper>
     )
@@ -54,7 +56,8 @@ const mapStateToProps = state => {
   return {
     playerProfile: state.playerProfile,
     raidHistory: state.raidHistory,
-    nightfallHistory: state.nightfallHistory
+    nightfallHistory: state.nightfallHistory,
+    playerPrivacy: state.playerPrivacy
   }
 };
 
@@ -64,10 +67,10 @@ const mapDispatchToProps = dispatch => {
   }
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(PlayerSearchContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(PlayerSearchContainer));
 
 const PlayerSearchWrapper = styled.section`
-  display: ${({ pgcr }) => pgcr ? 'none' : 'flex' };
+  display: flex;
   flex-direction: column;
   width: 100%;
   height: 100%;

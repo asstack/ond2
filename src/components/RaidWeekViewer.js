@@ -70,12 +70,24 @@ const RaidStackItems = styled.div`
   ${({ success }) => success ? 'margin-bottom: -1px' : null};
   ${({ success }) => success ? null: 'margin-top: -1px'};
   
-  & > a {
+  & a {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    padding-right: 5px;
     height: 100%;
     border-left: 1px solid black;
     border-top: 1px solid black;
     background-color: ${({ success }) => !!success ? 'green' : 'red'};
     width: ${({ activityCount }) => (100 / activityCount)}%;
+    text-decoration: none;
+  }
+  
+  .pgcr-link {
+    color: white;
+    font-size: 14px;
+    font-family: san-serif;
   }
 `;
 
@@ -94,6 +106,7 @@ const RaidDivs = styled.div`
   margin-right: 5px;
   p {
     font-size: 18px;
+    font-family: sans-serif;
     color: ${(props) => props.selected ? 'black' : 'blue'};
     
     &:hover {
@@ -132,6 +145,10 @@ const RaidDivs = styled.div`
     </RaidStackList>
  */
 
+const ScoreView = ({ raid }) => {
+  return <p>{ `${raid.values.score} / ${raid.values.teamScore}` }</p>
+};
+
 const RaidStack = ({ handleShowStats, handleFetchPGCR, raidWeek, raid }) => {
   const [week, raids] = raidWeek;
   const raidValues = Object.values(raids);
@@ -145,13 +162,15 @@ const RaidStack = ({ handleShowStats, handleFetchPGCR, raidWeek, raid }) => {
       <RaidWeekContainer>
         <RaidWeekHeader raid={raid}>{ name }</RaidWeekHeader>
         <RaidWeek>
-          { completedRaids && Object.values(completedRaids).map(raid => (
+          { completedRaids && Object.values(completedRaids).map(_raid => (
             <RaidStackItems
-              onClick={() => handleFetchPGCR(raid.activityDetails.instanceId)}
+              onClick={() => handleFetchPGCR(_raid.activityDetails.instanceId)}
               key={shortid.generate()}
               activityCount={1}
               success={true}>
-              <Link className="raidStackItem" to={`/destiny/pgcr/${raid.activityDetails.instanceId}`} />
+              <Link className="pgcr-link" to={`/destiny/pgcr/${_raid.activityDetails.instanceId}`}>
+                { raid === 'nf' && <ScoreView raid={_raid} /> }
+              </Link>
             </RaidStackItems>
           ))
           }
@@ -176,30 +195,33 @@ class RaidWeekViewer extends Component {
     super(props);
 
     this.state = {
-      raid: 'lev',
-      mode: false,
       deepLink: false,
       raidWeeks: [],
       normalize: false
     }
   }
 
-  componentDidUpdate = () => {
-    const { raid, mode, normalize } = this.state;
-    const { raidHistory, nightfallHistory } = this.props;
+  componentDidUpdate(prevProps, prevState) {
+    const { viewRaid, viewMode, raidHistory, nightfallHistory } = this.props;
     const { mergedHistory } = raidHistory;
 
-    const raidWeeks = raid === 'nf'
-      ? Object.entries(nightfallHistory[mode]).map((item) => [item[0], item[1]])
-      : this.normalizeRaidWeeks(raid, mergedHistory, mode);
+    const prepareNewData = (
+      prevState.raidWeeks.length === 0 ||
+      prevProps.viewRaid !== viewRaid ||
+      prevProps.viewMode !== viewMode
+    );
 
-    if(normalize) {
-      this.setState({
-        raidWeeks,
-        normalize: false
-      })
-    }
-  };
+    if(prepareNewData) {
+      const historyReady = (Object.keys(nightfallHistory).length > 0 && Object.keys(raidHistory).length > 0);
+
+      if(historyReady) {}
+          const raidWeeks = viewRaid === 'nf'
+            ? Object.entries(nightfallHistory[viewMode]).map((item) => [item[0], item[1]])
+            : this.normalizeRaidWeeks(viewRaid, mergedHistory, viewMode);
+
+          this.setState({ raidWeeks })
+      }
+  }
 
   normalizeRaidWeeks = (raid, history, mode) => normalize.raidWeeks(raid, history, mode);
 
@@ -211,23 +233,17 @@ class RaidWeekViewer extends Component {
   };
 
   setRaid = (raid) => {
-    this.setState({
-      raid,
-      normalize: true
-    })
+    this.props.setViewRaid(raid);
+    this.setState({ normalize: true });
   };
 
   setMode = (mode) => {
-    this.setState({
-      mode,
-      normalize: true
-    })
+    this.props.setViewMode(mode);
+    this.setState({ normalize: true });
   };
 
   toggleNormalized = () => {
-    this.setState({
-      normalize: !this.state.normalize,
-    })
+    this.setState({ normalize: !this.state.normalize });
   };
 
   setUp = () => {
@@ -241,41 +257,43 @@ class RaidWeekViewer extends Component {
     this.setState({ deepLink: !this.state.deepLink })
   };
 
-  shouldComponentUpdate = (nextProps) => {
-    return (
+  shouldComponentUpdate = (nextProps) => (
       Object.keys(nextProps.raidHistory).length !== 0 ||
       Object.keys(nextProps.nightfallHistory).length !== 0 ||
-      nextProps.playerProfile.notFound &&
+      this.props.viewRaid !== nextProps.viewRaid ||
+      this.props.viewMode !== nextProps.viewMode ||
+      !!nextProps.playerProfile.notFound &&
       nextProps.match.isExact
     );
-  };
 
   componentWillReceiveProps = (nextProps) => {
-    const { mode } = this.props;
-    if(!mode) {
-      this.setUp();
-    }
-    else if(mode !== nextProps.mode) {
-      this.toggleNormalized();
+    const { viewRaid } = this.props;
+    if(viewRaid !== nextProps.viewRaid) {
+      if(nextProps.viewRaid !== 'nf') {
+        this.toggleNormalized();
+      }
     }
   };
 
   render() {
-    const { raid, mode, raidWeeks, deepLink } = this.state;
+    const { raidWeeks, deepLink } = this.state;
     const {
       nightfallHistory, raidHistory, match, internalRouting,
-      handleDeepLink, searchPlayer, handleFetchPGCR, handleClearPGCR,
-      playerProfile: { notFound }, playerPrivacy
+      handleDeepLink, handleFetchPGCR, handleClearPGCR,
+      playerProfile: { notFound=false }, playerPrivacy, viewRaid, viewMode
     } = this.props;
 
     const { nfCount={ prestige: '#', normal: '#' } } = nightfallHistory;
     const { raidCount={ eow: { prestige: '#', normal: '#' }, lev: { prestige: '#', normal: '#' }} } = raidHistory;
 
-
-    if(match.isExact && !internalRouting && !deepLink) {
-      handleClearPGCR();
-      handleDeepLink(match.params.playerId, searchPlayer);
+    if(deepLink) {
       this.toggleDeepLink();
+    }
+    else {
+      if(!internalRouting && !deepLink) {
+        handleClearPGCR();
+        handleDeepLink(match.params.playerId, true);
+      }
     }
 
     const shouldRender = (!notFound && !playerPrivacy);
@@ -289,12 +307,12 @@ class RaidWeekViewer extends Component {
             <div style={{display: 'flex', flexDirection: 'row'}}>
               <p>EOW:</p>
               <RaidDivs
-                selected={raid==='eow' && mode ==='normal'}
+                selected={viewRaid==='eow' && viewMode ==='normal'}
                 onClick={() => { this.setRaid('eow'); this.setMode('normal');}}>
                 <p>Normal({raidCount.eow.normal})</p>
               </RaidDivs>
               <RaidDivs
-                selected={raid==='eow' && mode ==='prestige'}
+                selected={viewRaid==='eow' && viewMode ==='prestige'}
                 onClick={() => { this.setRaid('eow'); this.setMode('prestige');}}>
                 <p>Prestige({raidCount.eow.prestige})</p>
               </RaidDivs><br />
@@ -302,12 +320,12 @@ class RaidWeekViewer extends Component {
             <div style={{display: 'flex', flexDirection: 'row'}}>
               <p>Leviathan:</p>
               <RaidDivs
-                selected={raid==='lev' && mode ==='normal'}
+                selected={viewRaid==='lev' && viewMode ==='normal'}
                 onClick={() => { this.setRaid('lev'); this.setMode('normal');}}>
                 <p>Normal({raidCount.lev.normal})</p>
               </RaidDivs>
               <RaidDivs
-                selected={raid==='lev' && mode ==='prestige'}
+                selected={viewRaid==='lev' && viewMode ==='prestige'}
                 onClick={() => { this.setRaid('lev'); this.setMode('prestige');}}>
                 <p>Prestige({raidCount.lev.prestige})</p>
               </RaidDivs>
@@ -315,12 +333,12 @@ class RaidWeekViewer extends Component {
             <div style={{display: 'flex', flexDirection: 'row'}}>
               <p>Nightfall:</p>
               <RaidDivs
-                selected={raid==='nf' && mode ==='normal'}
+                selected={viewRaid==='nf' && viewMode ==='normal'}
                 onClick={() => { this.setRaid('nf'); this.setMode('normal');}}>
                 <p>Normal({nfCount.normal})</p>
               </RaidDivs>
               <RaidDivs
-                selected={raid==='nf' && mode ==='prestige'}
+                selected={viewRaid==='nf' && viewMode ==='prestige'}
                 onClick={() => { this.setRaid('nf'); this.setMode('prestige');}}>
                 <p>Prestige({nfCount.prestige})</p>
               </RaidDivs><br />
@@ -335,7 +353,7 @@ class RaidWeekViewer extends Component {
                   key={shortid.generate()}
                   handleFetchPGCR={handleFetchPGCR}
                   raidWeek={raidWeek}
-                  raid={raid}
+                  raid={viewRaid}
                 />
               )
             })

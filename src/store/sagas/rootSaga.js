@@ -36,15 +36,16 @@ function* fetchPlayerProfile({ data }) {
     yield put({ type: consts.SET_PLAYER_PROFILE, data: playerProfile });
     yield put({ type: consts.FETCH_LOG, data: 'Player Profile Fetch Success' });
 
-    const [raidHistory, nightfallHistory] = yield all([call(collectRaidData, playerProfile), call(collectNightFallData, playerProfile)]);
+    const [nightfallHistory, raidHistory] = yield all([call(collectNightFallData, playerProfile), call(collectRaidData, playerProfile)]);
 
-    yield put({ type: consts.SET_RAID_HISTORY, data: raidHistory});
     yield put({ type: consts.SET_NF_HISTORY, data: nightfallHistory});
+    yield put({ type: consts.SET_RAID_HISTORY, data: raidHistory});
 
     yield put({ type: consts.TOGGLE_LOADING });
 
   }
   catch(error) {
+    console.log('error', error);
     yield put({ type: consts.FETCH_LOG, data: `Player Profile Fetch Error: ${error}`});
     yield put({ type: consts.TOGGLE_LOADING });
   }

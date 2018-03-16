@@ -9,7 +9,9 @@ import {
   SET_PGCR_HISTORY,
   SET_PUBLIC_MILESTONES,
   TOGGLE_LOADING,
-  SET_PLAYER_PRIVACY
+  SET_PLAYER_PRIVACY,
+  SET_VIEW_MODE,
+  SET_VIEW_RAID
 } from "../constants";
 
 const fetchLogs = (state=[], action) =>
@@ -19,7 +21,7 @@ const setLoading = (state=false, action) => {
   return action.type === TOGGLE_LOADING ? !state : state;
 };
 
-const setPlayerProfile = (state={ notFound: false }, action) => {
+const setPlayerProfile = (state=false, action) => {
   switch(action.type) {
     case SET_PLAYER_PROFILE:
       return Object.assign({ notFound: false }, action.data);
@@ -74,6 +76,20 @@ const setPlayerPrivacy = (state = false, action) => {
   return state;
 };
 
+const setViewMode = (state = 'prestige', action) => {
+  if(action.type === SET_VIEW_MODE) {
+    return action.data;
+  }
+  return state;
+};
+
+const setViewRaid = (state = 'nf', action) => {
+  if(action.type === SET_VIEW_RAID) {
+    return action.data;
+  }
+  return state;
+};
+
 const rootReducer = combineReducers({
   fetchLogs,
   playerProfile: setPlayerProfile,
@@ -83,7 +99,9 @@ const rootReducer = combineReducers({
   publicMilestones: setPublicMilestones,
   nightfallHistory: setNightfallHistory,
   loading: setLoading,
-  playerPrivacy: setPlayerPrivacy
+  playerPrivacy: setPlayerPrivacy,
+  viewMode: setViewMode,
+  viewRaid: setViewRaid
 });
 
 export default rootReducer;

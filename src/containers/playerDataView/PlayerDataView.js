@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import RaidWeekViewer from '../../components/RaidWeekViewer';
-import { FETCH_PLAYER_PROFILE } from "../../store/constants";
+import { FETCH_PLAYER_PROFILE, SET_VIEW_MODE, SET_VIEW_RAID } from "../../store/constants";
 
 class PlayerSearchContainer extends Component {
   constructor(props) {
@@ -16,17 +16,22 @@ class PlayerSearchContainer extends Component {
     }
   }
 
+  componentWillReceiveProps(nextProps) {
+    const { playerProfile } = nextProps;
+    playerProfile.displayName ? this.setState({ playerSearch: playerProfile.displayName }) : null;
+  }
+
   handlePlayerInput = ({ target}) => {
     this.setState({
       playerSearch: target.value
     });
   };
 
-  searchDestinyPlayer = (playerSearch) => {
+  searchDestinyPlayer = (playerSearch, deepLink=false) => {
     const { history, searchPlayer } = this.props;
-    this.setState({ playerSearch: playerSearch});
-    history.push(`/destiny/player/${playerSearch}`);
     searchPlayer({ displayName: playerSearch, membershipType: -1 });
+
+    if(!deepLink) history.push(`/destiny/player/${playerSearch}`);
   };
 
   render() {
@@ -57,13 +62,17 @@ const mapStateToProps = state => {
     playerProfile: state.playerProfile,
     raidHistory: state.raidHistory,
     nightfallHistory: state.nightfallHistory,
-    playerPrivacy: state.playerPrivacy
+    playerPrivacy: state.playerPrivacy,
+    viewRaid: state.viewRaid,
+    viewMode: state.viewMode,
   }
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    searchPlayer: pathParams => dispatch({type: FETCH_PLAYER_PROFILE, data: pathParams}),
+    searchPlayer: pathParams => dispatch({ type: FETCH_PLAYER_PROFILE, data: pathParams }),
+    setViewMode: mode => dispatch({ type: SET_VIEW_MODE, data: mode }),
+    setViewRaid: mode => dispatch({ type: SET_VIEW_RAID, data: mode })
   }
 };
 

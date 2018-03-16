@@ -1,34 +1,23 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
 
-import styled from 'styled-components';
-import baseStyles from './base-styles';
-
-import PlayerSearchContainer from './containers/PlayerSearchContainer/PlayerSearchContainer';
-import PostGameCarnageReportContainer from './containers/PostGameCarnageReportContainer/PostGameCarnageReportContainer';
-import DestinyLoader from './components/DestinyLoader/DestinyLoader';
+import baseStyles, { AppWrapper, PlayerInfoWrapper} from './base-styles';
 import { FETCH_PGCR, SET_PGCR } from "./store/constants";
 
-const AppWrapper = styled.div`
-  width: 100%;
-  height: 100%;
-  align-items: center;
-`;
+import PlayerSearchContainer from './containers/playerDataView/PlayerDataView';
+import PostGameCarnageReportContainer from './containers/pgcrView/PGCR_View';
+import DestinyLoader from './components/DestinyLoader/DestinyLoader';
 
-const PlayerInfoWrapper = styled.div`
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  ${(props) => props.loading ? "div { display: none; }" : ''}
-`;
 
 class App extends Component {
 
   constructor(props) {
     super(props);
+
+    this.state = {
+      internalRouting: false
+    }
   }
 
   fetchPGCR = (instanceId) => {

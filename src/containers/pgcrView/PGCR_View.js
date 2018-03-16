@@ -66,11 +66,12 @@ const PostGameCarnageReportTable = ({ handleClearPGCR, pgcr }) => (
       <thead>
         <tr>
           <th>Player</th>
+          <th>Score</th>
           <th>Kills</th>
           <th>Deaths</th>
           <th>Assists</th>
           <th>KDA</th>
-          <th>Time (minutes)</th>
+          <th>Time (m)</th>
         </tr>
       </thead>
       <tbody>
@@ -80,6 +81,7 @@ const PostGameCarnageReportTable = ({ handleClearPGCR, pgcr }) => (
             return (
               <tr key={shortid.generate()}>
                 <td><Link to={`/destiny/player/${displayName.toLowerCase()}`}>{displayName}</Link></td>
+                <td>{`${values.score} / ${values.teamScore}`}</td>
                 <td>{values.kills}</td>
                 <td>{values.deaths}</td>
                 <td>{values.assists}</td>
@@ -115,8 +117,9 @@ class PostGameCarnageReportContainer extends Component {
     const { deepLink } = this.state;
     const { match, handleDeepLink } = this.props;
 
+
     if(match.params.instanceId && !deepLink) {
-      this.toggleDeepLink();
+      //this.toggleDeepLink();
       handleDeepLink(match.params.instanceId);
     }
 

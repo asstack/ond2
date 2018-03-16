@@ -118,10 +118,10 @@ class PostGameCarnageReportContainer extends Component {
     const { match, handleDeepLink } = this.props;
 
 
-    if(match.params.instanceId && !deepLink) {
-      //this.toggleDeepLink();
-      handleDeepLink(match.params.instanceId);
-    }
+    //if(match.params.instanceId && !deepLink) {
+    //  //this.toggleDeepLink();
+    //  handleDeepLink(match.params.instanceId);
+    //}
 
     return(
       <PostGameCarnageReportTable {...this.props} />

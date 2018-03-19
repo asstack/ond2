@@ -11,7 +11,8 @@ import {
   TOGGLE_LOADING,
   SET_PLAYER_PRIVACY,
   SET_VIEW_MODE,
-  SET_VIEW_RAID
+  SET_VIEW_RAID,
+  TOGGLE_PLAYER_SEARCH
 } from "../constants";
 
 const fetchLogs = (state=[], action) =>
@@ -19,6 +20,10 @@ const fetchLogs = (state=[], action) =>
 
 const setLoading = (state=false, action) => {
   return action.type === TOGGLE_LOADING ? !state : state;
+};
+
+const setPlayerSearch = (state=false, action) => {
+  return action.type === TOGGLE_PLAYER_SEARCH ? !state : state;
 };
 
 const setPlayerProfile = (state=false, action) => {
@@ -34,7 +39,7 @@ const setPlayerProfile = (state=false, action) => {
   }
 };
 
-const setRaidHistory = (state={}, action) => {
+const setRaidHistory = (state={ raidCount: { eow: { normal: 0, prestige: 0 }, lev: { normal: 0, prestige: 0 } } }, action) => {
   if(action.type === SET_RAID_HISTORY) {
    return action.data;
   }
@@ -62,7 +67,7 @@ const setPublicMilestones = (state = false, action) => {
   return state;
 };
 
-const setNightfallHistory = (state = false, action) => {
+const setNightfallHistory = (state = { normal: {}, prestige: {}, nfCount: { normal: 0, prestige: 0 } }, action) => {
   if(action.type === SET_NF_HISTORY) {
     return action.data;
   }
@@ -101,7 +106,8 @@ const rootReducer = combineReducers({
   loading: setLoading,
   playerPrivacy: setPlayerPrivacy,
   viewMode: setViewMode,
-  viewRaid: setViewRaid
+  viewRaid: setViewRaid,
+  newPlayerSearch: setPlayerSearch
 });
 
 export default rootReducer;

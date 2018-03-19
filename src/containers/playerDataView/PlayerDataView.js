@@ -4,40 +4,54 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import RaidWeekViewer from '../../components/RaidWeekViewer';
-import { FETCH_PLAYER_PROFILE, SET_VIEW_MODE, SET_VIEW_RAID } from "../../store/constants";
+import { FETCH_PLAYER_PROFILE, SET_VIEW_MODE, SET_VIEW_RAID, SET_NEW_PLAYER_SEARCH } from "../../store/constants";
 
 class PlayerSearchContainer extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      playerSearch: '',
+      playerSearch: this.props.playerProfile.displayName || this.props.match.params.playerId || '',
+      inputActivity: false,
       internal: false,
     }
   }
 
-  componentWillReceiveProps(nextProps) {
-    const { playerProfile } = nextProps;
-    playerProfile.displayName ? this.setState({ playerSearch: playerProfile.displayName }) : null;
-  }
-
   handlePlayerInput = ({ target}) => {
     this.setState({
-      playerSearch: target.value
+      playerSearch: target.value,
+      inputActivity: true
     });
   };
 
-  searchDestinyPlayer = (playerSearch, deepLink=false) => {
-    const { history, searchPlayer } = this.props;
-    searchPlayer({ displayName: playerSearch, membershipType: -1 });
-
-    if(!deepLink) history.push(`/destiny/player/${playerSearch}`);
+  handleSetPlayerSearch = (displayName) => {
+    console.log('handle search', displayName);
+    this.setState({ playerSearch: displayName });
   };
 
-  render() {
-    const { playerSearch } = this.state;
+  searchDestinyPlayer = (playerSearch) => {
+    const { history, searchPlayer } = this.props;
+    searchPlayer({ displayName: playerSearch, membershipType: -1 });
+    this.setState({ inputActivity: true });
+    history.push(`/destiny/player/${playerSearch}`);
+  };
 
-    const internalRouting = playerSearch.length > 0;
+  deepLinkSearch = (playerSearch) => {
+
+    const { searchPlayer } = this.props;
+    searchPlayer({ displayName: playerSearch, membershipType: -1 });
+    this.setState({ inputActivity: true });
+  };
+
+
+  render() {
+    const { inputActivity, playerSearch } = this.state;
+
+    const { playerProfile } = this.props;
+    //if(playerSearch === '' && playerProfile.displayName || playerProfile.displayName !== playerSearch) {
+    //  this.setState({ playerSearch: playerProfile.displayName });
+    //}
+    const internalRouting = inputActivity;
 
     return(
       <PlayerSearchWrapper>
@@ -49,7 +63,10 @@ class PlayerSearchContainer extends Component {
 
         <RaidReportSection>
           <Route path="/destiny/player/:playerId" render={(data) => (
-            <RaidWeekViewer internalRouting={internalRouting} handleDeepLink={this.searchDestinyPlayer} {...this.props} {...data} />
+            <RaidWeekViewer
+              internalRouting={internalRouting} handleSetPlayerSearch={this.handleSetPlayerSearch}
+              handleDeepLink={this.deepLinkSearch} {...this.props} {...data}
+          />
           )}/>
         </RaidReportSection>
       </PlayerSearchWrapper>
@@ -65,6 +82,7 @@ const mapStateToProps = state => {
     playerPrivacy: state.playerPrivacy,
     viewRaid: state.viewRaid,
     viewMode: state.viewMode,
+    newPlayerSearch: state.newPlayerSearch
   }
 };
 
@@ -76,7 +94,7 @@ const mapDispatchToProps = dispatch => {
   }
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(PlayerSearchContainer));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(PlayerSearchContainer));
 
 const PlayerSearchWrapper = styled.section`
   display: flex;

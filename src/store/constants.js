@@ -19,7 +19,7 @@ export const FETCH_PGCR = 'fetch_pgcr';
 export const LOAD_PUBLIC_MILESTONE_DATA = 'load_public_milestone_data';
 
 export const TOGGLE_LOADING = 'toggle_loading';
-
+export const TOGGLE_PLAYER_SEARCH = 'set_player_search';
 
 export const activityModes = {
   0: 'none',

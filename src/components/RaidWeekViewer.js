@@ -5,26 +5,13 @@ import shortid from 'shortid';
 
 import normalize from '../store/normalize';
 
+import RaidSelection from './RaidSelection';
+
 const RaidView = styled.div`
   display: flex;
   flex-flow: row wrap;
   justify-content: center;
   align-items: center;
-`;
-
-const RaidButtonWrapper = styled.div`
-  display: flex;
-  flex: 1 100%;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  margin-bottom: 10px;
-  
-  p {
-    font-size: 20px;
-    margin-right: 10px;
-    text-align: right;
-  }
 `;
 
 const RaidWeekContainer = styled.div`
@@ -91,29 +78,14 @@ const RaidStackItems = styled.div`
   }
 `;
 
-const RaidButton = styled.button`
-  width: 125px;
-  height: 50px;
-  margin-right: 5px;
-  border-radius: 5px;
-  background-color: ${({ selected }) => selected ? 'black' : 'white'};
-  color: ${({ selected }) => selected ? 'white' : 'black'};
-`;
-
-const RaidDivs = styled.div`
+const RaidDivs = styled.a`
   width: 150px;
   height: 32px;
+  margin-left: 10px;
   margin-right: 5px;
-  p {
-    font-size: 18px;
-    font-family: sans-serif;
-    color: ${(props) => props.selected ? 'black' : 'blue'};
-    
-    &:hover {
-      color: purple;
-      text-decoration: underline;
-    }
-  }
+  font-size: 18px;
+  font-family: sans-serif;
+  color: ${(props) => props.selected ? 'black' : 'blue'};
 `;
 
 /*
@@ -146,7 +118,7 @@ const RaidDivs = styled.div`
  */
 
 const ScoreView = ({ raid }) => {
-  return <p>{ `${raid.values.score} / ${raid.values.teamScore}` }</p>
+  return <p><b>{raid.values.teamScore}</b> {`(${raid.values.score})` }</p>
 };
 
 const RaidStack = ({ handleShowStats, handleFetchPGCR, raidWeek, raid }) => {
@@ -195,159 +167,99 @@ class RaidWeekViewer extends Component {
     super(props);
 
     this.state = {
-      deepLink: false,
-      raidWeeks: [],
-      normalize: false
+      active: false
     }
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    const { viewRaid, viewMode, raidHistory, nightfallHistory } = this.props;
-    const { mergedHistory } = raidHistory;
-
-    const prepareNewData = (
-      prevState.raidWeeks.length === 0 ||
-      prevProps.viewRaid !== viewRaid ||
-      prevProps.viewMode !== viewMode
-    );
-
-    if(prepareNewData) {
-      const historyReady = (Object.keys(nightfallHistory).length > 0 && Object.keys(raidHistory).length > 0);
-
-      if(historyReady) {}
-          const raidWeeks = viewRaid === 'nf'
-            ? Object.entries(nightfallHistory[viewMode]).map((item) => [item[0], item[1]])
-            : this.normalizeRaidWeeks(viewRaid, mergedHistory, viewMode);
-
-          this.setState({ raidWeeks })
-      }
   }
 
   normalizeRaidWeeks = (raid, history, mode) => normalize.raidWeeks(raid, history, mode);
 
   setRaidWeeks = (raidWeeks) => {
-    this.setState({
-      raidWeeks,
-      normalize
-    });
+    this.setState({ raidWeeks });
   };
 
   setRaid = (raid) => {
     this.props.setViewRaid(raid);
-    this.setState({ normalize: true });
   };
 
   setMode = (mode) => {
     this.props.setViewMode(mode);
-    this.setState({ normalize: true });
   };
 
-  toggleNormalized = () => {
-    this.setState({ normalize: !this.state.normalize });
-  };
-
-  setUp = () => {
-    this.setState({
-      normalize: true,
-      mode: 'prestige'
-    })
-  };
-
-  toggleDeepLink = () => {
-    this.setState({ deepLink: !this.state.deepLink })
-  };
-
-  shouldComponentUpdate = (nextProps) => (
-      Object.keys(nextProps.raidHistory).length !== 0 ||
-      Object.keys(nextProps.nightfallHistory).length !== 0 ||
-      this.props.viewRaid !== nextProps.viewRaid ||
-      this.props.viewMode !== nextProps.viewMode ||
-      !!nextProps.playerProfile.notFound &&
-      nextProps.match.isExact
-    );
-
-  componentWillReceiveProps = (nextProps) => {
-    const { viewRaid } = this.props;
-    if(viewRaid !== nextProps.viewRaid) {
-      if(nextProps.viewRaid !== 'nf') {
-        this.toggleNormalized();
-      }
-    }
-  };
+  //shouldComponentUpdate = (nextProps) => {
+  //  //console.log('this.props', this.props);
+  //  //console.log('nextProps', nextProps);
+  //  const wee = (
+  //    this.props.playerProfile.displayName !== nextProps.playerProfile.displayName ||
+  //    this.props.raidHistory.raidCount.eow.prestige !== nextProps.raidHistory.raidCount.eow.prestige ||
+  //    this.props.raidHistory.raidCount.eow.normal !== nextProps.raidHistory.raidCount.eow.normal ||
+  //    this.props.raidHistory.raidCount.lev.prestige !== nextProps.raidHistory.raidCount.lev.prestige ||
+  //    this.props.raidHistory.raidCount.lev.normal !== nextProps.raidHistory.raidCount.lev.normal ||
+  //    this.props.nightfallHistory.nfCount.prestige !== nextProps.nightfallHistory.nfCount.prestige ||
+  //    this.props.nightfallHistory.nfCount.normal !== nextProps.nightfallHistory.nfCount.normal ||
+  //    this.props.viewRaid !== nextProps.viewRaid ||
+  //    this.props.viewMode !== nextProps.viewMode ||
+  //    !!nextProps.playerProfile.notFound
+  //  );
+  //  console.log('wee', wee);
+  //  return wee;
+  //};
 
   render() {
-    const { raidWeeks, deepLink } = this.state;
+    const { active } = this.state;
     const {
-      nightfallHistory, raidHistory, match, internalRouting,
-      handleDeepLink, handleFetchPGCR, handleClearPGCR,
-      playerProfile: { notFound=false }, playerPrivacy, viewRaid, viewMode
+      nightfallHistory, raidHistory, match, history, internalRouting,
+      handleDeepLink, handleSetPlayerSearch, handleFetchPGCR, handleClearPGCR,
+      playerProfile, playerPrivacy, viewRaid, viewMode
     } = this.props;
-
+//TODO Waggly Dessert is a good example: Somethign wrong with Week 4 and 5, both are A Garden World
+    const { notFound, displayName='' } = playerProfile;
     const { nfCount={ prestige: '#', normal: '#' } } = nightfallHistory;
-    const { raidCount={ eow: { prestige: '#', normal: '#' }, lev: { prestige: '#', normal: '#' }} } = raidHistory;
+    const { mergedHistory, raidCount={ eow: { prestige: '#', normal: '#' }, lev: { prestige: '#', normal: '#' }} } = raidHistory;
 
-    if(deepLink) {
-      this.toggleDeepLink();
+    console.log('this.props', this.props);
+    let raidWeeks = [];
+
+    if(viewRaid === 'nf' && !!nightfallHistory[viewMode]) {
+      if (Object.keys(nightfallHistory[ viewMode ]).length > 1) {
+        raidWeeks = Object.entries(nightfallHistory[viewMode]).map((item) => [ item[ 0 ], item[ 1 ] ])
+      }
+    } else {
+      raidWeeks = this.normalizeRaidWeeks(viewRaid, mergedHistory, viewMode) || [];
     }
-    else {
-      if(!internalRouting && !deepLink) {
-        handleClearPGCR();
-        handleDeepLink(match.params.playerId, true);
+
+    console.log('internalRouting', internalRouting);
+    console.log('active', active);
+    if(!internalRouting) {
+      console.log('internalRouting', internalRouting);
+      console.log('internal this.props', this.props);
+      handleClearPGCR();
+      console.log('playerId', match.params.playerId.toLowerCase());
+      console.log('displayName', displayName.toLowerCase());
+      console.log('go-n deep', match.params.playerId);
+
+      if(!active || match.params.playerId.toLowerCase() !== displayName.toLowerCase()) {
+        handleDeepLink(match.params.playerId);
+        handleSetPlayerSearch(match.params.playerId);
+        this.setState({ active: true });
       }
     }
 
-    const shouldRender = (!notFound && !playerPrivacy);
+    const shouldRender = (raidWeeks.length > 0 && !notFound && !playerPrivacy);
 
     return (
       <RaidView>
         { playerPrivacy && <h1 style={{ fontSize: 24 }}>The player has set their account to private</h1>}
         { notFound && <h1 style={{ fontSize: 24 }}>Sorry player not found</h1> }
-        { shouldRender && (
-          <RaidButtonWrapper>
-            <div style={{display: 'flex', flexDirection: 'row'}}>
-              <p>EOW:</p>
-              <RaidDivs
-                selected={viewRaid==='eow' && viewMode ==='normal'}
-                onClick={() => { this.setRaid('eow'); this.setMode('normal');}}>
-                <p>Normal({raidCount.eow.normal})</p>
-              </RaidDivs>
-              <RaidDivs
-                selected={viewRaid==='eow' && viewMode ==='prestige'}
-                onClick={() => { this.setRaid('eow'); this.setMode('prestige');}}>
-                <p>Prestige({raidCount.eow.prestige})</p>
-              </RaidDivs><br />
-            </div>
-            <div style={{display: 'flex', flexDirection: 'row'}}>
-              <p>Leviathan:</p>
-              <RaidDivs
-                selected={viewRaid==='lev' && viewMode ==='normal'}
-                onClick={() => { this.setRaid('lev'); this.setMode('normal');}}>
-                <p>Normal({raidCount.lev.normal})</p>
-              </RaidDivs>
-              <RaidDivs
-                selected={viewRaid==='lev' && viewMode ==='prestige'}
-                onClick={() => { this.setRaid('lev'); this.setMode('prestige');}}>
-                <p>Prestige({raidCount.lev.prestige})</p>
-              </RaidDivs>
-            </div>
-            <div style={{display: 'flex', flexDirection: 'row'}}>
-              <p>Nightfall:</p>
-              <RaidDivs
-                selected={viewRaid==='nf' && viewMode ==='normal'}
-                onClick={() => { this.setRaid('nf'); this.setMode('normal');}}>
-                <p>Normal({nfCount.normal})</p>
-              </RaidDivs>
-              <RaidDivs
-                selected={viewRaid==='nf' && viewMode ==='prestige'}
-                onClick={() => { this.setRaid('nf'); this.setMode('prestige');}}>
-                <p>Prestige({nfCount.prestige})</p>
-              </RaidDivs><br />
-            </div>
-          </RaidButtonWrapper>
-        )}
-      { shouldRender && (
+        {shouldRender &&
+          <RaidSelection
+            handleSetRaid={this.setRaid} handleSetMode={this.setMode}
+            nfCount={nfCount} raidCount={raidCount}
+            viewRaid={viewRaid} viewMode={viewMode}
+          />
+        }
+        {shouldRender &&
           <RaidStackList>
-            { raidWeeks.map(raidWeek => {
+            {raidWeeks.map(raidWeek => {
               return (
                 <RaidStack
                   key={shortid.generate()}
@@ -356,10 +268,9 @@ class RaidWeekViewer extends Component {
                   raid={viewRaid}
                 />
               )
-            })
-            }
+            })}
           </RaidStackList>
-      )}
+        }
       </RaidView>
     )
   }

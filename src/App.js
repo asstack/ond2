@@ -5,7 +5,7 @@ import { BrowserRouter as Router, Route } from 'react-router-dom';
 import baseStyles, { AppWrapper, PlayerInfoWrapper} from './base-styles';
 import { FETCH_PGCR, SET_PGCR } from "./store/constants";
 
-import PlayerSearchContainer from './containers/playerDataView/PlayerDataView';
+import PlayerDataView from './containers/playerDataView/PlayerDataView';
 import PostGameCarnageReportContainer from './containers/pgcrView/PGCR_View';
 import DestinyLoader from './components/DestinyLoader/DestinyLoader';
 
@@ -34,15 +34,13 @@ class App extends Component {
       <Router>
         <AppWrapper>
           { loading && <DestinyLoader /> }
-          {!pgcr &&
-            <PlayerInfoWrapper loading={loading || pgcr}>
-              <PlayerSearchContainer
-                handleClearPGCR={() => clearPostGameCarnageReport()}
-                handleFetchPGCR={this.fetchPGCR}
-                {...this.props}
-              />
-            </PlayerInfoWrapper>
-          }
+          <PlayerInfoWrapper loading={loading || pgcr}>
+            <PlayerDataView
+              handleClearPGCR={() => clearPostGameCarnageReport()}
+              handleFetchPGCR={this.fetchPGCR}
+              {...this.props}
+            />
+          </PlayerInfoWrapper>
           { pgcr &&
             <Route path="/destiny/pgcr/:instanceId" render={({...rest}) => (
               <PostGameCarnageReportContainer

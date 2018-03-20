@@ -19,27 +19,49 @@ function* handleSearchPlayerFailure() {
   yield put({ type: consts.TOGGLE_LOADING });
 }
 
+/*
+const pgcrHistory = yield select(state => state.pgcrHistory);
+
+    if(pgcrHistory[data]) {
+      yield put({ type: consts.SET_PGCR, data: pgcrHistory[data] });
+    }
+    else {
+      const pgcr = yield call(fetchPostGameCarnageReport, data);
+      const normalizedPGCR = normalize.postGameCarnageReport(pgcr);
+      pgcrHistory[data] = normalizedPGCR;
+
+      yield put({ type: consts.SET_PGCR, data: normalizedPGCR });
+      yield put({ type: consts.FETCH_LOG, data: 'Post Game Carnage Report Fetch Success' });
+   }
+ */
 function* fetchPlayerProfile({ data }) {
   try {
     yield put({ type: consts.TOGGLE_LOADING });
-    yield put({ type: consts.TOGGLE_PLAYER_SEARCH });
     yield put({ type: consts.SET_PLAYER_PRIVACY, data: false });
+
     const searchResults = yield call(searchPlayer, data);
 
     if(searchResults === undefined ) {
       return yield call(handleSearchPlayerFailure);
     }
 
-    const [profile, playersCharacters] = yield all([ call(fetchProfile, searchResults), call(fetchCharacters, searchResults)]);
+    const playerCache = yield  select(state => state.playerCache);
+    const memberId = searchResults.membershipId;
+    const cacheCheck = Object.keys(playerCache).indexOf(memberId) >= 0;
 
-    const playerProfile = normalize.player(searchResults, profile, playersCharacters);
+    const [ profile, playersCharacters ] = yield all([ call(fetchProfile, searchResults), call(fetchCharacters, searchResults) ]);
+    const playerProfile = cacheCheck ? playerCache[memberId] : normalize.player(searchResults, profile, playersCharacters);
 
-    yield put({ type: consts.SET_PLAYER_PROFILE, data: playerProfile });
-    yield put({ type: consts.FETCH_LOG, data: 'Player Profile Fetch Success' });
+    if(!cacheCheck) {
+      playerCache[ memberId ] = playerProfile;
+    }
+
+    yield put({type: consts.SET_PLAYER_CACHE, data: playerCache});
+    yield put({type: consts.SET_PLAYER_PROFILE, data: playerProfile});
+    yield put({type: consts.FETCH_LOG, data: 'Player Profile Fetch Success'});
 
     yield call(collectNightfallData, playerProfile);
     yield call(collectRaidData, playerProfile);
-
   }
   catch(error) {
     //TODO: Remove error warn and store log files in s3 bucket or store errors in database.
@@ -60,36 +82,63 @@ function* collectProfileCharacters(data) {
 
 function* collectNightfallData(playerProfile) {
   try {
-    const nfNormalActivities = yield all(
-      [
-        ...playerProfile.characterIds.map(curr => collectActivityHistory(playerProfile.characters[curr], { page: 0, mode: 46, count: 250 })),
-        ...playerProfile.characterIds.map(curr => collectActivityHistory(playerProfile.characters[curr], { page: 0, mode: 16, count: 250 }))
-      ]
-    );
 
-    const nfPrestigeActivities = yield all(
-      [
-        ...playerProfile.characterIds.map(curr => call(collectActivityHistory, playerProfile.characters[curr], { page: 0, mode: 47, count: 250 })),
-        ...playerProfile.characterIds.map(curr => call(collectActivityHistory, playerProfile.characters[curr], { page: 0, mode: 17, count: 250 }))
-      ]
-    );
+    const nfHistoryCache = yield  select(state => state.nfHistoryCache);
+    const memberId = playerProfile.membershipId;
+    const cacheCheck = Object.keys(nfHistoryCache).indexOf(memberId) >= 0;
 
-    const nfNormalData = nfNormalActivities.reduce((accum, data) => {
-      accum = [...accum, ...data];
-      return accum;
-    }, []);
+    if(cacheCheck) {
+      yield put({ type: consts.SET_NF_HISTORY, data: nfHistoryCache[memberId]});
+    } else {
+      const nfNormalActivities = yield all(
+        [
+          ...playerProfile.characterIds.map(curr => collectActivityHistory(playerProfile.characters[ curr ], {
+            page: 0,
+            mode: 46,
+            count: 250
+          })),
+          ...playerProfile.characterIds.map(curr => collectActivityHistory(playerProfile.characters[ curr ], {
+            page: 0,
+            mode: 16,
+            count: 250
+          }))
+        ]
+      );
 
-    const nfPrestigeData = nfPrestigeActivities.reduce((accum, data) => {
-      accum = [...accum, ...data];
-      return accum;
-    }, []);
+      const nfPrestigeActivities = yield all(
+        [
+          ...playerProfile.characterIds.map(curr => call(collectActivityHistory, playerProfile.characters[ curr ], {
+            page: 0,
+            mode: 47,
+            count: 250
+          })),
+          ...playerProfile.characterIds.map(curr => call(collectActivityHistory, playerProfile.characters[ curr ], {
+            page: 0,
+            mode: 17,
+            count: 250
+          }))
+        ]
+      );
+
+      const nfNormalData = nfNormalActivities.reduce((accum, data) => {
+        accum = [ ...accum, ...data ];
+        return accum;
+      }, []);
+
+      const nfPrestigeData = nfPrestigeActivities.reduce((accum, data) => {
+        accum = [ ...accum, ...data ];
+        return accum;
+      }, []);
+
+      const nightfallHistory = normalize.nightfall({ normal: nfNormalData, prestige: nfPrestigeData });
+
+      nfHistoryCache[memberId] = nightfallHistory;
+
+      yield put({ type: consts.SET_NF_HISTORY_CACHE, data: nfHistoryCache });
+      yield put({ type: consts.SET_NF_HISTORY, data: nightfallHistory});
+    }
 
 
-    const nightfallHistory = normalize.nightfall({ normal: nfNormalData, prestige: nfPrestigeData });
-
-    yield put({ type: consts.SET_NF_HISTORY, data: nightfallHistory});
-    //TODO: Check here and in collect history for the state the store is currently in for subsequent loads.
-    yield put({ type: consts.TOGGLE_PLAYER_SEARCH });
     yield put({ type: consts.TOGGLE_LOADING });
     yield put({ type: consts.FETCH_LOG, data: `Nightfall data successfully collected`});
   }
@@ -101,22 +150,35 @@ function* collectNightfallData(playerProfile) {
 
 function* collectRaidData(playerProfile) {
   try {
-    const raidData = yield all(
-      playerProfile.characterIds.map(curr => call(collectActivityHistory, playerProfile.characters[curr])),
-    );
+    const raidHistoryCache = yield  select(state => state.raidHistoryCache);
+    const memberId = playerProfile.membershipId;
+    const cacheCheck = Object.keys(raidHistoryCache).indexOf(memberId) >= 0;
 
-    if(Object.keys(raidData[0]).indexOf('error') >= 0) {
-      yield put({ type: consts.SET_PLAYER_PRIVACY, data: true });
+    if(cacheCheck) {
+      yield put({type: consts.SET_RAID_HISTORY, data: raidHistoryCache[memberId]});
+
+    } else {
+      const raidData = yield all(
+        playerProfile.characterIds.map(curr => call(collectActivityHistory, playerProfile.characters[ curr ])),
+      );
+
+      if (Object.keys(raidData[ 0 ]).indexOf('error') >= 0) {
+        yield put({type: consts.SET_PLAYER_PRIVACY, data: true});
+      }
+
+      const activityHistory = playerProfile.characterIds.reduce((accum, charId, idx) => {
+        accum[ charId ] = [ ...raidData[ idx ] ];
+        return accum;
+      }, {});
+
+      const raidHistory = normalize.raidHistory(activityHistory);
+
+      raidHistoryCache[memberId] = raidHistory;
+
+      yield put({ type: consts.SET_RAID_HISTORY_CACHE, data: raidHistoryCache });
+      yield put({type: consts.SET_RAID_HISTORY, data: raidHistory});
     }
 
-    const activityHistory = playerProfile.characterIds.reduce((accum, charId, idx) => {
-      accum[charId] = [...raidData[idx]];
-      return accum;
-    }, {});
-
-    const raidHistory = normalize.raidHistory(activityHistory);
-
-    yield put({ type: consts.SET_RAID_HISTORY, data: raidHistory});
     yield put({ type: consts.FETCH_LOG, data: 'Raid Data Successfully Collected' });
   }
   catch(error) {

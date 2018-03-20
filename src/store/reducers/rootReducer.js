@@ -6,13 +6,16 @@ import {
   SET_RAID_HISTORY,
   SET_NF_HISTORY,
   SET_PGCR,
-  SET_PGCR_HISTORY,
   SET_PUBLIC_MILESTONES,
   TOGGLE_LOADING,
   SET_PLAYER_PRIVACY,
   SET_VIEW_MODE,
   SET_VIEW_RAID,
-  TOGGLE_PLAYER_SEARCH
+  TOGGLE_PLAYER_SEARCH,
+  SET_PGCR_CACHE,
+  SET_NF_HISTORY_CACHE,
+  SET_PLAYER_CACHE,
+  SET_RAID_HISTORY_CACHE
 } from "../constants";
 
 const fetchLogs = (state=[], action) =>
@@ -53,13 +56,6 @@ const setPostGameCarnageReport = (state = false, action) => {
   return state;
 };
 
-const setPGCRHistory = (state = {}, action) => {
-  if(action.type === SET_PGCR_HISTORY) {
-    return action.data;
-  }
-  return state;
-};
-
 const setPublicMilestones = (state = false, action) => {
   if(action.type === SET_PUBLIC_MILESTONES) {
     return action.data;
@@ -95,19 +91,50 @@ const setViewRaid = (state = 'nf', action) => {
   return state;
 };
 
+const setPGCRCache = (state = {}, action) => {
+  if(action.type === SET_PGCR_CACHE) {
+    return action.data;
+  }
+  return state;
+};
+
+const setNFHistoryCache = (state = {}, action) => {
+  if(action.type === SET_NF_HISTORY_CACHE) {
+    return action.data;
+  }
+  return state;
+};
+
+const setRaidHistoryCache = (state = {}, action) => {
+  if(action.type === SET_RAID_HISTORY_CACHE) {
+    return action.data;
+  }
+  return state;
+};
+
+const setPlayerCache = (state = {}, action) => {
+  if(action.type === SET_PLAYER_CACHE) {
+    return action.data;
+  }
+  return state;
+};
+
 const rootReducer = combineReducers({
   fetchLogs,
   playerProfile: setPlayerProfile,
   raidHistory: setRaidHistory,
   postGameCarnageReport: setPostGameCarnageReport,
-  pgcrHistory: setPGCRHistory,
   publicMilestones: setPublicMilestones,
   nightfallHistory: setNightfallHistory,
   loading: setLoading,
   playerPrivacy: setPlayerPrivacy,
   viewMode: setViewMode,
   viewRaid: setViewRaid,
-  newPlayerSearch: setPlayerSearch
+  newPlayerSearch: setPlayerSearch,
+  pgcrCache: setPGCRCache,
+  nfHistoryCache: setNFHistoryCache,
+  raidHistoryCache: setRaidHistoryCache,
+  playerCache: setPlayerCache
 });
 
 export default rootReducer;

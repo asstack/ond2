@@ -1,14 +1,22 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Redirect, Route } from 'react-router-dom';
+import styled from 'styled-components';
 
-import baseStyles, { AppWrapper, PlayerInfoWrapper} from './base-styles';
+import baseStyles, { PlayerInfoWrapper} from './base-styles';
 import { FETCH_PGCR, SET_PGCR } from "./store/constants";
 
-import PlayerDataView from './containers/playerDataView/PlayerDataView';
+import Landing from './containers/Landing';
+import PlayerDataView from './containers/PlayerDataView';
 import PostGameCarnageReportContainer from './containers/pgcrView/PGCR_View';
 import DestinyLoader from './components/DestinyLoader/DestinyLoader';
+import * as consts from "./store/constants";
 
+const AppWrapper = styled.div`
+  width: 100%;
+  height: 100%;
+  align-items: center;
+`;
 
 class App extends Component {
 
@@ -19,6 +27,15 @@ class App extends Component {
       internalRouting: false
     }
   }
+
+  componentDidMount() {
+    <Redirect path="/" to="/destiny" />
+  }
+
+  searchByGamerTag = (gamerTag) => {
+    const { searchPlayer } = this.props;
+    searchPlayer({ displayName: gamerTag, membershipType: -1 });
+  };
 
   fetchPGCR = (instanceId) => {
     const { fetchPostGameCarnageReport } = this.props;
@@ -34,23 +51,23 @@ class App extends Component {
       <Router>
         <AppWrapper>
           { loading && <DestinyLoader /> }
-          <PlayerInfoWrapper loading={loading || pgcr}>
-            <PlayerDataView
+
+          <Route exact path="/destiny" render={data => (
+            <Landing loading={loading} {...data} />
+          )} />
+
+           <Route path="/destiny/player/:playerId" render={(data) => (
+             <PlayerDataView handlePlayerSearch={this.searchByGamerTag} {...this.props} {...data} />
+           )}/>
+
+          <Route path="/destiny/pgcr/:instanceId" render={({...rest}) => (
+            <PostGameCarnageReportContainer
+              {...rest}
+              pgcr={pgcr}
+              handleDeepLink={this.fetchPGCR}
               handleClearPGCR={() => clearPostGameCarnageReport()}
-              handleFetchPGCR={this.fetchPGCR}
-              {...this.props}
             />
-          </PlayerInfoWrapper>
-          { pgcr &&
-            <Route path="/destiny/pgcr/:instanceId" render={({...rest}) => (
-              <PostGameCarnageReportContainer
-                {...rest}
-                pgcr={pgcr}
-                handleDeepLink={this.fetchPGCR}
-                handleClearPGCR={() => clearPostGameCarnageReport()}
-              />
-            )}/>
-          }
+          )}/>
         </AppWrapper>
       </Router>
     );
@@ -67,7 +84,8 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     fetchPostGameCarnageReport: pathParams => dispatch({type: FETCH_PGCR, data: pathParams}),
-    clearPostGameCarnageReport: () => dispatch({ type: SET_PGCR, data: false})
+    clearPostGameCarnageReport: () => dispatch({ type: SET_PGCR, data: false}),
+    searchPlayer: pathParams => dispatch({ type: consts.FETCH_PLAYER_PROFILE, data: pathParams })
   }
 };
 

@@ -15,7 +15,7 @@ import {
   SET_PGCR_CACHE,
   SET_NF_HISTORY_CACHE,
   SET_PLAYER_CACHE,
-  SET_RAID_HISTORY_CACHE
+  SET_RAID_HISTORY_CACHE, TOGGLE_PLATFORM_SELECT
 } from "../constants";
 
 const fetchLogs = (state=[], action) =>
@@ -91,6 +91,13 @@ const setViewRaid = (state = 'nf', action) => {
   return state;
 };
 
+const togglePlatformSelect = (state = 'false', action) => {
+  if(action.type === TOGGLE_PLATFORM_SELECT) {
+    return !state;
+  }
+  return state;
+};
+
 const setPGCRCache = (state = {}, action) => {
   if(action.type === SET_PGCR_CACHE) {
     return action.data;
@@ -134,7 +141,8 @@ const rootReducer = combineReducers({
   pgcrCache: setPGCRCache,
   nfHistoryCache: setNFHistoryCache,
   raidHistoryCache: setRaidHistoryCache,
-  playerCache: setPlayerCache
+  playerCache: setPlayerCache,
+  platformSelect: togglePlatformSelect
 });
 
 export default rootReducer;

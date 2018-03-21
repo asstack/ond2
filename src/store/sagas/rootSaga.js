@@ -1,4 +1,4 @@
-import { call, put, takeEvery, all, select } from 'redux-saga/effects';
+import { call, put, takeEvery, take, all, select } from 'redux-saga/effects';
 import {
   searchPlayer,
   fetchProfile,
@@ -19,38 +19,32 @@ function* handleSearchPlayerFailure() {
   yield put({ type: consts.TOGGLE_LOADING });
 }
 
-/*
-const pgcrHistory = yield select(state => state.pgcrHistory);
-
-    if(pgcrHistory[data]) {
-      yield put({ type: consts.SET_PGCR, data: pgcrHistory[data] });
-    }
-    else {
-      const pgcr = yield call(fetchPostGameCarnageReport, data);
-      const normalizedPGCR = normalize.postGameCarnageReport(pgcr);
-      pgcrHistory[data] = normalizedPGCR;
-
-      yield put({ type: consts.SET_PGCR, data: normalizedPGCR });
-      yield put({ type: consts.FETCH_LOG, data: 'Post Game Carnage Report Fetch Success' });
-   }
- */
 function* fetchPlayerProfile({ data }) {
   try {
     yield put({ type: consts.TOGGLE_LOADING });
     yield put({ type: consts.SET_PLAYER_PRIVACY, data: false });
 
     const searchResults = yield call(searchPlayer, data);
+    console.log('searchR', searchResults);
 
-    if(searchResults === undefined ) {
-      return yield call(handleSearchPlayerFailure);
-    }
+    let playerSearch = searchResults[0];
+
+    //if(searchResults.length <= 0) {
+    //  return yield call(handleSearchPlayerFailure);
+    //} else if( searchResults.length === 1) {
+    //  playerSearch = searchResults[0];
+    //} else {
+    //  yield put({ type: consts.TOGGLE_PLATFORM_SELECT });
+    //}
+
+    //const platform = yield take({ type: consts.SELECT_PLATFORM });
 
     const playerCache = yield  select(state => state.playerCache);
-    const memberId = searchResults.membershipId;
+    const memberId = playerSearch.membershipId;
     const cacheCheck = Object.keys(playerCache).indexOf(memberId) >= 0;
 
-    const [ profile, playersCharacters ] = yield all([ call(fetchProfile, searchResults), call(fetchCharacters, searchResults) ]);
-    const playerProfile = cacheCheck ? playerCache[memberId] : normalize.player(searchResults, profile, playersCharacters);
+    const [ profile, playersCharacters ] = yield all([ call(fetchProfile, playerSearch), call(fetchCharacters, playerSearch) ]);
+    const playerProfile = cacheCheck ? playerCache[memberId] : normalize.player(playerSearch, profile, playersCharacters);
 
     if(!cacheCheck) {
       playerCache[ memberId ] = playerProfile;

@@ -27,8 +27,7 @@ const searchPlayer = async pathParams => {
   const url = applyQueryStringParams(searchDestinyPlayer(pathParams), { components: 100 });
   const res = await fetch(url, destinyInit);
   const playerData = await res.json();
-  const player = playerData.Response.filter(item => item.displayName.toLowerCase() === pathParams.displayName.toLowerCase());
-  return player[0];
+  return playerData.Response;
 };
 
 const fetchProfile = async pathParams => {

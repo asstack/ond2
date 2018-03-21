@@ -34,9 +34,9 @@ export const destinyBaseURL = 'https://www.bungie.net';
 export const LEVIATHAN_IMAGE = `${destinyBaseURL}/img/destiny_content/pgcr/raid_gluttony.jpg`;
 export const EATER_OF_WORLDS_IMAGE = `${destinyBaseURL}/img/destiny_content/pgcr/raids_leviathan_eater_of_worlds.jpg`;
 
-export const EATER_OF_WORLDS_LAUNCH_WEEK = '2017-12-11';
-export const LEVIATHAN_LAUNCH_WEEK = '2017-09-12';
-export const NF_START_DATE = '2018-02-06';
+export const EATER_OF_WORLDS_LAUNCH_WEEK = '2017-12-11T10:00:00Z';
+export const LEVIATHAN_LAUNCH_WEEK = '2017-09-12T10:00:00Z';
+export const NF_START_DATE = '2018-02-13T10:00:00Z';
 
 export const tier = {
   0: 'Normal',

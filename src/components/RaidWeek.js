@@ -44,22 +44,26 @@ const RaidStackItems = styled.div`
   }
 `;
 
-const RaidWeek = ({ raids, handleFetchPGCR, success=true }) => (
-  <RaidWeekWrapper success={success}>
-    { raids && Object.values(raids).map(raid => (
+const RaidWeek = ({ raid='', raids, handleFetchPGCR, success=true }) => {
+  const renderScore = raid === 'nf';
+
+  return (
+    <RaidWeekWrapper success={success}>
+      {raids && Object.values(raids).map(raid => (
         <RaidStackItems
           onClick={() => handleFetchPGCR(raid.activityDetails.instanceId)}
           key={shortid.generate()}
           activityCount={1}
           success={success}>
           <Link className="pgcr-link" to={`/destiny/pgcr/${raid.activityDetails.instanceId}`}>
-            {raid === 'nf' && <ScoreView teamScore={raid.values.teamScore} score={raid.values.score}/>}
+            { renderScore && <ScoreView teamScore={raid.values.teamScore} score={raid.values.score}/> }
           </Link>
         </RaidStackItems>
       ))
-    }
-  </RaidWeekWrapper>
-);
+      }
+    </RaidWeekWrapper>
+  )
+}
 
 RaidWeek.propTypes = {
   raids: PropTypes.array.isRequired,

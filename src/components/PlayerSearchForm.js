@@ -33,7 +33,7 @@ class PlayerSearchContainer extends Component {
     super(props);
 
     this.state = {
-      playerSearch: this.props.playerId || '',
+      playerSearch: this.props.playerId
     }
   }
 

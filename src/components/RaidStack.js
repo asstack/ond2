@@ -40,7 +40,7 @@ const RaidStack = ({ handleFetchPGCR, raidWeek, raid }) => {
     <PlayerDataWrapper>
       <RaidWeekContainer>
         <RaidWeekHeader raid={raid}>{ name }</RaidWeekHeader>
-        <RaidWeek raids={completedRaids} handleFetchPGCR={handleFetchPGCR} />
+        <RaidWeek raid={raid} raids={completedRaids} handleFetchPGCR={handleFetchPGCR} />
         <RaidWeek success={false} raids={failedRaids} handleFetchPGCR={handleFetchPGCR} />
       </RaidWeekContainer>
     </PlayerDataWrapper>

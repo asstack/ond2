@@ -33,8 +33,6 @@ const RaidDivs = styled.a`
 
 
 const RaidSelection = ({ handleSetRaid, handleSetMode, nfCount, raidCount, viewRaid, viewMode }) => {
-  console.log('viewMode', viewMode);
-  console.log('viewRiad', viewRaid);
   return (<RaidViewSelectionWrapper>
     <RaidSelect> EOW:
       <RaidDivs

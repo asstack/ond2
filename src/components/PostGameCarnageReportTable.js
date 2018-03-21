@@ -1,7 +1,8 @@
-import React, { Component } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
+import shortid from "shortid";
 import styled from 'styled-components';
-import shortid from 'shortid';
 
 const PGCRWrapper = styled.div`
   position: absolute;
@@ -57,6 +58,7 @@ const Nav = styled.div`
   margin-bottom: 10px;
 `;
 
+
 const PostGameCarnageReportTable = ({ handleClearPGCR, pgcr }) => (
   <PGCRWrapper>
     <Nav>
@@ -96,37 +98,9 @@ const PostGameCarnageReportTable = ({ handleClearPGCR, pgcr }) => (
   </PGCRWrapper>
 );
 
-class PostGameCarnageReportContainer extends Component {
-  constructor(props) {
-    super(props);
+PostGameCarnageReportTable.propTypes = {
+  pgcr: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]).isRequired,
+  handleClearPGCR: PropTypes.func.isRequired
+};
 
-    this.state = {
-      deepLink: false
-    }
-  }
-
-  componentWillUnmount() {
-    this.props.handleClearPGCR();
-  }
-
-  toggleDeepLink = () => {
-    this.setState({ deepLink: !this.state.deepLink })
-  };
-
-  render() {
-    const { deepLink } = this.state;
-    const { match, handleDeepLink } = this.props;
-
-
-    //if(match.params.instanceId && !deepLink) {
-    //  //this.toggleDeepLink();
-    //  handleDeepLink(match.params.instanceId);
-    //}
-
-    return(
-      <PostGameCarnageReportTable {...this.props} />
-    )
-  }
-}
-
-export default PostGameCarnageReportContainer;
+export default PostGameCarnageReportTable;

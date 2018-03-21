@@ -189,15 +189,15 @@ function* collectRaidData(playerProfile) {
 
 function* collectPGCR({ data }) {
   try {
-    const pgcrHistory = yield select(state => state.pgcrHistory);
+    const pgcrCache = yield select(state => state.pgcrCache);
 
-    if(pgcrHistory[data]) {
-      yield put({ type: consts.SET_PGCR, data: pgcrHistory[data] });
+    if(pgcrCache[data]) {
+      yield put({type: consts.SET_PGCR, data: pgcrCache[ data ]});
     }
     else {
       const pgcr = yield call(fetchPostGameCarnageReport, data);
       const normalizedPGCR = normalize.postGameCarnageReport(pgcr);
-      pgcrHistory[data] = normalizedPGCR;
+      pgcrCache[data] = normalizedPGCR;
 
       yield put({ type: consts.SET_PGCR, data: normalizedPGCR });
       yield put({ type: consts.FETCH_LOG, data: 'Post Game Carnage Report Fetch Success' });

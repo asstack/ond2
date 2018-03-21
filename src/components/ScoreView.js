@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const ScoreView = (score, teamScore ) => {
+const ScoreView = ({ score, teamScore }) => {
   return (<p><b>{teamScore}</b> {`(${score})` }</p>)
 };
 

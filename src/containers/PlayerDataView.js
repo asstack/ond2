@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import styled from 'styled-components';
 import shortid from 'shortid';
 
@@ -39,12 +39,35 @@ const SearchWrapper = styled.div`
 class RaidWeekViewer extends Component {
   constructor(props) {
     super(props);
+
+    this.state = {
+      player: this.props.match.params.playerId || ''
+    }
   }
 
   componentDidMount() {
-    const { handlePlayerSearch, match} = this.props;
+    const {handlePlayerSearch, match, history} = this.props;
     handlePlayerSearch(match.params.playerId);
+
+    history.listen((location, action) => {
+      if(action === 'PUSH') {
+        if(location.state) {
+          handlePlayerSearch(location.state.gamerTag);
+        }
+      } else if(action === 'POP') {
+        handlePlayerSearch(match.params.playerId);
+        this.setUpPlayer(match.params.playerId);
+      }
+    });
   }
+
+  setUpPlayer = (player) => {
+    this.setState({ player });
+  };
+
+  searchPlayer = (gamerTag) => {
+    this.props.history.push(`/destiny/player/${gamerTag}`, { gamerTag});
+  };
 
   normalizeRaidWeeks = (raid, history, mode) => normalize.raidWeeks(raid, history, mode);
 
@@ -80,10 +103,10 @@ class RaidWeekViewer extends Component {
   //};
 
   render() {
-    const { match, loading, handlePlayerSearch,
+    const { player } = this.state;
+    const { match, loading,
       nightfallHistory, raidHistory, fetchPostGameCarnageReport, playerProfile, playerPrivacy, viewRaid, viewMode
     } = this.props;
-
     const { notFound } = playerProfile;
     const { nfCount={ prestige: '#', normal: '#' } } = nightfallHistory;
     const {
@@ -104,15 +127,12 @@ class RaidWeekViewer extends Component {
       raidWeeks = this.normalizeRaidWeeks(viewRaid, mergedHistory, viewMode) || [];
     }
 
-    console.log('raidWeeks', raidWeeks);
-    console.log('props', this.props);
-
     const shouldRender = (!loading && raidWeeks.length > 0 && !notFound && !playerPrivacy);
 
     return (
       <div>
         <SearchWrapper loading={loading}>
-          <PlayerSearchForm playerId={match.params.playerId} handlePlayerSearch={handlePlayerSearch}/>
+          <PlayerSearchForm playerId={player} handlePlayerSearch={this.searchPlayer}/>
         </SearchWrapper>
 
         <RaidView>
@@ -168,4 +188,4 @@ const mapDispatchToProps = dispatch => {
   }
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(RaidWeekViewer);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(RaidWeekViewer));

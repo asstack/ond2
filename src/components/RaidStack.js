@@ -5,14 +5,13 @@ import styled from 'styled-components';
 import RaidWeek from '../components/RaidWeek';
 
 const PlayerDataWrapper = styled.section`
-  margin-top: 10px;
 `;
 
 const RaidWeekContainer = styled.div`
   width: 200px;
   height: 300px;
   border: 1px solid black;
-  border-radius: 5px;
+  border-radius: 2px;
   margin: 0 5px;
 `;
 
@@ -25,6 +24,7 @@ const RaidWeekHeader = styled.div`
   text-align: center;
   vertical-align: middle;
   padding: 5px;
+  background-color: white;
 `;
 
 const RaidStack = ({ handleFetchPGCR, raidWeek, raid }) => {

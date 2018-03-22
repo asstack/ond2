@@ -25,19 +25,20 @@ function* fetchPlayerProfile({ data }) {
     yield put({ type: consts.SET_PLAYER_PRIVACY, data: false });
 
     const searchResults = yield call(searchPlayer, data);
-    console.log('searchR', searchResults);
 
     let playerSearch = searchResults[0];
 
-    //if(searchResults.length <= 0) {
-    //  return yield call(handleSearchPlayerFailure);
-    //} else if( searchResults.length === 1) {
+    if(searchResults.length <= 0) {
+      return yield call(handleSearchPlayerFailure);
+    }
+    //else if( searchResults.length === 1) {
     //  playerSearch = searchResults[0];
     //} else {
-    //  yield put({ type: consts.TOGGLE_PLATFORM_SELECT });
+    //  yield put({ type: consts.SET_GAMER_TAG_SUGGESTIONS, data: searchResults });
     //}
 
-    //const platform = yield take({ type: consts.SELECT_PLATFORM });
+    //const gamerTagIndex = yield take({ type: consts.SELECT_GAMER_TAG });
+    //console.log('gamerTagIndex', gamerTagIndex);
 
     const playerCache = yield  select(state => state.playerCache);
     const memberId = playerSearch.membershipId;

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import styled from 'styled-components';
 
-import PlayerSearchForm from '../components/PlayerSearchForm';
+import PlayerSearchForm from '../components/PlayerSearch';
 
 const LandingWrapper = styled.div`
   height: 100%;

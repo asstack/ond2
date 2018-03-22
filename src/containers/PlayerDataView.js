@@ -7,7 +7,7 @@ import normalize from '../store/normalize';
 
 import RaidSelection from '../components/RaidSelection';
 import RaidStack from '../components/RaidStack';
-import PlayerSearchForm from '../components/PlayerSearchForm';
+import PlayerSearch from '../components/PlayerSearch';
 import * as consts from "../store/constants";
 import { connect } from "react-redux";
 import { SET_PGCR } from "../store/constants";
@@ -25,6 +25,9 @@ const RaidStackList = styled.div`
   flex-direction: row;
   flex-flow: row wrap;
   justify-content: center;
+  width: 1100px;
+  padding: 10px 15px 50px 15px;
+  background-color: skyblue;
 `;
 
 const SearchWrapper = styled.div`
@@ -50,13 +53,13 @@ class RaidWeekViewer extends Component {
     handlePlayerSearch(match.params.playerId);
 
     history.listen((location, action) => {
-      if(action === 'PUSH') {
-        if(location.state) {
+      console.log('history listen location', location);
+      console.log('history listen action', action);
+      if(action === 'PUSH' || action === 'POP') {
+        console.log('location.state', !!location.state);
+        if(!!location.state) {
           handlePlayerSearch(location.state.gamerTag);
         }
-      } else if(action === 'POP') {
-        handlePlayerSearch(match.params.playerId);
-        this.setUpPlayer(match.params.playerId);
       }
     });
   }
@@ -66,7 +69,7 @@ class RaidWeekViewer extends Component {
   };
 
   searchPlayer = (gamerTag) => {
-    this.props.history.push(`/destiny/player/${gamerTag}`, { gamerTag});
+    this.props.history.push(`/destiny/player/${gamerTag}`, { gamerTag });
   };
 
   normalizeRaidWeeks = (raid, history, mode) => normalize.raidWeeks(raid, history, mode);
@@ -103,11 +106,14 @@ class RaidWeekViewer extends Component {
   //};
 
   render() {
-    const { player } = this.state;
-    const { match, loading,
-      nightfallHistory, raidHistory, fetchPostGameCarnageReport, playerProfile, playerPrivacy, viewRaid, viewMode
+    const {
+      match, loading, nightfallHistory, raidHistory,
+      fetchPostGameCarnageReport, playerProfile, playerPrivacy,
+      viewRaid, viewMode
     } = this.props;
+
     const { notFound } = playerProfile;
+
     const { nfCount={ prestige: '#', normal: '#' } } = nightfallHistory;
     const {
       mergedHistory,
@@ -118,6 +124,7 @@ class RaidWeekViewer extends Component {
     } = raidHistory;
 
     let raidWeeks = [];
+    const player = match.params.playerId;
 
     if(viewRaid === 'nf' && !!nightfallHistory[viewMode]) {
       if (Object.keys(nightfallHistory[ viewMode ]).length > 1) {
@@ -132,13 +139,15 @@ class RaidWeekViewer extends Component {
     return (
       <div>
         <SearchWrapper loading={loading}>
-          <PlayerSearchForm playerId={player} handlePlayerSearch={this.searchPlayer}/>
+          <PlayerSearch
+            playerId={player}
+            handlePlayerSearch={this.searchPlayer}/>
         </SearchWrapper>
 
         <RaidView>
           { playerPrivacy && <h1 style={{ fontSize: 24 }}>The player has set their account to private</h1>}
           { notFound && <h1 style={{ fontSize: 24 }}>Sorry player not found</h1> }
-          {shouldRender &&
+          {(!loading && !notFound) &&
             <RaidSelection
               handleSetRaid={this.setRaid} handleSetMode={this.setMode}
               nfCount={nfCount} raidCount={raidCount}
@@ -174,7 +183,8 @@ const mapStateToProps = state => {
     nightfallHistory: state.nightfallHistory,
     raidHistory: state.raidHistory,
     playerProfile: state.playerProfile,
-    playerPrivacy: state.playerPrivacy
+    playerPrivacy: state.playerPrivacy,
+    gamerTagSuggestions: state.gamerTagSuggestions
   }
 };
 
@@ -184,7 +194,8 @@ const mapDispatchToProps = dispatch => {
     clearPostGameCarnageReport: () => dispatch({ type: SET_PGCR, data: false}),
     searchPlayer: pathParams => dispatch({ type: consts.FETCH_PLAYER_PROFILE, data: pathParams }),
     setViewRaid: raid => dispatch({ type: consts.SET_VIEW_RAID, data: raid }),
-    setViewMode: mode => dispatch({ type: consts.SET_VIEW_MODE, data: mode })
+    setViewMode: mode => dispatch({ type: consts.SET_VIEW_MODE, data: mode }),
+    selectGamerTag: gamerTag => dispatch({ type: consts.SELECT_GAMER_TAG, data: gamerTag })
   }
 };
 

@@ -15,7 +15,9 @@ import {
   SET_PGCR_CACHE,
   SET_NF_HISTORY_CACHE,
   SET_PLAYER_CACHE,
-  SET_RAID_HISTORY_CACHE, TOGGLE_PLATFORM_SELECT
+  SET_RAID_HISTORY_CACHE,
+  SET_GAMER_TAG_SUGGESTIONS,
+  SELECT_GAMER_TAG
 } from "../constants";
 
 const fetchLogs = (state=[], action) =>
@@ -91,9 +93,16 @@ const setViewRaid = (state = 'nf', action) => {
   return state;
 };
 
-const togglePlatformSelect = (state = 'false', action) => {
-  if(action.type === TOGGLE_PLATFORM_SELECT) {
-    return !state;
+const setGamerTagSuggestions = (state = [], action) => {
+  if(action.type === SET_GAMER_TAG_SUGGESTIONS) {
+    return action.data;
+  }
+  return state;
+};
+
+const selectGamerTag = (state = '', action) => {
+  if(action.type === SELECT_GAMER_TAG) {
+    return action.data;
   }
   return state;
 };
@@ -142,7 +151,8 @@ const rootReducer = combineReducers({
   nfHistoryCache: setNFHistoryCache,
   raidHistoryCache: setRaidHistoryCache,
   playerCache: setPlayerCache,
-  platformSelect: togglePlatformSelect
+  gamerTagSuggestions: setGamerTagSuggestions,
+  selectedGamerTag: selectGamerTag
 });
 
 export default rootReducer;

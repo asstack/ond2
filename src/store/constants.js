@@ -10,9 +10,8 @@ export const SET_PUBLIC_MILESTONES = 'set_public_milestones';
 export const SET_PLAYER_PRIVACY = 'set_player_privacy';
 export const SET_VIEW_MODE = 'set_view_mode';
 export const SET_VIEW_RAID = 'set_view_raid';
-export const SELECT_PLATFORM = 'set_view_raid';
-
-export const TOGGLE_PLATFORM_SELECT = 'toggle_platform_select';
+export const SET_GAMER_TAG_SUGGESTIONS = 'set_gamer_tag_suggestions';
+export const SELECT_GAMER_TAG = 'select_gamer_tag';
 
 export const SET_PGCR_CACHE = 'set_pgcr_cache';
 export const SET_NF_HISTORY_CACHE = 'set_nf_history_cache';
@@ -27,6 +26,7 @@ export const LOAD_PUBLIC_MILESTONE_DATA = 'load_public_milestone_data';
 
 export const TOGGLE_LOADING = 'toggle_loading';
 export const TOGGLE_PLAYER_SEARCH = 'set_player_search';
+
 export const PLATFORM_MODES = {
   xbox: 1,
   psn: 2,

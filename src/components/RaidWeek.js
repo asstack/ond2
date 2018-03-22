@@ -13,13 +13,14 @@ const RaidWeekWrapper = styled.div`
   align-items: center;
   height: 45%;
   border-top: 1px solid black;
+  background-color: white;
 `;
 
 const RaidStackItems = styled.div`
   display: flex;
   flex-direction: row;
   height: 20px;
-  width: 60%;
+  width: 100%;
   ${({ success }) => success ? 'margin-bottom: -1px' : null};
   ${({ success }) => success ? null: 'margin-top: -1px'};
   
@@ -33,7 +34,7 @@ const RaidStackItems = styled.div`
     border-left: 1px solid black;
     border-top: 1px solid black;
     background-color: ${({ success }) => !!success ? 'green' : 'red'};
-    width: ${({ activityCount }) => (100 / activityCount)}%;
+    width: 100%;
     text-decoration: none;
   }
   
@@ -43,20 +44,22 @@ const RaidStackItems = styled.div`
     font-family: san-serif;
   }
 `;
-
+//${({ percentComplete, success }) => !!success ? percentComplete : 100 }%;
 const RaidWeek = ({ raid='', raids, handleFetchPGCR, success=true }) => {
   const renderScore = raid === 'nf';
-
   return (
     <RaidWeekWrapper success={success}>
       {raids && Object.values(raids).map(raid => (
         <RaidStackItems
           onClick={() => handleFetchPGCR(raid.activityDetails.instanceId)}
+          percentComplete={((raid.values.score / raid.values.teamScore) * 100).toFixed(0)}
           key={shortid.generate()}
           activityCount={1}
           success={success}>
           <Link className="pgcr-link" to={`/destiny/pgcr/${raid.activityDetails.instanceId}`}>
-            { renderScore && <ScoreView teamScore={raid.values.teamScore} score={raid.values.score}/> }
+            { renderScore &&
+              <ScoreView teamScore={raid.values.teamScore} score={((raid.values.score / raid.values.teamScore) * 100).toFixed(0)}/>
+            }
           </Link>
         </RaidStackItems>
       ))

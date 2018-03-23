@@ -54,6 +54,10 @@ class PlayerSearch extends Component {
     handlePlayerSearch: PropTypes.func.isRequired
   };
 
+  componentDidMount() {
+    this.playerInput.focus();
+  }
+
   componentWillReceiveProps(nextProps) {
     if(this.props.playerId !== nextProps.playerId) {
       this.setState({ playerSearch: nextProps.playerId });
@@ -80,7 +84,12 @@ class PlayerSearch extends Component {
       <PlayerSearchWrapper>
         <PlayerSearchSection>
           <form onSubmit={(e) => { e.preventDefault(); return handlePlayerSearch(playerSearch) }}>
-            <Input placeholder="Gamer Tag" value={playerSearch} onChange={this.handlePlayerInput} />
+            <Input
+              innerRef={(input) => { this.playerInput = input; }}
+              placeholder="Gamer Tag"
+              value={playerSearch}
+              onChange={this.handlePlayerInput}
+            />
           </form>
         </PlayerSearchSection>
       </PlayerSearchWrapper>

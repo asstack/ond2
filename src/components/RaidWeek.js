@@ -47,6 +47,9 @@ const RaidStackItems = styled.div`
 //${({ percentComplete, success }) => !!success ? percentComplete : 100 }%;
 const RaidWeek = ({ raid='', raids, handleFetchPGCR, success=true }) => {
   const renderScore = raid === 'nf';
+
+  // If success && Object.values(raids) > 7
+  // (Remove ScoreView and add tooltip) OR (add tooltip to all and remove on condition)
   return (
     <RaidWeekWrapper success={success}>
       {raids && Object.values(raids).map(raid => (

@@ -118,13 +118,3 @@ const RaidSelection = ({ handleSetRaid, handleSetMode, nfCount, raidCount, viewR
 };
 
 export default RaidSelection;
-
-/*
-          <Selection
-            href="javascript:void(0)"
-            selected={viewRaid==='eow' && viewMode ==='prestige'}
-            onClick={() => { handleSetRaid('eow'); handleSetMode('prestige');}}
-          >
-            Prestige({raidCount.eow.prestige})
-          </Selection>
- */

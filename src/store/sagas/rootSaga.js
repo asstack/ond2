@@ -13,15 +13,19 @@ import normalize from '../normalize';
 
 function* handleSearchPlayerFailure() {
   yield put({ type: consts.SET_PLAYER_PROFILE, data: { notFound: true } });
-  yield put({ type: consts.SET_RAID_HISTORY, data: {} });
-  yield put({ type: consts.SET_ACTIVITY_HISTORY, data: {} });
-  yield put({ type: consts.SET_NF_HISTORY, data: {} });
   yield put({ type: consts.TOGGLE_LOADING });
+}
+
+function* clearSearchData() {
+  yield put({ type: consts.SET_RAID_HISTORY, data: { raidCount: { eow: { normal: 0, prestige: 0 }, lev: { normal: 0, prestige: 0 } } } });
+  yield put({ type: consts.SET_ACTIVITY_HISTORY, data: { normal: {}, prestige: {}, nfCount: { normal: 0, prestige: 0 } } });
+  yield put({ type: consts.SET_NF_HISTORY, data: {} });
 }
 
 function* fetchPlayerProfile({ data }) {
   try {
     yield put({ type: consts.TOGGLE_LOADING });
+    yield call(clearSearchData);
     yield put({ type: consts.SET_PLAYER_PRIVACY, data: false });
 
     const searchResults = yield call(searchPlayer, data);

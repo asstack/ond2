@@ -48,21 +48,25 @@ class RaidWeekViewer extends Component {
     }
   }
 
-  componentDidMount() {
+  componentDidMount = () => {
     const {handlePlayerSearch, match, history} = this.props;
     handlePlayerSearch(match.params.playerId);
 
-    history.listen((location, action) => {
-      console.log('history listen location', location);
-      console.log('history listen action', action);
+    // Will only be called once the component is mounted
+    // PGCR will unmount and cause listener to be cleared
+    // This prevents the listener from catch the PGCR back.
+    this.unListen = history.listen((location, action) => {
       if(action === 'PUSH' || action === 'POP') {
-        console.log('location.state', !!location.state);
         if(!!location.state) {
           handlePlayerSearch(location.state.gamerTag);
         }
       }
     });
-  }
+  };
+
+  componentWillUnmount = () => {
+    this.unListen();
+  };
 
   setUpPlayer = (player) => {
     this.setState({ player });
@@ -86,25 +90,6 @@ class RaidWeekViewer extends Component {
     this.props.setViewMode(mode);
   };
 
-  //shouldComponentUpdate = (nextProps) => {
-  //  //console.log('this.props', this.props);
-  //  //console.log('nextProps', nextProps);
-  //  const wee = (
-  //    this.props.playerProfile.displayName !== nextProps.playerProfile.displayName ||
-  //    this.props.raidHistory.raidCount.eow.prestige !== nextProps.raidHistory.raidCount.eow.prestige ||
-  //    this.props.raidHistory.raidCount.eow.normal !== nextProps.raidHistory.raidCount.eow.normal ||
-  //    this.props.raidHistory.raidCount.lev.prestige !== nextProps.raidHistory.raidCount.lev.prestige ||
-  //    this.props.raidHistory.raidCount.lev.normal !== nextProps.raidHistory.raidCount.lev.normal ||
-  //    this.props.nightfallHistory.nfCount.prestige !== nextProps.nightfallHistory.nfCount.prestige ||
-  //    this.props.nightfallHistory.nfCount.normal !== nextProps.nightfallHistory.nfCount.normal ||
-  //    this.props.viewRaid !== nextProps.viewRaid ||
-  //    this.props.viewMode !== nextProps.viewMode ||
-  //    !!nextProps.playerProfile.notFound
-  //  );
-  //  console.log('wee', wee);
-  //  return wee;
-  //};
-
   render() {
     const {
       match, loading, nightfallHistory, raidHistory,
@@ -114,12 +99,12 @@ class RaidWeekViewer extends Component {
 
     const { notFound } = playerProfile;
 
-    const { nfCount={ prestige: '#', normal: '#' } } = nightfallHistory;
+    const { nfCount={ prestige: '0', normal: '0' } } = nightfallHistory;
     const {
       mergedHistory,
       raidCount={
-        eow: { prestige: '#', normal: '#' },
-        lev: { prestige: '#', normal: '#' }
+        eow: { prestige: '0', normal: '0' },
+        lev: { prestige: '0', normal: '0' }
       }
     } = raidHistory;
 
@@ -128,9 +113,9 @@ class RaidWeekViewer extends Component {
 
     if(viewRaid === 'nf' && !!nightfallHistory[viewMode]) {
       if (Object.keys(nightfallHistory[ viewMode ]).length > 1) {
-        raidWeeks = Object.entries(nightfallHistory[viewMode]).map((item) => [ item[ 0 ], item[ 1 ] ])
+        raidWeeks = Object.entries(nightfallHistory[viewMode]).map((item) => [ ...item ])
       }
-    } else {
+    } if(viewRaid === 'eow' || viewRaid === 'lev') {
       raidWeeks = this.normalizeRaidWeeks(viewRaid, mergedHistory, viewMode) || [];
     }
 

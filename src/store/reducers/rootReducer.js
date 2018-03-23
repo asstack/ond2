@@ -65,7 +65,7 @@ const setPublicMilestones = (state = false, action) => {
   return state;
 };
 
-const setNightfallHistory = (state = { normal: {}, prestige: {}, nfCount: { normal: 0, prestige: 0 } }, action) => {
+const setNightfallHistory = (state ={ normal: {}, prestige: {}, nfCount: { normal: 0, prestige: 0 } }, action) => {
   if(action.type === SET_NF_HISTORY) {
     return action.data;
   }

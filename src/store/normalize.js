@@ -157,11 +157,11 @@ const _normalizeRaidHistory = (activityHistory) => {
 
       accum.raidCount = {
         eow: {
-          prestige: accum.raidCount.eow.normal + eowPrestigeCount,
+          prestige: accum.raidCount.eow.prestige + eowPrestigeCount,
           normal: accum.raidCount.eow.normal + eowNormalCount,
         },
         lev: {
-          prestige: accum.raidCount.lev.normal + levPrestigeCount,
+          prestige: accum.raidCount.lev.prestige + levPrestigeCount,
           normal: accum.raidCount.lev.normal + levNormalCount,
         }
       };

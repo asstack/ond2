@@ -174,6 +174,7 @@ const _normalizeRaidHistory = (activityHistory) => {
   return raidHistory;
 };
 
+// To get date, add string to header value, and split on some unique character. ::--
 const _normalizeNightfallHistory = ({prestige, normal}) => {
   const nPrestige = Object.values(prestige).map(nf => ({...nf, values: _normalizeRaidValues(nf.values)}));
   const nNormal = Object.values(normal).map(nf => ({...nf, values: _normalizeRaidValues(nf.values)}));

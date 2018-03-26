@@ -16,6 +16,7 @@ const AppWrapper = styled.div`
   width: 100%;
   height: 100%;
   align-items: center;
+  background-color: #f4f4f4;
 `;
 
 class App extends Component {

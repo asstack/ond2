@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import AutoSuggest from 'react-autosuggest';
 
 const PlayerSearchWrapper = styled.section`
   display: flex;
@@ -13,32 +12,27 @@ const PlayerSearchWrapper = styled.section`
 
 const PlayerSearchSection = styled.div`
   margin: 75px 0 30px 0;
-  
-  & input {
-    width: 300px;
-    height: 40px;
-    font-size: 24px;
-    border-radius: 3px;
-    padding: 5px;
-  }
 
 `;
 
 const Input = styled.input`
-  width: 300px;
-  height: 40px;
-  font-size: 24px;
-  border-radius: 3px;
-  padding: 5px;
+  width: 756px;
+  height: 68px;
+  border-radius: 34px;
+  border solid 2px black;
+  font-size: 20px;
+  padding: 32px;
+  
+  font-family: Montserrat;
+  font-size: 20px;
+  font-weight: 500;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  text-align: left;
+  color: #000000;
 `;
-
-//function renderSuggestion(suggestion) {
-//  return (
-//    <div style={{ width: '300px', height: '50px' }}>{suggestion}</div>
-//  );
-//}
-//
-//const getSuggestionValue = suggestion => suggestion;
 
 class PlayerSearch extends Component {
   constructor(props) {
@@ -74,12 +68,6 @@ class PlayerSearch extends Component {
     const { playerSearch } = this.state;
     const { handlePlayerSearch } = this.props;
 
-    //const inputProps = {
-    //  placeholder: 'Gamer Tag',
-    //  value: playerSearch,
-    //  onChange: this.handleOnChange
-    //};
-
     return(
       <PlayerSearchWrapper>
         <PlayerSearchSection>
@@ -98,41 +86,3 @@ class PlayerSearch extends Component {
 }
 
 export default PlayerSearch;
-
-/*
-          <form onSubmit={(e) => { e.preventDefault(); return this.props.handlePlayerSearch(playerSearch) }}>
-            <AutoSuggest
-              suggestions={suggestions}
-              getSuggestionValue={getSuggestionValue}
-              onSuggestionSelected={this.onSuggestionSelected}
-              onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
-              onSuggestionsClearRequested={this.onSuggestionsClearRequested}
-              renderSuggestion={renderSuggestion}
-              inputProps={inputProps}
-            />
-          </form>
-            handleOnChange = (event, { newValue, method }) => {
-    if(method === 'type') {
-      this.handlePlayerInput(newValue)
-    }
-    else if(method === 'click') {
-      //this.props.selectGamerTag(newValue);
-    }
-  };
-
-  onSuggestionSelected = (event, { suggestion, suggestionValue, suggestionIndex }) => {
-    //this.selectGamerTag(suggestion);
-  };
-
-  onSuggestionsFetchRequested = ({ value }) => {
-    this.setState({
-      suggestions: this.props.gamerTagSuggestions
-    })
-  };
-
-  onSuggestionsClearRequested = (...props) => {
-    this.setState({
-      suggestions: []
-    })
-  };
- */

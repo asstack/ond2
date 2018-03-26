@@ -3,9 +3,9 @@ import styled from 'styled-components';
 
 const RaidViewSelectionWrapper = styled.div`
   display: flex;
-  max-width: 1000px;
-  flex: 1 100%;
-  justify-content: space-evenly;
+  flex 1 100%;
+  max-width: 1100px;
+  justify-content: space-around;
   align-items: center;
   flex-direction: row;
   
@@ -18,38 +18,55 @@ const RaidViewSelectionWrapper = styled.div`
 
 const SelectionGroup = styled.div`
   display: flex;
+  width: 100%;
   flex-direction: row;
+  align-items: center;
   justify-content: space-evenly;
 `;
 
 const RaidHeading = styled.div`
-  font-weight: bold;
-  font-size: 24px;
-  margin-bottom: 8px;
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  justify-content: center;
+  margin-bottom: 15px;
+  font-family: Montserrat;
+  font-size: 20px;
+  font-weight: 500;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  color: #000000;
 `;
 
 const RaidSelect = styled.div`
-  width: 100%;
+  width: 360px;
+  height: 88px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding-top: 15px;
-  border-radius: 2px;
-  background-color: ${props => props.selected ? 'skyblue' : 'white'};
+  padding-top: 20px;
+  border-radius: 4px;
+  background-color: ${props => props.selected ? 'white' : '#eeeeee'};
 `;
 
-const Selection = styled.a`
-  width: 75px;
-  height: 32px;
-  font-size: 18px;
-  font-family: sans-serif;
-  color: ${(props) => props.selected ? 'black' : 'blue'};
-  ${props => props.selected && 'text-decoration: none'};
-  ${props => props.selected && 'cursor: default'};
+const Selection = styled.div`
+  margin-bottom: 15px;
   
-  :nth-child(2) {
-    margin-left: 30px;
+  p {
+    font-family: Montserrat;
+    font-size: 16px;
+    font-weight: ${({ selected }) => selected ? 600 : 'normal'};
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: normal;
+    text-align: center;
+    color: #2b76ed;
+    cursor: ${({ selected }) => selected ? 'default' : 'pointer' };
+    text-decoration: ${({ selected }) => selected ? 'underline' : 'none' };
   }
 `;
 
@@ -58,7 +75,7 @@ const RaidSelection = ({ handleSetRaid, handleSetMode, nfCount, raidCount, viewR
     <RaidViewSelectionWrapper>
       <RaidSelect selected={viewRaid==='eow'}>
         <RaidHeading onClick={() => { handleSetRaid('eow'); handleSetMode('normal');}}>
-          EOW
+          <p>EOW</p>
         </RaidHeading>
         <SelectionGroup>
           <Selection
@@ -66,14 +83,14 @@ const RaidSelection = ({ handleSetRaid, handleSetMode, nfCount, raidCount, viewR
             selected={viewRaid==='eow' && viewMode ==='normal'}
             onClick={() => { handleSetRaid('eow'); handleSetMode('normal');}}
           >
-            Normal({raidCount.eow.normal})
+            <p>N {raidCount.eow.normal}</p>
           </Selection>
         </SelectionGroup>
       </RaidSelect>
 
       <RaidSelect selected={viewRaid==='lev'}>
-        <RaidHeading onClick={() => { handleSetRaid('lev'); handleSetMode('normal');}}>
-          Leviathan
+        <RaidHeading onClick={() => { handleSetRaid('lev'); handleSetMode('prestige');}}>
+          <p>Leviathan</p>
         </RaidHeading>
         <SelectionGroup>
           <Selection
@@ -81,21 +98,21 @@ const RaidSelection = ({ handleSetRaid, handleSetMode, nfCount, raidCount, viewR
             selected={viewRaid==='lev' && viewMode ==='normal'}
             onClick={() => { handleSetRaid('lev'); handleSetMode('normal');}}
           >
-            Normal({raidCount.lev.normal})
+            <p>N {raidCount.lev.normal}</p>
           </Selection>
           <Selection
             href="javascript:void(0)"
             selected={viewRaid==='lev' && viewMode ==='prestige'}
             onClick={() => { handleSetRaid('lev'); handleSetMode('prestige');}}
           >
-            Prestige({raidCount.lev.prestige})
+            <p>P {raidCount.lev.prestige}</p>
           </Selection>
         </SelectionGroup>
       </RaidSelect>
 
       <RaidSelect selected={viewRaid ==='nf'}>
         <RaidHeading onClick={() => { handleSetRaid('nf'); handleSetMode('prestige');}}>
-          Nightfall
+          <p>Nightfall</p>
         </RaidHeading>
         <SelectionGroup>
           <Selection
@@ -103,13 +120,13 @@ const RaidSelection = ({ handleSetRaid, handleSetMode, nfCount, raidCount, viewR
             selected={viewRaid==='nf' && viewMode ==='normal'}
             onClick={() => { handleSetRaid('nf'); handleSetMode('normal');}}
           >
-            Normal({nfCount.normal})
+            <p>N {nfCount.normal}</p>
           </Selection>
           <Selection
             href="javascript:void(0)"
             selected={viewRaid==='nf' && viewMode ==='prestige'}
             onClick={() => { handleSetRaid('nf'); handleSetMode('prestige');}}>
-            Prestige({nfCount.prestige})
+            <p>P {nfCount.prestige}</p>
           </Selection>
         </SelectionGroup>
       </RaidSelect>

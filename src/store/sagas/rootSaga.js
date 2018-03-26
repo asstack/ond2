@@ -188,6 +188,7 @@ function* collectRaidData(playerProfile) {
 
 function* collectPGCR({ data }) {
   try {
+    yield put({ type: consts.TOGGLE_LOADING });
     const pgcrCache = yield select(state => state.pgcrCache);
 
     if(pgcrCache[data]) {

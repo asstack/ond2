@@ -25,9 +25,10 @@ const RaidStackList = styled.div`
   flex-direction: row;
   flex-flow: row wrap;
   justify-content: center;
-  width: 1100px;
-  padding: 10px 15px 50px 15px;
-  background-color: skyblue;
+  width: 1130px;
+  padding: 15px 15px;
+  border-radius: 4px;
+  background-color: white;
 `;
 
 const SearchWrapper = styled.div`

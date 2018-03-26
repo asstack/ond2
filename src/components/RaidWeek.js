@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import shortid from "shortid";
 
+import { Popup, Progress } from 'semantic-ui-react';
+
 import ScoreView from '../components/ScoreView';
 
 const RaidWeekWrapper = styled.div`
@@ -12,8 +14,31 @@ const RaidWeekWrapper = styled.div`
   justify-content: ${({ success }) => success ? 'flex-end' : 'flex-start' };
   align-items: center;
   height: 45%;
-  border-top: 1px solid black;
+  width: 100%;
+  border-top: 1px solid #d9d9d9;
   background-color: white;
+  overflow: hidden;
+  overflow-y: scroll;
+  
+  ::-webkit-scrollbar {
+    width: 0px;  /* remove scrollbar space */
+    background: transparent;  /* optional: just make scrollbar invisible */
+  }
+  
+  .pgcr-link {
+    width: 100%;
+    margin: 1px 0 0 0;
+    
+    .progress {
+      border-radius: 0 !important;
+      margin: 0 0 0 0 !important;
+    }
+    
+    .bar {
+      border-radius: 0 !important;
+    }
+  }
+  
 `;
 
 const RaidStackItems = styled.div`
@@ -44,28 +69,42 @@ const RaidStackItems = styled.div`
     font-family: san-serif;
   }
 `;
+
 //${({ percentComplete, success }) => !!success ? percentComplete : 100 }%;
+
 const RaidWeek = ({ raid='', raids, handleFetchPGCR, success=true }) => {
-  const renderScore = raid === 'nf';
+  const isNF = raid === 'nf';
+  const manyRaids = Object.values(raids).length > 8;
 
   // If success && Object.values(raids) > 7
   // (Remove ScoreView and add tooltip) OR (add tooltip to all and remove on condition)
   return (
     <RaidWeekWrapper success={success}>
-      {raids && Object.values(raids).map(raid => (
-        <RaidStackItems
-          onClick={() => handleFetchPGCR(raid.activityDetails.instanceId)}
-          percentComplete={((raid.values.score / raid.values.teamScore) * 100).toFixed(0)}
-          key={shortid.generate()}
-          activityCount={1}
-          success={success}>
-          <Link className="pgcr-link" to={`/destiny/pgcr/${raid.activityDetails.instanceId}`}>
-            { renderScore &&
-              <ScoreView teamScore={raid.values.teamScore} score={((raid.values.score / raid.values.teamScore) * 100).toFixed(0)}/>
-            }
-          </Link>
-        </RaidStackItems>
-      ))
+      {raids && Object.values(raids).map(raid => {
+        const size = success ? manyRaids ? 'tiny' : 'small' : 'tiny';
+
+        const content = isNF
+          ? `Score: ${raid.values.score} / ${raid.values.teamScore}` : `KDA: ${raid.values.kills} / ${raid.values.deaths} / ${raid.values.assists}`;
+
+        return (
+          <Popup
+            key={shortid.generate()}
+            content={content }
+            trigger={
+              <Link className="pgcr-link" to={ `/destiny/pgcr/${raid.activityDetails.instanceId}` }>
+                <Progress
+                  onClick={() => handleFetchPGCR(raid.activityDetails.instanceId)}
+                  value={raid.values.score || 100 }
+                  total={raid.values.teamScore || 100 }
+                  size={size}
+                  success={success}
+                  error={!success}
+                >
+                </Progress>
+              </Link>
+            }/>
+        )
+      })
       }
     </RaidWeekWrapper>
   )

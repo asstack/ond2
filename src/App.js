@@ -48,15 +48,15 @@ class App extends Component {
       <AppWrapper>
         { loading && <DestinyLoader /> }
 
-        <Route exact path="/destiny" render={data => (
+        <Route exact path="/" render={data => (
           <Landing loading={loading} {...data} />
         )} />
 
-         <Route path="/destiny/player/:playerId" render={(data) => (
+         <Route path="/player/:playerId" render={(data) => (
            <PlayerDataView handlePlayerSearch={this.searchByGamerTag} {...this.props} {...data} />
          )}/>
 
-        <Route path="/destiny/pgcr/:instanceId" render={({...rest}) => (
+        <Route path="/pgcr/:instanceId" render={({...rest}) => (
           <PostGameCarnageReportContainer
             {...rest}
             pgcr={pgcr}

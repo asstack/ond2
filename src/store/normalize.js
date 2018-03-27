@@ -21,28 +21,25 @@ const splitRaidByWeek = (raidWeeks, raids) => (
 );
 
 const splitNightfallByWeek = (weeks, nightfalls) => {
-  return weeks.reduce((accum, week, idx, arr) => {
-    const weekName = `Week ${idx + 1}`;
-    const smallWeek = `(W${idx + 1})`;
+  return weeks.reduce((accum, week) => {
+    const nextWeek = moment(week).add(1, 'weeks');
 
-    const nextWeek = arr[ idx + 1 ] || {};
+    const weekRange = `${week.format('MM/DD')}`;//-${nextWeek.format('MM/DD')}`;
+    const smallDate = week.format('MM/DD');
+
     const weekBox = nightfalls.filter(nf => {
       const time = moment.utc(nf.period);
       return time.isSameOrAfter(week) && time.isBefore(nextWeek);
     });
 
     if (weekBox.length > 0) {
-      const constValue = NF_HASHES.all[ weekBox[ 0 ].activityDetails.referenceId ] || weekName;
-      const refIdName = constValue ? `${constValue.name.substring(11)} ${smallWeek}` : weekName;
+      const constValue = NF_HASHES.all[ weekBox[ 0 ].activityDetails.referenceId ] || weekRange;
+      const nfName = constValue ? `${constValue.name.substring(11)}:D:${smallDate}` : weekRange;
 
-      if (refIdName) {
-        const indexOfName = Object.keys(accum).indexOf(refIdName);
-        const nfName = indexOfName >= 0 ? `${refIdName}-:-${indexOfName}` : refIdName;
+      accum[ nfName ] = weekBox
 
-        accum[ nfName ] = weekBox
-      }
     } else {
-      accum[ weekName ] = []
+      accum[ weekRange ] = []
     }
     return accum;
   }, {})

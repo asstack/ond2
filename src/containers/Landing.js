@@ -22,7 +22,7 @@ class Landing extends Component {
   playerSearch = (name) => {
     const { history } = this.props;
     this.setState({ playerId: name });
-    history.push(`/destiny/player/${name}`, { gamerTag: name });
+    history.push(`/player/${name}`, { gamerTag: name });
   };
 
   render() {

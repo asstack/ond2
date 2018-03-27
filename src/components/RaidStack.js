@@ -4,27 +4,58 @@ import styled from 'styled-components';
 
 import RaidWeek from '../components/RaidWeek';
 
-const PlayerDataWrapper = styled.section`
-`;
-
 const RaidWeekContainer = styled.div`
-  width: 200px;
-  height: 300px;
-  border: 1px solid black;
-  border-radius: 2px;
-  margin: 0 5px;
+  width: 212px;
+  height: 650px;
+  border-radius: 4px;
+  background-color: #ffffff;
+  border: solid 1px #e2e2e2;
+  
+  font-family: Montserrat;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  text-align: center;
+  color: #000000;
+  
+  @media only screen and (min-width: 340px) and (max-width: 400px) {
+    height: 100%;
+  }
+  
+  @media only screen and (min-width: 400px) and (max-width: 750px) {
+    height: 100%;
+  }
+  
+  @media only screen and (min-width: 750px) and (max-width: 1100px) {
+    height: 100%;
+  }
 `;
 
 const RaidWeekHeader = styled.div`
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   justify-content: center;
-  height: 10%;
-  font-size: ${({ raid }) => raid === 'nf' ? '17px' : '26px;'};
-  text-align: center;
-  vertical-align: middle;
+  align-items: center;
+  height: 49px;
+  font-size: 16px;
   padding: 5px;
   background-color: white;
+`;
+
+const HeaderDate = styled.span`
+  margin: 0 0 0 5px;
+  font-family: Montserrat;
+  font-size: 14px;
+  font-weight: bolder;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  text-align: bottom;
+  color: #000000;
 `;
 
 const RaidStack = ({ handleFetchPGCR, raidWeek, raid }) => {
@@ -43,18 +74,19 @@ const RaidStack = ({ handleFetchPGCR, raidWeek, raid }) => {
   //console.log('completed t', test1.length);
   //console.log('failed t', test2.length);
 
-  const name = week.split('-:-')[0];
+  const [name, date] = week.split(':D:');
   //console.log('week', week);
   //console.log('completedRaids', completedRaids);
   //Raids should have week start date in header instead of (W5).
   return(
-    <PlayerDataWrapper>
-      <RaidWeekContainer>
-        <RaidWeekHeader raid={raid}>{ name }</RaidWeekHeader>
-        <RaidWeek raid={raid} raids={completedRaids} handleFetchPGCR={handleFetchPGCR} />
-        <RaidWeek success={false} raids={failedRaids} handleFetchPGCR={handleFetchPGCR} />
-      </RaidWeekContainer>
-    </PlayerDataWrapper>
+    <RaidWeekContainer>
+      <RaidWeekHeader raid={raid}>
+        {name}
+        <HeaderDate>{date}</HeaderDate>
+      </RaidWeekHeader>
+      <RaidWeek raid={raid} raids={completedRaids} handleFetchPGCR={handleFetchPGCR} />
+      <RaidWeek success={false} raids={failedRaids} handleFetchPGCR={handleFetchPGCR} />
+    </RaidWeekContainer>
   );
 };
 

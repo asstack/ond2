@@ -14,6 +14,19 @@ const RaidViewSelectionWrapper = styled.div`
     margin-right: 10px;
     text-align: right;
   }
+  
+  @media only screen and (min-width: 340px) and (max-width: 400px) {
+    width: 275px;
+  }
+  
+  @media only screen and (min-width: 400px) and (max-width: 750px) {
+    width: 375px;
+  }
+  
+  @media only screen and (min-width: 750px) and (max-width: 1100px) {
+    max-width: 500px;
+  
+  }
 `;
 
 const SelectionGroup = styled.div`
@@ -22,6 +35,14 @@ const SelectionGroup = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: space-evenly;
+  
+  @media only screen and (min-width: 400px) and (max-width: 750px) {
+    width: 92%;
+  }
+  
+  @media only screen and (min-width: 750px) and (max-width: 1100px) {
+  
+  }
 `;
 
 const RaidHeading = styled.div`
@@ -50,6 +71,15 @@ const RaidSelect = styled.div`
   padding-top: 20px;
   border-radius: 4px;
   background-color: ${props => props.selected ? 'white' : '#eeeeee'};
+  
+  @media only screen and (min-width: 400px) and (max-width: 750px) {
+    width: 125px;
+  }
+  
+  @media only screen and (min-width: 750px) and (max-width: 1100px) {
+    width: 160px;
+   
+  }
 `;
 
 const Selection = styled.div`

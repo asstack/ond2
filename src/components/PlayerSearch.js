@@ -12,6 +12,18 @@ const PlayerSearchWrapper = styled.section`
 
 const PlayerSearchSection = styled.div`
   margin: 75px 0 30px 0;
+  
+  @media only screen and (min-width: 340px) and (max-width: 400px) {
+    margin: 30px 0 15px 0;
+  }
+  
+  @media only screen and (max-width: 750px) {
+    margin: 30px 0 15px 0;
+  }
+  
+  @media only screen and (min-width: 750px) and (max-width: 1100px) {
+    margin: 30px 0 15px 0;
+  }
 
 `;
 
@@ -32,6 +44,20 @@ const Input = styled.input`
   letter-spacing: normal;
   text-align: left;
   color: #000000;
+  
+  @media only screen and (min-width: 340px) and (max-width: 400px) {
+    width: 225px;
+  }
+  
+  
+  @media only screen and (min-width: 400px) and (max-width: 750px) {
+    width: 375px;
+  }
+  
+  @media only screen and (min-width: 750px) and (max-width: 1100px) {
+    width: 650px;
+  }
+  
 `;
 
 class PlayerSearch extends Component {

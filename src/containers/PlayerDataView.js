@@ -18,17 +18,36 @@ const RaidView = styled.div`
   flex-flow: row wrap;
   justify-content: center;
   align-items: center;
+  
 `;
 
 const RaidStackList = styled.div`
   display: flex;
-  flex-direction: row;
+  height: 685px;
   flex-flow: row wrap;
   justify-content: center;
-  width: 1130px;
   padding: 15px 15px;
   border-radius: 4px;
   background-color: white;
+  
+  @media only screen and (min-width: 340px) and (max-width: 400px) {
+    height: 100%;
+    width: 92%;
+    flex-flow: row-reverse wrap-reverse;
+  }
+  
+  @media only screen and (min-width: 400px) and (max-width: 750px) {
+    height: 100%;
+    width: 92%;
+    flex-flow: row-reverse wrap-reverse;
+  }
+  
+  @media only screen and (min-width: 750px) and (max-width: 1100px) {
+    height: 100%;
+    width: 86%;
+    flex-flow: row-reverse wrap-reverse;
+  
+  }
 `;
 
 const SearchWrapper = styled.div`

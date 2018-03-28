@@ -29,7 +29,7 @@ const RaidWeekContainer = styled.div`
     height: 100%;
   }
   
-  @media only screen and (min-width: 750px) and (max-width: 1100px) {
+  @media only screen and (min-width: 750px) and (max-width: 1250px) {
     height: 100%;
   }
 `;
@@ -65,8 +65,8 @@ const RaidStack = ({ handleFetchPGCR, raidWeek, raid }) => {
   const completedRaids = raidValues.filter(raid => raid.values.completionReason === 0);
   const failedRaids = raidValues.filter(raid => raid.values.completionReason !== 0);
 
-  const test1 = raidValues.filter(raid => raid.values.completed === 1);
-  const test2 = raidValues.filter(raid => raid.values.completed !== 1);
+  // const test1 = raidValues.filter(raid => raid.values.completed === 1);
+  // const test2 = raidValues.filter(raid => raid.values.completed !== 1);
 
   //console.log('completed', completedRaids.length);
   //console.log('failed', failedRaids);

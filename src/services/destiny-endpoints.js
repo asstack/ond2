@@ -16,6 +16,10 @@ const getGroupsForMember = (pathParams) => {
   return `${apiType.group}/User/${membershipType}/${membershipId}/${filter}/${groupType}/`;
 };
 
+const getDestinyAsset = (path) => {
+  return `${destinyBaseURL}${path}`
+};
+
 /*
 Query String Params
   - count: Number of Rows to return
@@ -44,5 +48,6 @@ export {
   getActivityHistory,
   getAggregateActivityStats,
   getPostGameCarnageReport,
-  getPublicMilestones
+  getPublicMilestones,
+  getDestinyAsset
 }

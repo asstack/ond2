@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
+import { connect } from "react-redux";
 import styled from 'styled-components';
 import shortid from 'shortid';
 
@@ -9,7 +10,7 @@ import RaidSelection from '../components/RaidSelection';
 import RaidStack from '../components/RaidStack';
 import PlayerSearch from '../components/PlayerSearch';
 import * as consts from "../store/constants";
-import { connect } from "react-redux";
+
 import { SET_PGCR } from "../store/constants";
 import { FETCH_PGCR } from "../store/constants";
 
@@ -56,8 +57,9 @@ const SearchWrapper = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  ${(props) => props.loading ? "div { display: none; }" : ''}
 `;
+
+//${(props) => props.loading ? "div { display: none; }" : ''}
 
 class RaidWeekViewer extends Component {
   constructor(props) {
@@ -114,7 +116,7 @@ class RaidWeekViewer extends Component {
     const {
       match, loading, nightfallHistory, raidHistory,
       fetchPostGameCarnageReport, playerProfile, playerPrivacy,
-      viewRaid, viewMode
+      viewRaid, viewMode, gamerTagOptions, selectGamerTag
     } = this.props;
 
     const { notFound } = playerProfile;
@@ -131,9 +133,15 @@ class RaidWeekViewer extends Component {
     let raidWeeks = [];
     const player = match.params.playerId;
 
+
     if(viewRaid === 'nf' && !!nightfallHistory[viewMode]) {
+
       if (Object.keys(nightfallHistory[ viewMode ]).length > 1) {
-        raidWeeks = Object.entries(nightfallHistory[viewMode]).map((item) => [ ...item ])
+
+        //hack get this shit outta here
+        const nfLen = Object.entries(nightfallHistory[viewMode]).length;
+
+        raidWeeks = Object.entries(nightfallHistory[viewMode]).slice(1, nfLen).map((item) => [ ...item ])
       }
     } if(viewRaid === 'eow' || viewRaid === 'lev') {
       raidWeeks = this.normalizeRaidWeeks(viewRaid, mergedHistory, viewMode) || [];
@@ -145,8 +153,11 @@ class RaidWeekViewer extends Component {
       <div>
         <SearchWrapper loading={loading}>
           <PlayerSearch
+            gamerTagOptions={gamerTagOptions}
             playerId={player}
-            handlePlayerSearch={this.searchPlayer}/>
+            handlePlayerSearch={this.searchPlayer}
+            selectGamerTag={selectGamerTag}
+          />
         </SearchWrapper>
 
         <RaidView>
@@ -189,7 +200,7 @@ const mapStateToProps = state => {
     raidHistory: state.raidHistory,
     playerProfile: state.playerProfile,
     playerPrivacy: state.playerPrivacy,
-    gamerTagSuggestions: state.gamerTagSuggestions
+    gamerTagOptions: state.gamerTagOptions
   }
 };
 

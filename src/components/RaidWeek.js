@@ -29,7 +29,7 @@ const RaidWeekWrapper = styled.div`
     height: 199px;
   }
   
-  @media only screen and (min-width: 750px) and (max-width: 1100px) {
+  @media only screen and (min-width: 750px) and (max-width: 1250px) {
     height: 199px;
   }
   

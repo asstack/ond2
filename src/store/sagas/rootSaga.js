@@ -20,6 +20,7 @@ function* clearSearchData() {
   yield put({ type: consts.SET_RAID_HISTORY, data: { raidCount: { eow: { normal: 0, prestige: 0 }, lev: { normal: 0, prestige: 0 } } } });
   yield put({ type: consts.SET_ACTIVITY_HISTORY, data: { normal: {}, prestige: {}, nfCount: { normal: 0, prestige: 0 } } });
   yield put({ type: consts.SET_NF_HISTORY, data: {} });
+  yield put({ type: consts.SET_GAMER_TAG_OPTIONS, data: [] });
 }
 
 function* fetchPlayerProfile({ data }) {
@@ -30,19 +31,23 @@ function* fetchPlayerProfile({ data }) {
 
     const searchResults = yield call(searchPlayer, data);
 
-    let playerSearch = searchResults[0];
+    let playerSearch;
 
     if(searchResults.length <= 0) {
       return yield call(handleSearchPlayerFailure);
     }
-    //else if( searchResults.length === 1) {
-    //  playerSearch = searchResults[0];
-    //} else {
-    //  yield put({ type: consts.SET_GAMER_TAG_SUGGESTIONS, data: searchResults });
-    //}
+    else if( searchResults.length === 1) {
+     playerSearch = searchResults[0];
+    }
+    else {
+      yield put({ type: consts.TOGGLE_LOADING });
+      yield put({ type: consts.SET_GAMER_TAG_OPTIONS, data: searchResults });
 
-    //const gamerTagIndex = yield take({ type: consts.SELECT_GAMER_TAG });
-    //console.log('gamerTagIndex', gamerTagIndex);
+      const searchSelection = yield take([consts.SELECT_GAMER_TAG]);
+      yield put({ type: consts.SET_GAMER_TAG_OPTIONS, data: [] });
+      playerSearch = searchResults.filter(curr => curr.membershipId === searchSelection.data.key)[0];
+      yield put({ type: consts.TOGGLE_LOADING });
+    }
 
     const playerCache = yield  select(state => state.playerCache);
     const memberId = playerSearch.membershipId;
@@ -142,6 +147,7 @@ function* collectNightfallData(playerProfile) {
     yield put({ type: consts.FETCH_LOG, data: `Nightfall data successfully collected`});
   }
   catch(error) {
+    console.warn('error', error);
     yield put({ type: consts.FETCH_LOG, data: `NightFall Data Fetch Error: ${error}`});
     yield put({ type: consts.TOGGLE_LOADING });
   }
@@ -181,6 +187,7 @@ function* collectRaidData(playerProfile) {
     yield put({ type: consts.FETCH_LOG, data: 'Raid Data Successfully Collected' });
   }
   catch(error) {
+    console.warn('error', error);
     yield put({ type: consts.FETCH_LOG, data: `Raid Data Fetch Error: ${error}`});
     yield put({ type: consts.TOGGLE_LOADING });
   }
@@ -204,6 +211,7 @@ function* collectPGCR({ data }) {
    }
   }
   catch(error) {
+    console.warn('error', error);
     yield put({ type: consts.FETCH_LOG, data: `Error fetching report ${data}: ${error}`});
     yield put({ type: consts.TOGGLE_LOADING });
   }
@@ -225,6 +233,7 @@ function* collectPublicMilestoneData() {
     return publicMilestones;
   }
   catch(error) {
+    console.warn('error', error);
     yield put({ type: consts.FETCH_LOG, data: `Error fetching public milestone data: ${error}`})
     yield put({ type: consts.TOGGLE_LOADING });
   }

@@ -1,4 +1,3 @@
-
 export const FETCH_LOG = 'FETCH_LOG';
 
 export const SET_PLAYER_PROFILE = 'set_player_profile';
@@ -10,7 +9,7 @@ export const SET_PUBLIC_MILESTONES = 'set_public_milestones';
 export const SET_PLAYER_PRIVACY = 'set_player_privacy';
 export const SET_VIEW_MODE = 'set_view_mode';
 export const SET_VIEW_RAID = 'set_view_raid';
-export const SET_GAMER_TAG_SUGGESTIONS = 'set_gamer_tag_suggestions';
+export const SET_GAMER_TAG_OPTIONS = 'set_gamer_tag_suggestions';
 export const SELECT_GAMER_TAG = 'select_gamer_tag';
 
 export const SET_PGCR_CACHE = 'set_pgcr_cache';
@@ -31,9 +30,18 @@ export const PLATFORM_MODES = {
   xbox: 1,
   psn: 2,
   blizzard: 4,
-  1: 'xbox',
-  2: 'psn',
-  4: 'blizzard'
+  1: 'Xbox',
+  2: 'PSN',
+  4: 'Blizzard'
+};
+
+export const PLATFORM_ICONS = {
+  1: '/assets/xbox.png',
+  2: '/assets/psn.png',
+  4: '/assets/blizzard.jpeg',
+  xbox: '/assets/xbox.png',
+  psn: '/assets/psn.png',
+  blizzard: '/assets/blizzard.jpeg',
 };
 
 //None: 0

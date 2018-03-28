@@ -34,7 +34,7 @@ const splitNightfallByWeek = (weeks, nightfalls) => {
 
     if (weekBox.length > 0) {
       const constValue = NF_HASHES.all[ weekBox[ 0 ].activityDetails.referenceId ];
-      console.log(constValue);
+      // Each raid week key is made unique by adding the date 'smallDate'
       const nfName = constValue ? `${constValue.name.substring(11)}:D:${smallDate}` : weekRange;
 
       accum[ nfName ] = weekBox

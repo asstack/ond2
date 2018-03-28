@@ -16,7 +16,7 @@ import {
   SET_NF_HISTORY_CACHE,
   SET_PLAYER_CACHE,
   SET_RAID_HISTORY_CACHE,
-  SET_GAMER_TAG_SUGGESTIONS,
+  SET_GAMER_TAG_OPTIONS,
   SELECT_GAMER_TAG
 } from "../constants";
 
@@ -93,8 +93,8 @@ const setViewRaid = (state = 'nf', action) => {
   return state;
 };
 
-const setGamerTagSuggestions = (state = [], action) => {
-  if(action.type === SET_GAMER_TAG_SUGGESTIONS) {
+const setGamerTagOptions = (state = [], action) => {
+  if(action.type === SET_GAMER_TAG_OPTIONS) {
     return action.data;
   }
   return state;
@@ -151,7 +151,7 @@ const rootReducer = combineReducers({
   nfHistoryCache: setNFHistoryCache,
   raidHistoryCache: setRaidHistoryCache,
   playerCache: setPlayerCache,
-  gamerTagSuggestions: setGamerTagSuggestions,
+  gamerTagOptions: setGamerTagOptions,
   selectedGamerTag: selectGamerTag
 });
 

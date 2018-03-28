@@ -9,11 +9,14 @@ import {
   getPublicMilestones
 } from "./destiny-endpoints";
 
+//TODO: Need api key from Karl
 const destinyHeaders = new Headers({
   'Content-Type': 'application/json',
-  'X-API-KEY': 'b4c2d019990f452e8c3d40f5d279ac04'
+  'X-API-KEY': '06aa4878af6c4eee88f5c0292dcf4df6'
 });
 
+// mine - //'b4c2d019990f452e8c3d40f5d279ac04'
+//06aa4878af6c4eee88f5c0292dcf4df6
 const destinyInit = {
   method: 'GET',
   headers: destinyHeaders,
@@ -81,6 +84,7 @@ const fetchPublicMilestones = async () => {
   const publicMilestones = await res.json();
   return publicMilestones.Response
 };
+
 export {
   searchPlayer,
   fetchProfile,

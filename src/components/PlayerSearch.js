@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+import shortId from 'shortid';
+
+import { Search } from 'semantic-ui-react';
+import { PLATFORM_ICONS, PLATFORM_MODES } from "../store/constants";
 
 const PlayerSearchWrapper = styled.section`
   display: flex;
@@ -11,7 +15,7 @@ const PlayerSearchWrapper = styled.section`
 `;
 
 const PlayerSearchSection = styled.div`
-  margin: 75px 0 30px 0;
+  margin: 30px 0 30px 0;
   
   @media only screen and (min-width: 340px) and (max-width: 400px) {
     margin: 30px 0 15px 0;
@@ -21,10 +25,42 @@ const PlayerSearchSection = styled.div`
     margin: 30px 0 15px 0;
   }
   
-  @media only screen and (min-width: 750px) and (max-width: 1100px) {
+  @media only screen and (min-width: 750px) and (max-width: 1250px) {
     margin: 30px 0 15px 0;
   }
 
+  .playerSearch {
+    input {
+      width: 756px !important;
+      height: 68px !important;
+      border-radius: 34px !important;
+      border solid 2px black !important;
+      font-size: 20px !important;
+      padding: 32px !important;
+      
+      font-family: Montserrat !important;
+      font-size: 20px !important;
+      font-weight: 500 !important;
+      font-style: normal !important;
+      font-stretch: normal !important;
+      line-height: normal !important;
+      letter-spacing: normal !important;
+      text-align: left !important;
+      color: #000000 !important;
+      
+      @media only screen and (min-width: 340px) and (max-width: 400px) {
+        width: 225px !important;
+      }
+      
+      
+      @media only screen and (min-width: 400px) and (max-width: 750px) {
+        width: 375px !important;
+      }
+      
+      @media only screen and (min-width: 750px) and (max-width: 1250px) {
+        width: 650px !important;
+      }
+    }
 `;
 
 const Input = styled.input`
@@ -54,7 +90,7 @@ const Input = styled.input`
     width: 375px;
   }
   
-  @media only screen and (min-width: 750px) and (max-width: 1100px) {
+  @media only screen and (min-width: 750px) and (max-width: 1250px) {
     width: 650px;
   }
   
@@ -75,7 +111,7 @@ class PlayerSearch extends Component {
   };
 
   componentDidMount() {
-    this.playerInput.focus();
+    //this.playerInput.focus();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -84,25 +120,47 @@ class PlayerSearch extends Component {
     }
   }
 
-  handlePlayerInput = ({ target }) => {
+  handlePlayerInput = (e) => {
     this.setState({
-      playerSearch: target.value,
+      playerSearch: e.target.value,
     });
+  };
+
+  handleResultSelect = (event, { result }) => {
+    this.props.selectGamerTag(result);
   };
 
   render() {
     const { playerSearch } = this.state;
-    const { handlePlayerSearch } = this.props;
+    const { handlePlayerSearch, gamerTagOptions } = this.props;
+
+    const openSearchSelection = gamerTagOptions ? gamerTagOptions.length > 0 : false;
+
+    const options = !openSearchSelection
+      ? []
+      : gamerTagOptions.reduce((accum, curr, idx) => {
+          accum[idx] = {
+            title: curr.displayName,
+            description: PLATFORM_MODES[curr.membershipType],
+            image: PLATFORM_ICONS[curr.membershipType],
+            key: curr.membershipId
+          };
+          return accum;
+    }, []);
 
     return(
       <PlayerSearchWrapper>
         <PlayerSearchSection>
           <form onSubmit={(e) => { e.preventDefault(); return handlePlayerSearch(playerSearch) }}>
-            <Input
-              innerRef={(input) => { this.playerInput = input; }}
+            <Search
+              className="playerSearch"
               placeholder="Gamer Tag"
+              noResultsMessage="Gamer Tag not found"
+              results={options}
               value={playerSearch}
-              onChange={this.handlePlayerInput}
+              onSearchChange={this.handlePlayerInput}
+              open={openSearchSelection}
+              onResultSelect={this.handleResultSelect}
             />
           </form>
         </PlayerSearchSection>
@@ -112,3 +170,12 @@ class PlayerSearch extends Component {
 }
 
 export default PlayerSearch;
+
+/*
+  <Input
+    innerRef={(input) => { this.playerInput = input; }}
+    placeholder="Gamer Tag"
+    value={playerSearch}
+    onChange={this.handlePlayerInput}
+  />
+ */

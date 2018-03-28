@@ -93,7 +93,7 @@ class RaidWeekViewer extends Component {
   };
 
   searchPlayer = (gamerTag) => {
-    this.props.history.push(`/destiny/player/${gamerTag}`, { gamerTag });
+    this.props.history.push(`/player/${gamerTag}`, { gamerTag });
   };
 
   normalizeRaidWeeks = (raid, history, mode) => normalize.raidWeeks(raid, history, mode);

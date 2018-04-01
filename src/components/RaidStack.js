@@ -65,19 +65,9 @@ const RaidStack = ({ handleFetchPGCR, raidWeek, raid }) => {
   const completedRaids = raidValues.filter(raid => raid.values.completionReason === 0);
   const failedRaids = raidValues.filter(raid => raid.values.completionReason !== 0);
 
-  // const test1 = raidValues.filter(raid => raid.values.completed === 1);
-  // const test2 = raidValues.filter(raid => raid.values.completed !== 1);
-
-  //console.log('completed', completedRaids.length);
-  //console.log('failed', failedRaids);
-  //
-  //console.log('completed t', test1.length);
-  //console.log('failed t', test2.length);
 
   const [name, date] = week.split(':D:');
-  //console.log('week', week);
-  //console.log('completedRaids', completedRaids);
-  //Raids should have week start date in header instead of (W5).
+
   return(
     <RaidWeekContainer>
       <RaidWeekHeader raid={raid}>

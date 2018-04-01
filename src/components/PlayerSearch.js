@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import shortId from 'shortid';
 
-import { Search } from 'semantic-ui-react';
+import { Search, Icon } from 'semantic-ui-react';
 import { PLATFORM_ICONS, PLATFORM_MODES } from "../store/constants";
 
 const PlayerSearchWrapper = styled.section`
@@ -28,8 +28,24 @@ const PlayerSearchSection = styled.div`
   @media only screen and (min-width: 750px) and (max-width: 1250px) {
     margin: 30px 0 15px 0;
   }
+  
+  form {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    
+    i {
+      margin-left: -60px;
+      z-index: 1;
+     
+    }
+  }
 
   .playerSearch {
+    i {
+      margin-right: 30px !important;
+    }
+    
     input {
       width: 756px !important;
       height: 68px !important;
@@ -121,8 +137,10 @@ class PlayerSearch extends Component {
   }
 
   handlePlayerInput = (e) => {
+    const transformedSearch = e.target.value.replace('#', '%23');
+
     this.setState({
-      playerSearch: e.target.value,
+      playerSearch: transformedSearch,
     });
   };
 
@@ -148,20 +166,28 @@ class PlayerSearch extends Component {
           return accum;
     }, []);
 
+    const playerSearchDisplay = playerSearch.replace('%23', '#');
+
     return(
       <PlayerSearchWrapper>
         <PlayerSearchSection>
           <form onSubmit={(e) => { e.preventDefault(); return handlePlayerSearch(playerSearch) }}>
             <Search
+              icon=""
               className="playerSearch"
               placeholder="Gamer Tag"
               noResultsMessage="Gamer Tag not found"
               results={options}
-              value={playerSearch}
+              value={playerSearchDisplay}
               onSearchChange={this.handlePlayerInput}
               open={openSearchSelection}
               onResultSelect={this.handleResultSelect}
             />
+            <Icon
+              name="search"
+              fitted={false}
+              size="large"
+              onClick={(e) => { e.preventDefault(); return handlePlayerSearch(playerSearch) }} />
           </form>
         </PlayerSearchSection>
       </PlayerSearchWrapper>

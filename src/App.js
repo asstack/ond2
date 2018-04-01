@@ -9,7 +9,7 @@ import { FETCH_PGCR, SET_PGCR } from "./store/constants";
 import Landing from './containers/Landing';
 import PlayerDataView from './containers/PlayerDataView';
 import PostGameCarnageReportContainer from './containers/PostGameCarnageReport';
-import DestinyLoader from './components/DestinyLoader/DestinyLoader';
+import LogoLoader from './components/DestinyLoader/LogoLoader';
 import * as consts from "./store/constants";
 
 const AppWrapper = styled.div`
@@ -46,7 +46,7 @@ class App extends Component {
 
     return (
       <AppWrapper>
-        { loading && <DestinyLoader /> }
+        { loading && <LogoLoader /> }
 
         <Route exact path="/" render={data => (
           <Landing loading={loading} {...data} />

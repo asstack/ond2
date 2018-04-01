@@ -94,9 +94,9 @@ const Selection = styled.div`
     line-height: normal;
     letter-spacing: normal;
     text-align: center;
-    color: #2b76ed;
+    color: ${({ selected }) => selected ? 'black' : '#2b76ed'};
     cursor: ${({ selected }) => selected ? 'default' : 'pointer' };
-    text-decoration: ${({ selected }) => selected ? 'underline' : 'none' };
+    text-decoration: ${({ selected }) => selected ? 'none' : 'underline' };
   }
 `;
 

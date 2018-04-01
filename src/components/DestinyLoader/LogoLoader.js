@@ -1,9 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import DestinyLogoSVG from './DestinyLogoSVG';
+import OND2Logo from './OND2Logo';
 
-const DestinyLoaderWrapper = styled.div`
+const LoaderWrapper = styled.div`
 
   width: 100%;
   height: 100%;
@@ -31,12 +31,12 @@ const DestinyLoaderWrapper = styled.div`
   }
 `;
 
-const DestinyLoader = () => {
+const LogoLoader = () => {
   return(
-    <DestinyLoaderWrapper>
-      <DestinyLogoSVG />
-    </DestinyLoaderWrapper>
+    <LoaderWrapper>
+      <OND2Logo />
+    </LoaderWrapper>
   )
 };
 
-export default DestinyLoader;
+export default LogoLoader;

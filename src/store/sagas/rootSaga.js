@@ -207,6 +207,7 @@ function* collectPGCR({ data }) {
       pgcrCache[data] = normalizedPGCR;
 
       yield put({ type: consts.SET_PGCR, data: normalizedPGCR });
+      yield put({ type: consts.TOGGLE_LOADING });
       yield put({ type: consts.FETCH_LOG, data: 'Post Game Carnage Report Fetch Success' });
    }
   }

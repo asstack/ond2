@@ -68,12 +68,9 @@ const RaidWeekWrapper = styled.div`
 const BarValues = styled.span`
   width: 100%;
   height: 100%;
-  position: relative;
-  float: left;
+  float: ${({ floatDirection }) => floatDirection || 'none'};
   background-color: transparent;
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-end;
+  z-index: 10;
   padding: 0 5px;
  
   font-family: Montserrat;
@@ -83,7 +80,7 @@ const BarValues = styled.span`
   font-stretch: normal;
   line-height: normal;
   letter-spacing: normal;
-  text-align: right;
+  text-align: ${({ floatDirection }) => floatDirection || 'right'};;
   color: #383838;
 `;
 
@@ -115,32 +112,40 @@ const RaidWeek = ({ raid='', raids, handleFetchPGCR, success=true }) => {
   const isNF = raid === 'nf';
   const manyRaids = Object.values(raids).length > 14;
 
-  // If success && Object.values(raids) > 7
-  // (Remove ScoreView and add tooltip) OR (add tooltip to all and remove on condition)
   return (
     <RaidWeekWrapper success={success}>
       {raids && Object.values(raids).map(raid => {
         const size = success ? manyRaids ? 'tiny' : 'small' : 'tiny';
 
-        const time = `Time: ${Math.round(raid.values.activityDurationSeconds/60)}m`;
+        // TODO: Can timePlayedSeconds be vastly different than activityDurationSeconds?
+        const time = `${Number.parseFloat(raid.values.activityDurationSeconds/60).toFixed(2)}`;
         const content = isNF
           ?
-          `Score: ${raid.values.score}/${raid.values.teamScore} | ${time}`
+          `Score: ${raid.values.score}/${raid.values.teamScore} | ${time}m`
           : `KDA: ${raid.values.kills} / ${raid.values.deaths} / ${raid.values.assists}`;
 
-        const value = success ? raid.values.score : 100;
-        const total = success ? raid.values.teamScore : 100;
+        const value = success
+          ? isNF
+            ? raid.values.score : time
+            : 100;
+
+        const total = success
+          ? isNF
+            ? raid.values.teamScore : 180
+            : 100;
+
         return (
           <Popup
             key={shortid.generate()}
             content={content}
             trigger={
               <Link className="pgcr-link" to={ `/pgcr/${raid.activityDetails.instanceId}` }>
-                { success && <BarValues>{raid.values.teamScore || ''}</BarValues>}
+                { (success && isNF) && <BarValues floatDirection="right">{raid.values.teamScore || ''}</BarValues> }
+                { (success && !isNF) && <BarValues floatDirection="left">{time}m</BarValues> }
                 <Progress
                   onClick={() => handleFetchPGCR(raid.activityDetails.instanceId)}
-                  value={value || 100 }
-                  total={total || 100 }
+                  value={value}
+                  total={total}
                   on={['hover', 'focus']}
                   size={size}
                   success={success}

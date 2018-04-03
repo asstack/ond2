@@ -18,7 +18,10 @@ const LoaderWrapper = styled.div`
   align-items: center;
   
   svg {
-    margin-top: 15%;
+    position: absolute;
+    top: 25%;
+    left: calc(50% - 50px);
+    margin-top: 50px;
     fill: black;
     width: 100px;
     height: 100px;

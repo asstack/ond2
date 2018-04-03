@@ -13,6 +13,15 @@ const LandingWrapper = styled.div`
   ${(props) => props.loading ? "div { display: none; }" : ''}
 `;
 
+const Logo = styled.img`
+  width: 40%;
+  margin: 50px 0;
+  
+  @media only screen and (min-width: 340px) and (max-width: 750px) {
+    margin-top: 30px;
+  }
+`;
+
 class Landing extends Component {
 
   state = {
@@ -29,6 +38,7 @@ class Landing extends Component {
     const { playerId } = this.state;
     return (
       <LandingWrapper loading={this.props.loading}>
+        <Logo src="/assets/ond2-logo.png"/>
         <PlayerSearchForm playerId={playerId} handlePlayerSearch={this.playerSearch}/>
       </LandingWrapper>
     )

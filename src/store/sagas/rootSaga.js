@@ -13,7 +13,7 @@ import normalize from '../normalize';
 
 function* handleSearchPlayerFailure() {
   yield put({ type: consts.SET_PLAYER_PROFILE, data: { notFound: true } });
-  yield put({ type: consts.TOGGLE_LOADING });
+  yield put({ type: consts.SET_LOADING, data: false });
 }
 
 function* clearSearchData() {
@@ -25,7 +25,7 @@ function* clearSearchData() {
 
 function* fetchPlayerProfile({ data }) {
   try {
-    yield put({ type: consts.TOGGLE_LOADING });
+    yield put({ type: consts.SET_LOADING, data: true });
     yield call(clearSearchData);
     yield put({ type: consts.SET_PLAYER_PRIVACY, data: false });
 
@@ -40,13 +40,13 @@ function* fetchPlayerProfile({ data }) {
      playerSearch = searchResults[0];
     }
     else {
-      yield put({ type: consts.TOGGLE_LOADING });
+      yield put({ type: consts.SET_LOADING, data: true });
       yield put({ type: consts.SET_GAMER_TAG_OPTIONS, data: searchResults });
 
       const searchSelection = yield take([consts.SELECT_GAMER_TAG]);
       yield put({ type: consts.SET_GAMER_TAG_OPTIONS, data: [] });
       playerSearch = searchResults.filter(curr => curr.membershipId === searchSelection.data.key)[0];
-      yield put({ type: consts.TOGGLE_LOADING });
+      yield put({ type: consts.SET_LOADING, data: false });
     }
 
     const playerCache = yield  select(state => state.playerCache);
@@ -71,7 +71,7 @@ function* fetchPlayerProfile({ data }) {
     //TODO: Remove error warn and store log files in s3 bucket or store errors in database.
     console.warn('error', error);
     yield put({ type: consts.FETCH_LOG, data: `Player Profile Fetch Error: ${error}`});
-    yield put({ type: consts.TOGGLE_LOADING });
+    yield put({ type: consts.SET_LOADING, data: false });
     yield put({ type: consts.TOGGLE_PLAYER_SEARCH });
   }
 }
@@ -143,13 +143,13 @@ function* collectNightfallData(playerProfile) {
     }
 
 
-    yield put({ type: consts.TOGGLE_LOADING });
+    yield put({ type: consts.SET_LOADING, data: false });
     yield put({ type: consts.FETCH_LOG, data: `Nightfall data successfully collected`});
   }
   catch(error) {
     console.warn('error', error);
     yield put({ type: consts.FETCH_LOG, data: `NightFall Data Fetch Error: ${error}`});
-    yield put({ type: consts.TOGGLE_LOADING });
+    yield put({ type: consts.SET_LOADING, data: false });
   }
 }
 
@@ -161,6 +161,7 @@ function* collectRaidData(playerProfile) {
 
     if(cacheCheck) {
       yield put({type: consts.SET_RAID_HISTORY, data: raidHistoryCache[memberId]});
+      yield put({ type: consts.SET_LOADING, data: false });
 
     } else {
       const raidData = yield all(
@@ -189,13 +190,13 @@ function* collectRaidData(playerProfile) {
   catch(error) {
     console.warn('error', error);
     yield put({ type: consts.FETCH_LOG, data: `Raid Data Fetch Error: ${error}`});
-    yield put({ type: consts.TOGGLE_LOADING });
+    yield put({ type: consts.SET_LOADING, data: false });
   }
 }
 
 function* collectPGCR({ data }) {
   try {
-    yield put({ type: consts.TOGGLE_LOADING });
+    yield put({ type: consts.SET_LOADING, data: true });
     const pgcrCache = yield select(state => state.pgcrCache);
 
     if(pgcrCache[data]) {
@@ -207,14 +208,14 @@ function* collectPGCR({ data }) {
       pgcrCache[data] = normalizedPGCR;
 
       yield put({ type: consts.SET_PGCR, data: normalizedPGCR });
-      yield put({ type: consts.TOGGLE_LOADING });
+      yield put({ type: consts.SET_LOADING, data: false });
       yield put({ type: consts.FETCH_LOG, data: 'Post Game Carnage Report Fetch Success' });
    }
   }
   catch(error) {
     console.warn('error', error);
     yield put({ type: consts.FETCH_LOG, data: `Error fetching report ${data}: ${error}`});
-    yield put({ type: consts.TOGGLE_LOADING });
+    yield put({ type: consts.SET_LOADING, data: false });
   }
 }
 
@@ -235,8 +236,8 @@ function* collectPublicMilestoneData() {
   }
   catch(error) {
     console.warn('error', error);
-    yield put({ type: consts.FETCH_LOG, data: `Error fetching public milestone data: ${error}`})
-    yield put({ type: consts.TOGGLE_LOADING });
+    yield put({ type: consts.FETCH_LOG, data: `Error fetching public milestone data: ${error}`});
+    yield put({ type: consts.SET_LOADING, data: false });
   }
 }
 

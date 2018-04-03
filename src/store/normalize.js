@@ -21,6 +21,7 @@ const splitRaidByWeek = (raidWeeks, raids) => (
 );
 
 const splitNightfallByWeek = (weeks, nightfalls) => {
+
   return weeks.reduce((accum, week) => {
     const nextWeek = moment(week).add(1, 'weeks');
 
@@ -37,7 +38,7 @@ const splitNightfallByWeek = (weeks, nightfalls) => {
       // Each raid week key is made unique by adding the date 'smallDate'
       const nfName = constValue ? `${constValue.name.substring(11)}:D:${smallDate}` : weekRange;
 
-      accum[ nfName ] = weekBox
+      accum[ nfName ] = weekBox;
 
     } else {
       accum[ weekRange ] = []

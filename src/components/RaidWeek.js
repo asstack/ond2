@@ -13,8 +13,12 @@ const RaidWeekWrapper = styled.div`
   flex-direction: column;
   justify-content: ${({ success }) => success ? 'flex-end' : 'flex-start' };
   align-items: center;
-  height: 299px;
+  height: ${({ success, maxCount, neg }) => {
+    const size = neg ? 12 : 22;
+    return success ? `${size * maxCount + 1}px` : 'fit-content'
+  }};
   width: 100%;
+  max-height: 299px;
   border-top: 1px solid #d9d9d9;
   background-color: transparent;
   overflow: hidden;
@@ -29,7 +33,7 @@ const RaidWeekWrapper = styled.div`
     height: 199px;
   }
   
-  @media only screen and (min-width: 750px) and (max-width: 1250px) {
+  @media only screen and (min-width: 750px) and (max-width: 1100px) {
     height: 199px;
   }
   
@@ -67,8 +71,9 @@ const RaidWeekWrapper = styled.div`
 
 const BarValues = styled.span`
   width: 100%;
-  height: 100%;
-  float: ${({ floatDirection }) => floatDirection || 'none'};
+  height: 18px;
+  float: left;
+  position: relative;
   background-color: transparent;
   z-index: 10;
   padding: 0 5px;
@@ -80,59 +85,31 @@ const BarValues = styled.span`
   font-stretch: normal;
   line-height: normal;
   letter-spacing: normal;
-  text-align: ${({ floatDirection }) => floatDirection || 'right'};;
+  text-align: right;
   color: #383838;
 `;
 
-const RaidStackItems = styled.div`
-  display: flex;
-  flex-direction: row;
-  height: 20px;
-  width: 100%;
-  ${({ success }) => success ? 'margin-bottom: -1px' : null};
-  ${({ success }) => success ? null: 'margin-top: -1px'};
-  
-  & a {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
-    align-items: center;
-    padding-right: 5px;
-    height: 100%;
-    border-left: 1px solid black;
-    border-top: 1px solid black;
-    background-color: ${({ success }) => !!success ? 'green' : 'red'};
-    width: 100%;
-    text-decoration: none;
-  }
-`;
-
-//${({ percentComplete, success }) => !!success ? percentComplete : 100 }%;
-const RaidWeek = ({ raid='', raids, handleFetchPGCR, success=true }) => {
+const RaidWeek = ({ raid='', raids, handleFetchPGCR, success=true, maxCount }) => {
   const isNF = raid === 'nf';
-  const manyRaids = Object.values(raids).length > 14;
+  const manyRaids = Object.values(raids).length >= 14;
 
   return (
-    <RaidWeekWrapper success={success}>
+    <RaidWeekWrapper success={success} maxCount={Math.abs(maxCount)} neg={maxCount < 0}>
       {raids && Object.values(raids).map(raid => {
-        const size = success ? manyRaids ? 'tiny' : 'small' : 'tiny';
+        const barSize = success ? manyRaids ? 'tiny' : 'small' : 'tiny';
 
         // TODO: Can timePlayedSeconds be vastly different than activityDurationSeconds?
         const time = `${Number.parseFloat(raid.values.activityDurationSeconds/60).toFixed(2)}`;
         const content = isNF
           ?
-          `Score: ${raid.values.score}/${raid.values.teamScore} | ${time}m`
-          : `KDA: ${raid.values.kills} / ${raid.values.deaths} / ${raid.values.assists}`;
+          `Score: ${raid.values.score}/${raid.values.teamScore} | ${time} m`
+          : `Time: ${time}m | KDA: ${raid.values.kills} / ${raid.values.deaths} / ${raid.values.assists}`;
 
-        const value = success
-          ? isNF
-            ? raid.values.score : time
-            : 100;
+        const value = success ? isNF ? raid.values.score : time : 100;
 
-        const total = success
-          ? isNF
-            ? raid.values.teamScore : 180
-            : 100;
+        const total = success ? isNF ? raid.values.teamScore : 120 : 100;
+
+        const percentWidth =  (success && !isNF) ? Number.parseFloat(time).toFixed(0) : 100;
 
         return (
           <Popup
@@ -140,14 +117,14 @@ const RaidWeek = ({ raid='', raids, handleFetchPGCR, success=true }) => {
             content={content}
             trigger={
               <Link className="pgcr-link" to={ `/pgcr/${raid.activityDetails.instanceId}` }>
-                { (success && isNF) && <BarValues floatDirection="right">{raid.values.teamScore || ''}</BarValues> }
-                { (success && !isNF) && <BarValues floatDirection="left">{time}m</BarValues> }
+                { (success && !manyRaids && isNF) && <BarValues>{raid.values.teamScore || ''}</BarValues> }
+                { (success && !manyRaids && !isNF) && <BarValues>{percentWidth}m</BarValues> }
                 <Progress
                   onClick={() => handleFetchPGCR(raid.activityDetails.instanceId)}
                   value={value}
                   total={total}
                   on={['hover', 'focus']}
-                  size={size}
+                  size={barSize}
                   success={success}
                   error={!success}
                 />

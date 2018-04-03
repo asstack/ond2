@@ -7,7 +7,7 @@ import {
   SET_NF_HISTORY,
   SET_PGCR,
   SET_PUBLIC_MILESTONES,
-  TOGGLE_LOADING,
+  SET_LOADING,
   SET_PLAYER_PRIVACY,
   SET_VIEW_MODE,
   SET_VIEW_RAID,
@@ -24,7 +24,7 @@ const fetchLogs = (state=[], action) =>
   action.type === FETCH_LOG ? [...state, action.data] : state;
 
 const setLoading = (state=false, action) => {
-  return action.type === TOGGLE_LOADING ? !state : state;
+  return action.type === SET_LOADING ? action.data : state;
 };
 
 const setPlayerSearch = (state=false, action) => {

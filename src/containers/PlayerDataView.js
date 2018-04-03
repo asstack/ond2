@@ -14,9 +14,15 @@ import * as consts from "../store/constants";
 import { SET_PGCR } from "../store/constants";
 import { FETCH_PGCR } from "../store/constants";
 
+const PlayerDataViewWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+`;
+
 const RaidView = styled.div`
   display: flex;
-  flex-flow: row wrap;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   
@@ -24,30 +30,35 @@ const RaidView = styled.div`
 
 const RaidStackList = styled.div`
   display: flex;
-  height: 685px;
-  flex-flow: row wrap;
+  height: fit-content;
   justify-content: center;
   padding: 15px 15px;
   border-radius: 4px;
   background-color: white;
   
-  @media only screen and (min-width: 340px) and (max-width: 400px) {
-    height: 100%;
-    width: 92%;
+  @media only screen and (max-width: 1100px) {
+    width: 75%;
     flex-flow: row-reverse wrap-reverse;
   }
   
-  @media only screen and (min-width: 400px) and (max-width: 750px) {
-    height: 100%;
-    width: 92%;
-    flex-flow: row-reverse wrap-reverse;
+  @media only screen and (max-width 649px) {
+    width: 90%;
   }
   
-  @media only screen and (min-width: 750px) and (max-width: 1100px) {
-    height: 100%;
-    width: 86%;
-    flex-flow: row-reverse wrap-reverse;
+  @media only screen and (min-width: 606px) and (max-width: 739px) {
+    width: 95%;
+  }
   
+  @media only screen and (min-width: 740px) and (max-width: 1100px) {
+    width: 90%;
+  }
+  
+  @media only screen and (min-width: 785px) and (max-width: 1100px) {
+    width: 85%;
+  }
+  
+  @media only screen and (min-width: 890px) and (max-width: 1100px) {
+    width: 75%;
   }
 `;
 
@@ -66,7 +77,8 @@ class RaidWeekViewer extends Component {
     super(props);
 
     this.state = {
-      player: this.props.match.params.playerId || ''
+      player: this.props.match.params.playerId || '',
+      maxSuccessRaids: 0
     }
   }
 
@@ -100,16 +112,20 @@ class RaidWeekViewer extends Component {
 
   normalizeRaidWeeks = (raid, history, mode) => normalize.raidWeeks(raid, history, mode);
 
-  setRaidWeeks = (raidWeeks) => {
-    this.setState({ raidWeeks });
-  };
-
   setRaid = (raid) => {
     this.props.setViewRaid(raid);
+    this.setState({ maxSuccessRaids: 0 });
   };
 
   setMode = (mode) => {
     this.props.setViewMode(mode);
+    this.setState({ maxSuccessRaids: 0 });
+  };
+
+  setMaxSuccessRaids = count => {
+    this.setState({
+      maxSuccessRaids: count
+    })
   };
 
   render() {
@@ -118,6 +134,7 @@ class RaidWeekViewer extends Component {
       fetchPostGameCarnageReport, playerProfile, playerPrivacy,
       viewRaid, viewMode, gamerTagOptions, selectGamerTag
     } = this.props;
+    const { maxSuccessRaids } = this.state;
 
     const { notFound } = playerProfile;
 
@@ -150,7 +167,7 @@ class RaidWeekViewer extends Component {
     const shouldRender = (!loading && raidWeeks.length > 0 && !notFound && !playerPrivacy);
 
     return (
-      <div>
+      <PlayerDataViewWrapper>
         <SearchWrapper loading={loading}>
           <PlayerSearch
             gamerTagOptions={gamerTagOptions}
@@ -168,6 +185,7 @@ class RaidWeekViewer extends Component {
               handleSetRaid={this.setRaid} handleSetMode={this.setMode}
               nfCount={nfCount} raidCount={raidCount}
               viewRaid={viewRaid} viewMode={viewMode}
+              resetMaxSuccessRaids={() => this.setMaxSuccessRaids(0)}
             />
           }
           {shouldRender &&
@@ -179,13 +197,15 @@ class RaidWeekViewer extends Component {
                     handleFetchPGCR={fetchPostGameCarnageReport}
                     raidWeek={raidWeek}
                     raid={viewRaid}
+                    maxSuccessRaids={maxSuccessRaids}
+                    handleSetMaxSuccessRaids={this.setMaxSuccessRaids}
                   />
                 )
               })}
             </RaidStackList>
           }
         </RaidView>
-      </div>
+      </PlayerDataViewWrapper>
     )
   }
 }

@@ -8,13 +8,17 @@ import { FETCH_PGCR, SET_PGCR } from "./store/constants";
 
 import Landing from './containers/Landing';
 import PlayerDataView from './containers/PlayerDataView';
+import PostGameCarnageModal from './components/PostGameCarnageModal';
+
 import PostGameCarnageReportContainer from './containers/PostGameCarnageReport';
 import LogoLoader from './components/DestinyLoader/LogoLoader';
 import * as consts from "./store/constants";
 
 const AppWrapper = styled.div`
-  width: 100%;
-  height: 100%;
+  min-width: 100vw;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
   align-items: center;
   background-color: #f4f4f4;
 `;
@@ -43,6 +47,7 @@ class App extends Component {
     baseStyles();
 
     const { pgcr, clearPostGameCarnageReport, loading } = this.props;
+    const showModal = true;
 
     return (
       <AppWrapper>

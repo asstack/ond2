@@ -6,7 +6,8 @@ import RaidWeek from '../components/RaidWeek';
 
 const RaidWeekContainer = styled.div`
   width: 212px;
-  height: 650px;
+  height: fit-content;
+  
   border-radius: 4px;
   background-color: #ffffff;
   border: solid 1px #e2e2e2;
@@ -22,15 +23,15 @@ const RaidWeekContainer = styled.div`
   color: #000000;
   
   @media only screen and (min-width: 340px) and (max-width: 400px) {
-    height: 100%;
+    margin-bottom: 15px;
   }
   
   @media only screen and (min-width: 400px) and (max-width: 750px) {
-    height: 100%;
+    margin-bottom: 15px;
   }
   
-  @media only screen and (min-width: 750px) and (max-width: 1250px) {
-    height: 100%;
+  @media only screen and (min-width: 750px) and (max-width: 1100px) {
+    margin-bottom: 15px;
   }
 `;
 
@@ -58,12 +59,23 @@ const HeaderDate = styled.span`
   color: #000000;
 `;
 
-const RaidStack = ({ handleFetchPGCR, raidWeek, raid }) => {
+
+const RaidStack = ({ handleFetchPGCR, raidWeek, raid, maxSuccessRaids, handleSetMaxSuccessRaids }) => {
   const [week, raids] = raidWeek;
   const raidValues = Object.values(raids);
 
   const completedRaids = raidValues.filter(raid => raid.values.completionReason === 0);
   const failedRaids = raidValues.filter(raid => raid.values.completionReason !== 0);
+
+  const completedCount = Object.keys(completedRaids).length;
+
+  if(completedCount > Math.abs(maxSuccessRaids)) {
+    const currCount = maxSuccessRaids >= 14 ? Math.abs(maxSuccessRaids) / 2 : maxSuccessRaids;
+    const incCount = completedCount >= 14 ? completedCount / 2 : completedCount;
+
+    const incParsed = completedCount >= 14 ? (completedCount * -1) : completedCount;
+    incCount > currCount ? handleSetMaxSuccessRaids(incParsed) : null;
+  }
 
 
   const [name, date] = week.split(':D:');
@@ -74,7 +86,7 @@ const RaidStack = ({ handleFetchPGCR, raidWeek, raid }) => {
         {name}
         <HeaderDate>{date}</HeaderDate>
       </RaidWeekHeader>
-      <RaidWeek raid={raid} raids={completedRaids} handleFetchPGCR={handleFetchPGCR} />
+      <RaidWeek raid={raid} raids={completedRaids} maxCount={maxSuccessRaids} handleFetchPGCR={handleFetchPGCR} />
       <RaidWeek success={false} raids={failedRaids} handleFetchPGCR={handleFetchPGCR} />
     </RaidWeekContainer>
   );

@@ -1,9 +1,9 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "OND2",
+  "name": "OND2 - Destiny 2 Tracker",
   "icons": [
     {
-      "src": "favicon.ico",
+      "src": "ond2.ico",
       "sizes": "64x64 32x32 24x24 16x16",
       "type": "image/x-icon"
     }

@@ -4,7 +4,7 @@ import { BrowserRouter as Router, withRouter, Route } from 'react-router-dom';
 import styled from 'styled-components';
 
 import baseStyles from './base-styles';
-import { FETCH_PGCR, SET_PGCR } from "./store/constants";
+import { FETCH_PGCR, SET_PGCR, SET_LOADING } from "./store/constants";
 
 import Landing from './containers/Landing';
 import PlayerDataView from './containers/PlayerDataView';
@@ -46,8 +46,7 @@ class App extends Component {
   render() {
     baseStyles();
 
-    const { pgcr, clearPostGameCarnageReport, loading } = this.props;
-    const showModal = true;
+    const { pgcr, clearPostGameCarnageReport, loading, clearLoader } = this.props;
 
     return (
       <AppWrapper>
@@ -67,6 +66,7 @@ class App extends Component {
             pgcr={pgcr}
             handleFetchPGCR={this.fetchPGCR}
             handleClearPGCR={() => clearPostGameCarnageReport()}
+            handleClearLoader={() => clearLoader() }
           />
         )}/>
       </AppWrapper>
@@ -85,7 +85,8 @@ const mapDispatchToProps = dispatch => {
   return {
     fetchPostGameCarnageReport: pathParams => dispatch({type: FETCH_PGCR, data: pathParams}),
     clearPostGameCarnageReport: () => dispatch({ type: SET_PGCR, data: false}),
-    searchPlayer: pathParams => dispatch({ type: consts.FETCH_PLAYER_PROFILE, data: pathParams })
+    searchPlayer: pathParams => dispatch({ type: consts.FETCH_PLAYER_PROFILE, data: pathParams }),
+    clearLoader: () => dispatch({ type: SET_LOADING, data: false })
   }
 };
 

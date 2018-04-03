@@ -83,7 +83,7 @@ class PlayerSearch extends Component {
   };
 
   componentDidMount() {
-    //this.playerInput.focus();
+    this.playerInput.childNodes[0][0].focus();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -91,6 +91,12 @@ class PlayerSearch extends Component {
       this.setState({ playerSearch: nextProps.playerId });
     }
   }
+
+  clearPlayerSearch = () => {
+    this.setState( {
+      playerSearch: ''
+    })
+  };
 
   handlePlayerInput = (e) => {
     const transformedSearch = e.target.value.replace('#', '%23');
@@ -126,7 +132,7 @@ class PlayerSearch extends Component {
 
     return(
       <PlayerSearchWrapper>
-        <PlayerSearchSection>
+        <PlayerSearchSection innerRef={(input) => { this.playerInput = input}}>
           <form onSubmit={(e) => { e.preventDefault(); return handlePlayerSearch(playerSearch) }}>
             <Search
               icon=""
@@ -138,13 +144,13 @@ class PlayerSearch extends Component {
               onSearchChange={this.handlePlayerInput}
               open={openSearchSelection}
               onResultSelect={this.handleResultSelect}
-              onMouseDown={() => this.handlePlayerInput}
+              onMouseDown={() => this.clearPlayerSearch()}
             />
             <Icon
               name="search"
               fitted={false}
               size="large"
-              onClick={(e) => { e.preventDefault(); return handlePlayerSearch('') }} />
+              onClick={(e) => { e.preventDefault(); return playerSearch !== '' ? handlePlayerSearch(playerSearch) : null }} />
           </form>
         </PlayerSearchSection>
       </PlayerSearchWrapper>

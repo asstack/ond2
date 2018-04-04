@@ -50,8 +50,8 @@ const PlayerSearchSection = styled.div`
       text-align: left !important;
       color: #000000 !important;
       
-      @media only screen and (min-width: 340px) and (max-width: 400px) {
-        width: 300px !important;
+      @media only screen and (max-width: 400px) {
+        width: 275px !important;
       }
       
       @media only screen and (min-width: 400px) and (max-width: 574px) {

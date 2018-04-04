@@ -22,7 +22,7 @@ const RaidWeekContainer = styled.div`
   text-align: center;
   color: #000000;
   
-  @media only screen and (min-width: 340px) and (max-width: 400px) {
+  @media only screen and (max-width: 400px) {
     margin-bottom: 15px;
   }
   

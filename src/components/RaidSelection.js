@@ -15,8 +15,12 @@ const RaidViewSelectionWrapper = styled.div`
     text-align: right;
   }
   
-  @media only screen and (min-width: 340px) and (max-width: 400px) {
-    width: 275px;
+  @media only screen and (max-width: 400px) {
+    width: 300px;
+    
+    p {
+      font-size: 14px;
+    }
   }
   
   @media only screen and (min-width: 400px) and (max-width: 750px) {
@@ -36,7 +40,7 @@ const SelectionGroup = styled.div`
   align-items: center;
   justify-content: space-evenly;
   
-  @media only screen and (min-width: 400px) and (max-width: 750px) {
+  @media only screen and (max-width: 750px) {
     width: 92%;
   }
   

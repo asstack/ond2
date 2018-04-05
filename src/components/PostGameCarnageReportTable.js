@@ -52,6 +52,14 @@ const sortByValue = (arr, column, direction) => {
     const itemA = (column === 'name') ? a.player.displayName.toUpperCase() : (column === 'score') ? a.values.score : a.values[column.toLowerCase()];
     const itemB = (column === 'name') ? b.player.displayName.toUpperCase() : (column === 'score') ? b.values.score : b.values[column.toLowerCase()];
 
+
+    const aComplete = a.values.completionReason === 0 && a.values.completed === 1;
+    const bComplete = b.values.completionReason === 0 && b.values.completed === 1;
+
+
+    if(!aComplete) return direction === 'ascending' ? 1 : 1;
+    if(!bComplete) return direction === 'ascending' ? -1 : -1;
+
     if (itemA < itemB) {
       return direction === 'ascending' ? -1 : 1;
     }
@@ -91,26 +99,20 @@ class PostGameCarnageReportTable extends Component {
   handleSort = clickedColumn => {
     const { column, data, direction } = this.state;
 
-    if(column !== clickedColumn) {
-      this.setState({
-        column: clickedColumn,
-        data: sortByValue(data, clickedColumn, direction),
-        direction: 'ascending',
-      });
-
-      return
-    }
-
     this.setState({
-      data: data.reverse(),
-      direction: direction === 'ascending' ? 'descending' : 'ascending'
+      column: clickedColumn,
+      data: sortByValue(data, clickedColumn, direction),
+      direction: direction === 'ascending' ? 'descending' : 'ascending',
     });
   };
 
   render() {
     const { data, column, direction, raidName='Nightfall', raidDate } = this.state;
+    console.log('raidName', raidName);
 
     const isNF = (raidName !== 'Leviathan' && raidName !== 'Eater of Worlds' && raidName !== '');
+
+    if(column === 'score' && raidName === 'Leviathan' || raidName === 'Eater of Worlds') this.handleSort('kills');
 
     return(
       <PGCRWrapper>

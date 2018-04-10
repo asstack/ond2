@@ -157,8 +157,9 @@ class RaidWeekViewer extends Component {
 
         //hack get this shit outta here
         const nfLen = Object.entries(nightfallHistory[viewMode]).length;
+        const nfStartIndex = Math.abs(5 - nfLen);
 
-        raidWeeks = Object.entries(nightfallHistory[viewMode]).slice(1, nfLen).map((item) => [ ...item ])
+        raidWeeks = Object.entries(nightfallHistory[viewMode]).slice(nfStartIndex, nfLen).map((item) => [ ...item ])
       }
     } if(viewRaid === 'eow' || viewRaid === 'lev') {
       raidWeeks = this.normalizeRaidWeeks(viewRaid, mergedHistory, viewMode) || [];

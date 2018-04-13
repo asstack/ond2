@@ -25,7 +25,6 @@ const RaidView = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  
 `;
 
 const RaidStackList = styled.div`
@@ -41,7 +40,7 @@ const RaidStackList = styled.div`
     flex-flow: row-reverse wrap-reverse;
   }
   
-  @media only screen and (max-width 649px) {
+  @media only screen and (max-width: 649px) {
     width: 90%;
   }
   
@@ -70,7 +69,6 @@ const SearchWrapper = styled.div`
   align-items: center;
 `;
 
-//${(props) => props.loading ? "div { display: none; }" : ''}
 
 class RaidWeekViewer extends Component {
   constructor(props) {

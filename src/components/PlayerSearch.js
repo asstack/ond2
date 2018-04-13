@@ -36,7 +36,7 @@ const PlayerSearchSection = styled.div`
       width: 756px !important;
       height: 68px !important;
       border-radius: 34px !important;
-      border solid 2px black !important;
+      border: solid 2px black !important;
       font-size: 20px !important;
       padding: 32px !important;
       
@@ -69,40 +69,39 @@ const PlayerSearchSection = styled.div`
 `;
 
 class PlayerSearch extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      playerSearch: props.playerId || '',
-    }
-  }
 
   static propTypes = {
     playerId: PropTypes.string,
     handlePlayerSearch: PropTypes.func.isRequired
   };
 
+  state = {
+    playerSearch: this.props.playerId || '',
+  };
+
   componentDidMount() {
-    this.playerInput.childNodes[0][0].focus();
+    this.focusSearchElement();
   }
 
   componentWillReceiveProps(nextProps) {
-    if(this.props.playerId !== nextProps.playerId) {
-      this.setState({ playerSearch: nextProps.playerId });
-    }
+    this.props.playerId !== nextProps.playerId && this.setState({ playerSearch: nextProps.playerId });
   }
 
-  clearPlayerSearch = () => {
+  focusSearchElement = () => {
+    this.playerInput.childNodes[0][0].focus();
+  };
+
+  clearSearch = () => {
     this.setState( {
       playerSearch: ''
     })
   };
 
   handlePlayerInput = (e) => {
-    const transformedSearch = e.target.value.replace('#', '%23');
+    const parsedSearch = e.target.value.replace('#', '%23');
 
     this.setState({
-      playerSearch: transformedSearch,
+      playerSearch: parsedSearch,
     });
   };
 
@@ -144,13 +143,13 @@ class PlayerSearch extends Component {
               onSearchChange={this.handlePlayerInput}
               open={openSearchSelection}
               onResultSelect={this.handleResultSelect}
-              onMouseDown={() => this.clearPlayerSearch()}
+              onMouseDown={this.clearSearch}
             />
             <Icon
               name="search"
-              fitted={false}
               size="large"
-              onClick={(e) => { e.preventDefault(); return playerSearch !== '' ? handlePlayerSearch(playerSearch) : null }} />
+              fitted={false}
+              onClick={() => playerSearch === '' ? null : handlePlayerSearch(playerSearch)} />
           </form>
         </PlayerSearchSection>
       </PlayerSearchWrapper>

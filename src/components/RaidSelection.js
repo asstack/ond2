@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 const RaidViewSelectionWrapper = styled.div`
   display: flex;
-  flex 1 100%;
+  flex: 1 100%;
   max-width: 1100px;
   justify-content: space-around;
   align-items: center;

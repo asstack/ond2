@@ -6,66 +6,61 @@ import shortId from 'shortid';
 import { Search, Icon } from 'semantic-ui-react';
 import { PLATFORM_ICONS, PLATFORM_MODES } from "../store/constants";
 
-const PlayerSearchWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: 30px 0;
-`;
-
 const PlayerSearchSection = styled.div`
+  &&& {
   
-  form {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    
-    i {
-      margin-left: -60px;
-      z-index: 1;
-     
+    form {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      
+      i {
+        margin-left: -60px;
+        z-index: 1;
+      }
     }
-  }
 
   .playerSearch {
     i {
-      margin-right: 30px !important;
+      margin-right: 30px;
     }
-    
+
     input {
-      width: 756px !important;
-      height: 68px !important;
-      border-radius: 34px !important;
-      border: solid 2px black !important;
-      font-size: 20px !important;
-      padding: 32px !important;
+      width: 90%;
+      max-width: 756px;
+      height: 68px;
+      border-radius: 34px;
+      border: solid 2px black;
+      padding: 32px;
       
-      font-family: Montserrat !important;
-      font-size: 20px !important;
-      font-weight: 500 !important;
-      font-style: normal !important;
-      font-stretch: normal !important;
-      line-height: normal !important;
-      letter-spacing: normal !important;
-      text-align: left !important;
-      color: #000000 !important;
+      font-size: 20px;
+      font-family: Montserrat sans-serif;
+      font-weight: 500;
+      font-style: normal;
+      font-stretch: normal;
+      line-height: normal;
+      letter-spacing: normal;
+      text-align: left;
+      color: #000000;
+    }
       
       @media only screen and (max-width: 400px) {
-        width: 275px !important;
+        width: 275px;
       }
       
       @media only screen and (min-width: 400px) and (max-width: 574px) {
-        width: 375px !important;
+        width: 375px;
       }
       
       @media only screen and (min-width: 575px) and (max-width: 750px) {
-        width: 525px !important;
+        width: 525px;
       }
       
       @media only screen and (min-width: 750px) and (max-width: 1250px) {
-        width: 650px !important;
+        width: 650px;
       }
     }
+  }
 `;
 
 class PlayerSearch extends Component {
@@ -130,40 +125,29 @@ class PlayerSearch extends Component {
     const playerSearchDisplay = playerSearch.replace('%23', '#');
 
     return(
-      <PlayerSearchWrapper>
-        <PlayerSearchSection innerRef={(input) => { this.playerInput = input}}>
-          <form onSubmit={(e) => { e.preventDefault(); return handlePlayerSearch(playerSearch) }}>
-            <Search
-              icon=""
-              className="playerSearch"
-              placeholder="Gamer Tag"
-              noResultsMessage="Gamer Tag not found"
-              results={options}
-              value={playerSearchDisplay}
-              onSearchChange={this.handlePlayerInput}
-              open={openSearchSelection}
-              onResultSelect={this.handleResultSelect}
-              onMouseDown={this.clearSearch}
-            />
-            <Icon
-              name="search"
-              size="large"
-              fitted={false}
-              onClick={() => playerSearch === '' ? null : handlePlayerSearch(playerSearch)} />
-          </form>
-        </PlayerSearchSection>
-      </PlayerSearchWrapper>
+      <PlayerSearchSection innerRef={(input) => { this.playerInput = input}}>
+        <form onSubmit={(e) => { e.preventDefault(); return handlePlayerSearch(playerSearch) }}>
+          <Search
+            icon=""
+            className="playerSearch"
+            placeholder="Gamer Tag"
+            noResultsMessage="Gamer Tag not found"
+            results={options}
+            value={playerSearchDisplay}
+            onSearchChange={this.handlePlayerInput}
+            open={openSearchSelection}
+            onResultSelect={this.handleResultSelect}
+            onMouseDown={this.clearSearch}
+          />
+          <Icon
+            name="search"
+            size="large"
+            fitted={false}
+            onClick={() => playerSearch === '' ? null : handlePlayerSearch(playerSearch)} />
+        </form>
+      </PlayerSearchSection>
     )
   }
 }
 
 export default PlayerSearch;
-
-/*
-  <Input
-    innerRef={(input) => { this.playerInput = input; }}
-    placeholder="Gamer Tag"
-    value={playerSearch}
-    onChange={this.handlePlayerInput}
-  />
- */

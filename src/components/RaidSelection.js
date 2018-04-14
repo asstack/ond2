@@ -1,13 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
 
+import { Grid } from 'semantic-ui-react';
+
 const RaidViewSelectionWrapper = styled.div`
-  display: flex;
-  flex: 1 100%;
-  max-width: 1100px;
-  justify-content: space-around;
-  align-items: center;
-  flex-direction: row;
+  width: 100%;
+  max-width: 90%;
   
   p {
     font-size: 20px;
@@ -29,7 +27,6 @@ const RaidViewSelectionWrapper = styled.div`
   
   @media only screen and (min-width: 750px) and (max-width: 1100px) {
     max-width: 500px;
-  
   }
 `;
 
@@ -66,7 +63,7 @@ const RaidHeading = styled.div`
 `;
 
 const RaidSelect = styled.div`
-  width: 360px;
+  width: 100%;
   height: 88px;
   display: flex;
   flex-direction: column;
@@ -75,14 +72,6 @@ const RaidSelect = styled.div`
   padding-top: 20px;
   border-radius: 4px;
   background-color: ${props => props.selected ? 'white' : '#eeeeee'};
-  
-  @media only screen and (min-width: 400px) and (max-width: 750px) {
-    width: 125px;
-  }
-  
-  @media only screen and (min-width: 750px) and (max-width: 1100px) {
-    width: 160px;
-   
   }
 `;
 
@@ -106,66 +95,72 @@ const Selection = styled.div`
 
 const RaidSelection = ({ handleSetRaid, handleSetMode, nfCount, raidCount, viewRaid, viewMode }) => {
   return (
-    <RaidViewSelectionWrapper>
-      <RaidSelect selected={viewRaid==='eow'}>
-        <RaidHeading onClick={() => { handleSetRaid('eow'); handleSetMode('normal');}}>
-          <p>EOW</p>
-        </RaidHeading>
-        <SelectionGroup>
-          <Selection
-            href="javascript:void(0)"
-            selected={viewRaid==='eow' && viewMode ==='normal'}
-            onClick={() => { handleSetRaid('eow'); handleSetMode('normal');}}
-          >
-            <p>N {raidCount.eow.normal}</p>
-          </Selection>
-        </SelectionGroup>
-      </RaidSelect>
+    <Grid className="raid-selection" centered columns={3}>
+      <Grid.Column>
+        <RaidSelect selected={viewRaid==='eow'}>
+          <RaidHeading onClick={() => { handleSetRaid('eow'); handleSetMode('normal');}}>
+            <p>EOW</p>
+          </RaidHeading>
+          <SelectionGroup>
+            <Selection
+              href="javascript:void(0)"
+              selected={viewRaid==='eow' && viewMode ==='normal'}
+              onClick={() => { handleSetRaid('eow'); handleSetMode('normal');}}
+            >
+              <p>N {raidCount.eow.normal}</p>
+            </Selection>
+          </SelectionGroup>
+        </RaidSelect>
+      </Grid.Column>
 
-      <RaidSelect selected={viewRaid==='lev'}>
-        <RaidHeading onClick={() => { handleSetRaid('lev'); handleSetMode('prestige');}}>
-          <p>Leviathan</p>
-        </RaidHeading>
-        <SelectionGroup>
-          <Selection
-            href="javascript:void(0)"
-            selected={viewRaid==='lev' && viewMode ==='normal'}
-            onClick={() => { handleSetRaid('lev'); handleSetMode('normal');}}
-          >
-            <p>N {raidCount.lev.normal}</p>
-          </Selection>
-          <Selection
-            href="javascript:void(0)"
-            selected={viewRaid==='lev' && viewMode ==='prestige'}
-            onClick={() => { handleSetRaid('lev'); handleSetMode('prestige');}}
-          >
-            <p>P {raidCount.lev.prestige}</p>
-          </Selection>
-        </SelectionGroup>
-      </RaidSelect>
+      <Grid.Column>
+        <RaidSelect selected={viewRaid==='lev'}>
+          <RaidHeading onClick={() => { handleSetRaid('lev'); handleSetMode('prestige');}}>
+            <p>Leviathan</p>
+          </RaidHeading>
+          <SelectionGroup>
+            <Selection
+              href="javascript:void(0)"
+              selected={viewRaid==='lev' && viewMode ==='normal'}
+              onClick={() => { handleSetRaid('lev'); handleSetMode('normal');}}
+            >
+              <p>N {raidCount.lev.normal}</p>
+            </Selection>
+            <Selection
+              href="javascript:void(0)"
+              selected={viewRaid==='lev' && viewMode ==='prestige'}
+              onClick={() => { handleSetRaid('lev'); handleSetMode('prestige');}}
+            >
+              <p>P {raidCount.lev.prestige}</p>
+            </Selection>
+          </SelectionGroup>
+        </RaidSelect>
+      </Grid.Column>
 
-      <RaidSelect selected={viewRaid ==='nf'}>
-        <RaidHeading onClick={() => { handleSetRaid('nf'); handleSetMode('prestige');}}>
-          <p>Nightfall</p>
-        </RaidHeading>
-        <SelectionGroup>
-          <Selection
-            href="javascript:void(0)"
-            selected={viewRaid==='nf' && viewMode ==='normal'}
-            onClick={() => { handleSetRaid('nf'); handleSetMode('normal');}}
-          >
-            <p>N {nfCount.normal}</p>
-          </Selection>
-          <Selection
-            href="javascript:void(0)"
-            selected={viewRaid==='nf' && viewMode ==='prestige'}
-            onClick={() => { handleSetRaid('nf'); handleSetMode('prestige');}}>
-            <p>P {nfCount.prestige}</p>
-          </Selection>
-        </SelectionGroup>
-      </RaidSelect>
-    </RaidViewSelectionWrapper>
-);
+      <Grid.Column>
+        <RaidSelect selected={viewRaid ==='nf'}>
+          <RaidHeading onClick={() => { handleSetRaid('nf'); handleSetMode('prestige');}}>
+            <p>Nightfall</p>
+          </RaidHeading>
+          <SelectionGroup>
+            <Selection
+              href="javascript:void(0)"
+              selected={viewRaid==='nf' && viewMode ==='normal'}
+              onClick={() => { handleSetRaid('nf'); handleSetMode('normal');}}
+            >
+              <p>N {nfCount.normal}</p>
+            </Selection>
+            <Selection
+              href="javascript:void(0)"
+              selected={viewRaid==='nf' && viewMode ==='prestige'}
+              onClick={() => { handleSetRaid('nf'); handleSetMode('prestige');}}>
+              <p>P {nfCount.prestige}</p>
+            </Selection>
+          </SelectionGroup>
+        </RaidSelect>
+      </Grid.Column>
+    </Grid>
+  );
 };
 
 export default RaidSelection;

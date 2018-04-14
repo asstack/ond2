@@ -5,14 +5,14 @@ import styled from 'styled-components';
 import RaidWeek from '../components/RaidWeek';
 
 const RaidWeekContainer = styled.div`
-  width: 212px;
-  height: fit-content;
-  
+  width: 100%;
+  max-width: 212px;
+  display: inline-block;  
   border-radius: 4px;
   background-color: #ffffff;
   border: solid 1px #e2e2e2;
   
-  font-family: Montserrat;
+  font-family: Montserrat sans-serif;
   font-size: 16px;
   font-weight: normal;
   font-style: normal;
@@ -21,18 +21,6 @@ const RaidWeekContainer = styled.div`
   letter-spacing: normal;
   text-align: center;
   color: #000000;
-  
-  @media only screen and (max-width: 400px) {
-    margin-bottom: 15px;
-  }
-  
-  @media only screen and (min-width: 400px) and (max-width: 750px) {
-    margin-bottom: 15px;
-  }
-  
-  @media only screen and (min-width: 750px) and (max-width: 1100px) {
-    margin-bottom: 15px;
-  }
 `;
 
 const RaidWeekHeader = styled.div`
@@ -48,14 +36,14 @@ const RaidWeekHeader = styled.div`
 
 const HeaderDate = styled.span`
   margin: 0 0 0 5px;
-  font-family: Montserrat;
+  font-family: Montserrat sans-serif;
   font-size: 14px;
   font-weight: bolder;
   font-style: normal;
   font-stretch: normal;
   line-height: normal;
   letter-spacing: normal;
-  text-align: bottom;
+  text-align: match-parent;
   color: #000000;
 `;
 

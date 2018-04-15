@@ -48,12 +48,19 @@ const HeaderDate = styled.span`
 `;
 
 
-const RaidStack = ({ handleFetchPGCR, raidWeek, raid, maxSuccessRaids, handleSetMaxSuccessRaids }) => {
+const RaidStack = ({ handleFetchPGCR, viewRaid, raidWeek, raid, maxSuccessRaids, handleSetMaxSuccessRaids }) => {
   const [week, raids] = raidWeek;
   const raidValues = Object.values(raids);
 
-  const completedRaids = raidValues.filter(raid => raid.values.completionReason === 0);
-  const failedRaids = raidValues.filter(raid => raid.values.completionReason !== 0);
+  const completedRaids =
+    viewRaid === 'nf' ?
+      raidValues.filter(raid => raid.values.completionReason === 0)
+      : raidValues.filter(raid => raid.values.completed === 1 && raid.values.completionReason === 0);
+
+  const failedRaids =
+    viewRaid === 'nf' ?
+      raidValues.filter(raid => raid.values.completionReason !== 0)
+        : raidValues.filter(raid => raid.values.completed !== 1 && raid.values.completionReason !== 0);
 
   const completedCount = Object.keys(completedRaids).length;
 

@@ -7,26 +7,38 @@ import { Search, Icon } from 'semantic-ui-react';
 import { PLATFORM_ICONS, PLATFORM_MODES } from "../store/constants";
 
 const PlayerSearchSection = styled.div`
+
+  width: 100%;
+  margin: 30px 0;
+  
   &&& {
   
     form {
       display: flex;
       flex-direction: row;
+      justify-content: center;
       align-items: center;
       
       i {
-        margin-left: -60px;
+        margin-left: -45px;
         z-index: 1;
       }
     }
 
   .playerSearch {
+    width: 100%;
+    max-width: 756px;
+    
     i {
       margin-right: 30px;
     }
 
+    .input {
+      width: 100%;
+    }
+    
     input {
-      width: 90%;
+      width: 100%;
       max-width: 756px;
       height: 68px;
       border-radius: 34px;

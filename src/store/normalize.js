@@ -25,7 +25,7 @@ const splitNightfallByWeek = (weeks, nightfalls) => {
   return weeks.reduce((accum, week) => {
     const nextWeek = moment(week).add(1, 'weeks');
 
-    const weekRange = `${week.format('MM/DD')}`;//-${nextWeek.format('MM/DD')}`;
+    const weekRange = `${week.format('MM/DD')}`;
     const smallDate = week.format('MM/DD');
 
     const weekBox = nightfalls.filter(nf => {
@@ -262,8 +262,8 @@ const _normalizeMilestoneData = (milestones, mshObj) => (
 const _normalizeRaidWeeks = (raid = '', history = {EOW: {}, LEV: {}}, mode = '') => {
   const slicedRaid = (
     raid === 'eow'
-      ? Object.entries(history.EOW).reverse().slice(0, 5).reverse()
-      : Object.entries(history.LEV).reverse().slice(0, 5).reverse()
+      ? Object.entries(history.EOW).reverse().slice(0, 5)
+      : Object.entries(history.LEV).reverse().slice(0, 5)
   );
 
   if (mode === 'prestige') {

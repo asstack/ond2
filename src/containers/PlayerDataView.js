@@ -140,7 +140,7 @@ class RaidWeekViewer extends Component {
         const nfLen = Object.entries(nightfallHistory[viewMode]).length;
         const nfStartIndex = Math.abs(5 - nfLen);
 
-        raidWeeks = Object.entries(nightfallHistory[viewMode]).slice(nfStartIndex, nfLen).map((item) => [ ...item ])
+        raidWeeks = Object.entries(nightfallHistory[viewMode]).slice(nfStartIndex, nfLen).map((item) => [ ...item ]).reverse()
       }
     } if(viewRaid === 'eow' || viewRaid === 'lev') {
       raidWeeks = this.normalizeRaidWeeks(viewRaid, mergedHistory, viewMode) || [];
@@ -150,7 +150,7 @@ class RaidWeekViewer extends Component {
 
     return (
       <PlayerDataViewWrapper>
-        <Grid stackable container centered>
+        <Grid stackable={true} container centered>
           <Grid.Row centered>
             <PlayerSearch
               gamerTagOptions={gamerTagOptions}
@@ -177,13 +177,13 @@ class RaidWeekViewer extends Component {
 
 
             {shouldRender &&
-              <Grid.Row className="raid-stack-row" columns={5} centered>
+              <Grid.Row reversed='computer' className="raid-stack-row" columns={5}>
                 {raidWeeks.map(raidWeek => {
                   return (
-                    <Grid.Column textAlign="center">
+                    <Grid.Column textAlign="center" key={shortid.generate()}>
                       <RaidStack
-                        key={shortid.generate()}
                         handleFetchPGCR={fetchPostGameCarnageReport}
+                        viewRaid={viewRaid}
                         raidWeek={raidWeek}
                         raid={viewRaid}
                         maxSuccessRaids={maxSuccessRaids}

@@ -47,14 +47,14 @@ const PGCRTitle = styled.div`
 `;
 
 
-const sortByValue = (arr, column, direction) => {
+const sortByValue = (arr, column, direction, raidName) => {
   return arr && arr.sort((a, b) => {
     const itemA = (column === 'name') ? a.player.displayName.toUpperCase() : (column === 'score') ? a.values.score : a.values[column.toLowerCase()];
     const itemB = (column === 'name') ? b.player.displayName.toUpperCase() : (column === 'score') ? b.values.score : b.values[column.toLowerCase()];
 
 
-    const aComplete = a.values.completionReason === 0 && a.values.completed === 1;
-    const bComplete = b.values.completionReason === 0 && b.values.completed === 1;
+    const aComplete = raidName === 'Nightfall' ? a.values.completionReason === 0 && a.values.completed === 1 : a.values.completionReason === 0;
+    const bComplete = raidName === 'Nightfall' ? b.values.completionReason === 0 && b.values.completed === 1 : b.values.completionReason === 0;
 
 
     if(!aComplete) return direction === 'ascending' ? 1 : 1;
@@ -97,11 +97,11 @@ class PostGameCarnageReportTable extends Component {
   }
 
   handleSort = clickedColumn => {
-    const { column, data, direction } = this.state;
+    const { column, data, direction, raidName } = this.state;
 
     this.setState({
       column: clickedColumn,
-      data: sortByValue(data, clickedColumn, direction),
+      data: sortByValue(data, clickedColumn, direction, raidName),
       direction: direction === 'ascending' ? 'descending' : 'ascending',
     });
   };

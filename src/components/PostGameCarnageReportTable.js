@@ -15,13 +15,12 @@ const PGCRWrapper = styled.div`
   justify-content: flex-start;
   margin-top: 50px;
   
-  font-family: Montserrat;
+  font-family: Montserrat sans-serif;
   font-weight: bolder;
   font-style: normal;
   font-stretch: normal;
   line-height: normal;
   letter-spacing: normal;
-  text-align: bottom;
   margin-bottom: 20px;
     
   h1 {
@@ -46,15 +45,19 @@ const PGCRTitle = styled.div`
   align-items: center;
 `;
 
-
 const sortByValue = (arr, column, direction, raidName) => {
   return arr && arr.sort((a, b) => {
     const itemA = (column === 'name') ? a.player.displayName.toUpperCase() : (column === 'score') ? a.values.score : a.values[column.toLowerCase()];
     const itemB = (column === 'name') ? b.player.displayName.toUpperCase() : (column === 'score') ? b.values.score : b.values[column.toLowerCase()];
 
 
-    const aComplete = raidName === 'Nightfall' ? a.values.completionReason === 0 && a.values.completed === 1 : a.values.completionReason === 0;
-    const bComplete = raidName === 'Nightfall' ? b.values.completionReason === 0 && b.values.completed === 1 : b.values.completionReason === 0;
+    const aComplete = raidName === 'Nightfall' ?
+      a.values.timePlayedSeconds > 300 && a.values.completionReason === 0 && a.values.completed === 1
+      : a.values.timePlayedSeconds > 300 && a.values.completionReason === 0;
+
+    const bComplete = raidName === 'Nightfall' ?
+      b.values.timePlayedSeconds > 300 && b.values.completionReason === 0 && b.values.completed === 1
+        : b.values.timePlayedSeconds > 300 && b.values.completionReason === 0;
 
 
     if(!aComplete) return direction === 'ascending' ? 1 : 1;

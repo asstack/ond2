@@ -111,9 +111,8 @@ class PostGameCarnageReportTable extends Component {
 
   render() {
     const { data, column, direction, raidName='Nightfall', raidDate } = this.state;
-    console.log('raidName', raidName);
 
-    const isNF = (raidName !== 'Leviathan' && raidName !== 'Eater of Worlds' && raidName !== '');
+    const isNF = !!raidName && (raidName !== 'Leviathan' && raidName !== 'Eater of Worlds' && raidName !== '');
 
     if(column === 'score' && raidName === 'Leviathan' || raidName === 'Eater of Worlds') this.handleSort('kills');
 

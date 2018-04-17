@@ -54,13 +54,13 @@ const RaidStack = ({ handleFetchPGCR, viewRaid, raidWeek, raid, maxSuccessRaids,
 
   const completedRaids =
     viewRaid === 'nf' ?
-      raidValues.filter(raid => raid.values.timePlayedSeconds > 300 && raid.values.completionReason === 0)
-      : raidValues.filter(raid => raid.values.timePlayedSeconds > 300 && raid.values.completed === 1 && raid.values.completionReason === 0);
+      raidValues.filter(raid => raid.values.completionReason === 0)
+      : raidValues.filter(raid => raid.values.timePlayedSeconds >= 300 && raid.values.completed === 1 && raid.values.completionReason === 0);
 
   const failedRaids =
     viewRaid === 'nf' ?
-      raidValues.filter(raid => raid.values.timePlayedSeconds < 300 || raid.values.completionReason !== 0)
-        : raidValues.filter(raid => raid.values.timePlayedSeconds < 300 || raid.values.completed !== 1 && raid.values.completionReason !== 0);
+      raidValues.filter(raid => raid.values.completionReason !== 0)
+        : raidValues.filter(raid => raid.values.timePlayedSeconds >= 300 && raid.values.completed !== 1 && raid.values.completionReason !== 0);
 
   const completedCount = Object.keys(completedRaids).length;
 
@@ -72,6 +72,8 @@ const RaidStack = ({ handleFetchPGCR, viewRaid, raidWeek, raid, maxSuccessRaids,
     incCount > currCount ? handleSetMaxSuccessRaids(incParsed) : null;
   }
 
+  console.log('completedRaids', completedRaids);
+  console.log('failedRaids', failedRaids);
 
   const [name, date] = week.split(':D:');
 

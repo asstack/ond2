@@ -262,8 +262,8 @@ const _normalizeMilestoneData = (milestones, mshObj) => (
 const _normalizeRaidWeeks = (raid = '', history = {EOW: {}, LEV: {}}, mode = '') => {
   const slicedRaid = (
     raid === 'eow'
-      ? Object.entries(history.EOW).reverse().slice(0, 5)
-      : Object.entries(history.LEV).reverse().slice(0, 5)
+      ? Object.entries(history.EOW).reverse().slice(0, 6)
+      : Object.entries(history.LEV).reverse().slice(0, 6)
   );
 
   if (mode === 'prestige') {

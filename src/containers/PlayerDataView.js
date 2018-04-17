@@ -138,7 +138,7 @@ class RaidWeekViewer extends Component {
 
         //hack get this shit outta here
         const nfLen = Object.entries(nightfallHistory[viewMode]).length;
-        const nfStartIndex = Math.abs(5 - nfLen);
+        const nfStartIndex = Math.abs(6 - nfLen);
 
         raidWeeks = Object.entries(nightfallHistory[viewMode]).slice(nfStartIndex, nfLen).map((item) => [ ...item ]).reverse()
       }
@@ -177,7 +177,7 @@ class RaidWeekViewer extends Component {
 
 
             {shouldRender &&
-              <Grid.Row reversed='computer' className="raid-stack-row" columns={5}>
+              <Grid.Row reversed='computer' className="raid-stack-row" columns={6}>
                 {raidWeeks.map(raidWeek => {
                   return (
                     <Grid.Column textAlign="center" key={shortid.generate()}>

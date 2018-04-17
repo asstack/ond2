@@ -5,14 +5,14 @@ import styled from 'styled-components';
 import RaidWeek from '../components/RaidWeek';
 
 const RaidWeekContainer = styled.div`
-  width: 212px;
-  height: fit-content;
-  
+  width: 100%;
+  max-width: 212px;
+  display: inline-block;  
   border-radius: 4px;
   background-color: #ffffff;
   border: solid 1px #e2e2e2;
   
-  font-family: Montserrat;
+  font-family: Montserrat sans-serif;
   font-size: 16px;
   font-weight: normal;
   font-style: normal;
@@ -21,18 +21,6 @@ const RaidWeekContainer = styled.div`
   letter-spacing: normal;
   text-align: center;
   color: #000000;
-  
-  @media only screen and (max-width: 400px) {
-    margin-bottom: 15px;
-  }
-  
-  @media only screen and (min-width: 400px) and (max-width: 750px) {
-    margin-bottom: 15px;
-  }
-  
-  @media only screen and (min-width: 750px) and (max-width: 1100px) {
-    margin-bottom: 15px;
-  }
 `;
 
 const RaidWeekHeader = styled.div`
@@ -48,24 +36,31 @@ const RaidWeekHeader = styled.div`
 
 const HeaderDate = styled.span`
   margin: 0 0 0 5px;
-  font-family: Montserrat;
+  font-family: Montserrat sans-serif;
   font-size: 14px;
   font-weight: bolder;
   font-style: normal;
   font-stretch: normal;
   line-height: normal;
   letter-spacing: normal;
-  text-align: bottom;
+  text-align: match-parent;
   color: #000000;
 `;
 
 
-const RaidStack = ({ handleFetchPGCR, raidWeek, raid, maxSuccessRaids, handleSetMaxSuccessRaids }) => {
+const RaidStack = ({ handleFetchPGCR, viewRaid, raidWeek, raid, maxSuccessRaids, handleSetMaxSuccessRaids }) => {
   const [week, raids] = raidWeek;
   const raidValues = Object.values(raids);
 
-  const completedRaids = raidValues.filter(raid => raid.values.completionReason === 0);
-  const failedRaids = raidValues.filter(raid => raid.values.completionReason !== 0);
+  const completedRaids =
+    viewRaid === 'nf' ?
+      raidValues.filter(raid => raid.values.completionReason === 0)
+      : raidValues.filter(raid => raid.values.timePlayedSeconds >= 300 && raid.values.completed === 1 && raid.values.completionReason === 0);
+
+  const failedRaids =
+    viewRaid === 'nf' ?
+      raidValues.filter(raid => raid.values.completionReason !== 0)
+        : raidValues.filter(raid => raid.values.timePlayedSeconds >= 300 && raid.values.completed !== 1 && raid.values.completionReason !== 0);
 
   const completedCount = Object.keys(completedRaids).length;
 
@@ -77,6 +72,8 @@ const RaidStack = ({ handleFetchPGCR, raidWeek, raid, maxSuccessRaids, handleSet
     incCount > currCount ? handleSetMaxSuccessRaids(incParsed) : null;
   }
 
+  console.log('completedRaids', completedRaids);
+  console.log('failedRaids', failedRaids);
 
   const [name, date] = week.split(':D:');
 

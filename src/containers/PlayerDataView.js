@@ -4,6 +4,8 @@ import { connect } from "react-redux";
 import styled from 'styled-components';
 import shortid from 'shortid';
 
+import { Grid } from 'semantic-ui-react';
+
 import normalize from '../store/normalize';
 
 import RaidSelection from '../components/RaidSelection';
@@ -15,9 +17,30 @@ import { SET_PGCR } from "../store/constants";
 import { FETCH_PGCR } from "../store/constants";
 
 const PlayerDataViewWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
+  &&& {
+    width: 100%;
+    
+    .row {
+      padding: 0;  
+    }
+    
+    .raid-selection {
+      max-width: 90%;
+      
+      .column {
+        padding: 0;
+      }
+    }
+    
+    .raid-stack-row {
+      background-color: white;
+      padding: 15px;
+      
+      .column {
+        padding: 0;
+      }
+    }
+  }
 `;
 
 const RaidView = styled.div`
@@ -25,52 +48,16 @@ const RaidView = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  
 `;
 
 const RaidStackList = styled.div`
-  display: flex;
-  height: fit-content;
-  justify-content: center;
+  width: 100%;
   padding: 15px 15px;
   border-radius: 4px;
   background-color: white;
-  
-  @media only screen and (max-width: 1100px) {
-    width: 75%;
-    flex-flow: row-reverse wrap-reverse;
-  }
-  
-  @media only screen and (max-width 649px) {
-    width: 90%;
-  }
-  
-  @media only screen and (min-width: 606px) and (max-width: 739px) {
-    width: 95%;
-  }
-  
-  @media only screen and (min-width: 740px) and (max-width: 1100px) {
-    width: 90%;
-  }
-  
-  @media only screen and (min-width: 785px) and (max-width: 1100px) {
-    width: 85%;
-  }
-  
-  @media only screen and (min-width: 890px) and (max-width: 1100px) {
-    width: 75%;
-  }
 `;
 
-const SearchWrapper = styled.div`
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-`;
 
-//${(props) => props.loading ? "div { display: none; }" : ''}
 
 class RaidWeekViewer extends Component {
   constructor(props) {
@@ -86,9 +73,7 @@ class RaidWeekViewer extends Component {
     const {handlePlayerSearch, match, history} = this.props;
     handlePlayerSearch(match.params.playerId);
 
-    // Will only be called once the component is mounted
-    // PGCR will unmount and cause listener to be cleared
-    // This prevents the listener from catch the PGCR back.
+    // Prevents a new search on "history back" actions.
     this.unListen = history.listen((location, action) => {
       if(action === 'PUSH' || action === 'POP') {
         if(!!location.state) {
@@ -100,10 +85,6 @@ class RaidWeekViewer extends Component {
 
   componentWillUnmount = () => {
     this.unListen();
-  };
-
-  setUpPlayer = (player) => {
-    this.setState({ player });
   };
 
   searchPlayer = (gamerTag) => {
@@ -157,9 +138,9 @@ class RaidWeekViewer extends Component {
 
         //hack get this shit outta here
         const nfLen = Object.entries(nightfallHistory[viewMode]).length;
-        const nfStartIndex = Math.abs(5 - nfLen);
+        const nfStartIndex = Math.abs(6 - nfLen);
 
-        raidWeeks = Object.entries(nightfallHistory[viewMode]).slice(nfStartIndex, nfLen).map((item) => [ ...item ])
+        raidWeeks = Object.entries(nightfallHistory[viewMode]).slice(nfStartIndex, nfLen).map((item) => [ ...item ]).reverse()
       }
     } if(viewRaid === 'eow' || viewRaid === 'lev') {
       raidWeeks = this.normalizeRaidWeeks(viewRaid, mergedHistory, viewMode) || [];
@@ -169,43 +150,51 @@ class RaidWeekViewer extends Component {
 
     return (
       <PlayerDataViewWrapper>
-        <SearchWrapper loading={loading}>
-          <PlayerSearch
-            gamerTagOptions={gamerTagOptions}
-            playerId={player}
-            handlePlayerSearch={this.searchPlayer}
-            selectGamerTag={selectGamerTag}
-          />
-        </SearchWrapper>
-
-        <RaidView>
-          { playerPrivacy && <h1 style={{ fontSize: 24 }}>The player has set their account to private</h1>}
-          { notFound && <h1 style={{ fontSize: 24 }}>Sorry player not found</h1> }
-          {(!loading && !notFound) &&
-            <RaidSelection
-              handleSetRaid={this.setRaid} handleSetMode={this.setMode}
-              nfCount={nfCount} raidCount={raidCount}
-              viewRaid={viewRaid} viewMode={viewMode}
-              resetMaxSuccessRaids={() => this.setMaxSuccessRaids(0)}
+        <Grid stackable={true} container centered>
+          <Grid.Row centered>
+            <PlayerSearch
+              gamerTagOptions={gamerTagOptions}
+              playerId={player}
+              handlePlayerSearch={this.searchPlayer}
+              selectGamerTag={selectGamerTag}
             />
+          </Grid.Row>
+
+          { playerPrivacy && <Grid.Row><h1 style={{ fontSize: 24 }}>The player has set their account to private</h1></Grid.Row>}
+          { notFound && <Grid.Row><h1 style={{ fontSize: 24 }}>Sorry player not found</h1></Grid.Row> }
+
+          <Grid.Row>
+          {
+            (!loading && !notFound) &&
+              <RaidSelection
+                handleSetRaid={this.setRaid} handleSetMode={this.setMode}
+                nfCount={nfCount} raidCount={raidCount}
+                viewRaid={viewRaid} viewMode={viewMode}
+                resetMaxSuccessRaids={() => this.setMaxSuccessRaids(0)}
+              />
           }
-          {shouldRender &&
-            <RaidStackList>
-              {raidWeeks.map(raidWeek => {
-                return (
-                  <RaidStack
-                    key={shortid.generate()}
-                    handleFetchPGCR={fetchPostGameCarnageReport}
-                    raidWeek={raidWeek}
-                    raid={viewRaid}
-                    maxSuccessRaids={maxSuccessRaids}
-                    handleSetMaxSuccessRaids={this.setMaxSuccessRaids}
-                  />
-                )
-              })}
-            </RaidStackList>
-          }
-        </RaidView>
+          </Grid.Row>
+
+
+            {shouldRender &&
+              <Grid.Row reversed='computer' className="raid-stack-row" columns={6}>
+                {raidWeeks.map(raidWeek => {
+                  return (
+                    <Grid.Column textAlign="center" key={shortid.generate()}>
+                      <RaidStack
+                        handleFetchPGCR={fetchPostGameCarnageReport}
+                        viewRaid={viewRaid}
+                        raidWeek={raidWeek}
+                        raid={viewRaid}
+                        maxSuccessRaids={maxSuccessRaids}
+                        handleSetMaxSuccessRaids={this.setMaxSuccessRaids}
+                      />
+                    </Grid.Column>
+                  )
+                })}
+              </Grid.Row>
+            }
+        </Grid>
       </PlayerDataViewWrapper>
     )
   }

@@ -19,6 +19,7 @@ import { FETCH_PGCR } from "../store/constants";
 const PlayerDataViewWrapper = styled.div`
   &&& {
     width: 100%;
+    margin-bottom: 20px;
     
     .row {
       padding: 0;  
@@ -56,8 +57,6 @@ const RaidStackList = styled.div`
   border-radius: 4px;
   background-color: white;
 `;
-
-
 
 class RaidWeekViewer extends Component {
   constructor(props) {

@@ -8,7 +8,7 @@ import { FETCH_PGCR, SET_PGCR, SET_LOADING } from "./store/constants";
 
 import Landing from './containers/Landing';
 import PlayerDataView from './containers/PlayerDataView';
-import PostGameCarnageModal from './components/PostGameCarnageModal';
+import Credits from './components/credits';
 
 import PostGameCarnageReportContainer from './containers/PostGameCarnageReport';
 import LogoLoader from './components/DestinyLoader/LogoLoader';

@@ -72,9 +72,6 @@ const RaidStack = ({ handleFetchPGCR, viewRaid, raidWeek, raid, maxSuccessRaids,
     incCount > currCount ? handleSetMaxSuccessRaids(incParsed) : null;
   }
 
-  console.log('completedRaids', completedRaids);
-  console.log('failedRaids', failedRaids);
-
   const [name, date] = week.split(':D:');
 
   return(

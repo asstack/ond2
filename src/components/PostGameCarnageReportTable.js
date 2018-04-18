@@ -83,7 +83,7 @@ class PostGameCarnageReportTable extends Component {
     this.state = {
       column : 'score',
       data: this.props.pgcr.entries,
-      direction: 'ascending',
+      direction: 'descending',
       raidName: null,
       raidDate: null
     }
@@ -100,7 +100,7 @@ class PostGameCarnageReportTable extends Component {
   }
 
   handleSort = clickedColumn => {
-    const { column, data, direction, raidName } = this.state;
+    const { data, direction, raidName } = this.state;
 
     this.setState({
       column: clickedColumn,

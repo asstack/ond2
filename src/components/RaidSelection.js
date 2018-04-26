@@ -1,34 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-
 import { Grid } from 'semantic-ui-react';
-
-const RaidViewSelectionWrapper = styled.div`
-  width: 100%;
-  max-width: 90%;
-  
-  p {
-    font-size: 20px;
-    margin-right: 10px;
-    text-align: right;
-  }
-  
-  @media only screen and (max-width: 400px) {
-    width: 300px;
-    
-    p {
-      font-size: 14px;
-    }
-  }
-  
-  @media only screen and (min-width: 400px) and (max-width: 750px) {
-    width: 375px;
-  }
-  
-  @media only screen and (min-width: 750px) and (max-width: 1100px) {
-    max-width: 500px;
-  }
-`;
 
 const SelectionGroup = styled.div`
   display: flex;

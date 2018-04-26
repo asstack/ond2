@@ -1,27 +1,6 @@
-
-const REQUEST = 'REQUEST';
-const SUCCESS = 'SUCCESS';
-const FAILURE = 'FAILURE';
-
-function createRequestTypes(base) {
-  return [REQUEST, SUCCESS, FAILURE].reduce((acc, type) => {
-    acc[type] = `${base}_${type}`;
-    return acc;
-  }, {})
-}
+// Constant data derived from Destiny resources
 
 export const FETCH_LOG = 'FETCH_LOG';
-
-export const SET_PLAYER_PROFILE = 'set_player_profile';
-export const SET_ACTIVITY_HISTORY = 'set_activity_history';
-
-export const LOAD_PUBLIC_MILESTONE_DATA = 'load_public_milestone_data';
-
-export const SET_RAID_HISTORY = 'set_raid_history';
-
-export const FETCH_PLAYER_PROFILE = createRequestTypes('PROFILE');
-export const FETCH_PROFILE_CHARACTERS = 'fetch_profile_characters';
-export const FETCH_PGCR = 'fetch_pgcr';
 
 // TODO: Need Class Race and Gender Hash
 export const CLASS_MAP = {
@@ -619,26 +598,6 @@ export const NF_HASHES = {
           "activityModeHashes": [ 547513715, 2394616003, 1164760493 ],
           "activityModeTypes": [ 46, 18, 7 ]
         },
-    2046332536: {
-              "description": "Contain a rampant army of Red Legion within the Infinite Forest.",
-              "name": "Nightfall: Tree of Probabilities",
-              "icon": "/common/destiny2_content/icons/c9d32f40b3a02374dd26b45c702b959a.png",
-              "hasIcon": true,
-              "releaseIcon": "/common/destiny2_content/icons/62bfc4d00ed8e415e6bf02e56a0907de.png",
-              "releaseTime": 0,
-              "activityLevel": 27,
-              "completionUnlockHash": 0,
-              "activityLightLevel": 270,
-              "destinationHash": 1993421442,
-              "placeHash": 1259908504,
-              "activityTypeHash": 575572995,
-              "tier": 1,
-              "pgcrImage": "/img/destiny_content/pgcr/rituals_tree_of_probabilities.jpg",
-              "directActivityModeHash": 547513715,
-              "directActivityModeType": 46,
-              "activityModeHashes": [ 547513715, 2394616003, 1164760493 ],
-              "activityModeTypes": [ 46, 18, 7 ]
-            },
     145302664: {
           "description": "Shut down the operations of an ironmonger providing weapons to the Red Legion.",
           "name": "Nightfall: The Arms Dealer",

@@ -8,23 +8,19 @@ import {
   getPostGameCarnageReport,
   getPublicMilestones
 } from "./destiny-endpoints";
+import { isObjectEmpty } from "./utilities";
 
-//TODO: Need api key from Karl
 const destinyHeaders = new Headers({
   'Content-Type': 'application/json',
   'X-API-KEY': '06aa4878af6c4eee88f5c0292dcf4df6'
 });
 
-// mine - //'b4c2d019990f452e8c3d40f5d279ac04'
-//06aa4878af6c4eee88f5c0292dcf4df6
 const destinyInit = {
   method: 'GET',
   headers: destinyHeaders,
   mode: 'cors',
   credentials: 'include'
 };
-
-const isObjectEmpty = (obj) => Object.keys(obj).length === 0 && obj.constructor === Object;
 
 const searchPlayer = async pathParams => {
   const url = applyQueryStringParams(searchDestinyPlayer(pathParams), { components: 100 });
@@ -37,20 +33,20 @@ const fetchProfile = async pathParams => {
   const url = applyQueryStringParams(getProfile(pathParams), { components: 100 });
   const res = await fetch(url, destinyInit);
   const playerProfile = await res.json();
-  return Object.keys(playerProfile.Response).length > 0 ? playerProfile.Response.profile.data : {};
+  return isObjectEmpty(playerProfile.Response) ? {} : playerProfile.Response.profile.data;
 };
 
 const fetchCharacters = async pathParams => {
   const url = applyQueryStringParams(getProfile(pathParams), { components: 200 });
   const res = await fetch(url, destinyInit);
   const characters = await res.json();
-  return Object.keys(characters.Response).length > 0 ? characters.Response.characters.data : {}
+  return isObjectEmpty(characters.Response) ? {} : characters.Response.characters.data;
 };
 
 const fetchGroupsForMembers = async pathParams => {
   const res = await fetch(getGroupsForMember(pathParams), destinyInit);
   const groups = await res.json();
-  return Object.keys(groups.Response).length > 0 ? groups.Response.results : {}
+  return isObjectEmpty(groups.Response) ? {} : groups.Response.results
 };
 
 // count, mode, page
@@ -58,9 +54,9 @@ const fetchActivityHistory = async (pathParams, queryParams) => {
   const url = applyQueryStringParams(getActivityHistory(pathParams), queryParams);
   const res = await fetch(url, destinyInit);
   const activityHistory = await res.json();
-  return(
+  return (
     !!activityHistory.Response
-    ? Object.keys(activityHistory.Response).length > 0 ? activityHistory.Response.activities : []
+    ? isObjectEmpty(activityHistory.Response) ? [] : activityHistory.Response.activities
     : { error: activityHistory.Message }
   )
 };
@@ -69,7 +65,7 @@ const fetchActivityStatsAggregate = async (pathParams) => {
   const url = applyQueryStringParams(getAggregateActivityStats(pathParams));
   const res = await fetch(url, destinyInit);
   const activityHistory = await res.json();
-  return Object.keys(activityHistory.Response).length > 0 ? activityHistory.Response.activities : {}
+  return isObjectEmpty(activityHistory.Response) ? {} : activityHistory.Response.activities;
 };
 
 const fetchPostGameCarnageReport = async (activityId) => {

@@ -20,6 +20,7 @@ import {
   SELECT_GAMER_TAG
 } from "../constants";
 
+// TODO: Need to break this into smaller files.
 const fetchLogs = (state=[], action) =>
   action.type === FETCH_LOG ? [...state, action.data] : state;
 

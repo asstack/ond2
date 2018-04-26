@@ -47,36 +47,6 @@ const splitNightfallByWeek = (weeks, nightfalls) => {
   }, {})
 };
 
-
-const splitNightfallByStrike = ({normal, prestige}) => {
-  const prestigeData = Object.entries(NF_HASHES.all).reduce((accum, nfHash) => {
-    const [ id, nfStrike ] = nfHash;
-    const name = nfStrike.name.substring(11);
-
-    const prestigeNightfall = Object.values(prestige).filter((run) => run.activityDetails.referenceId.toString() === id);
-    accum[ name ] = !!accum[ name ] ? [ ...accum[ name ], ...prestigeNightfall ] : [ ...prestigeNightfall ];
-
-    return accum;
-  }, {});
-
-  const normalData = Object.entries(NF_HASHES.all).reduce((accum, nfHash) => {
-    const [ id, rawName ] = nfHash;
-    const name = rawName.name.substring(11);
-
-    const normalNightfall = Object.values(normal).filter((run) => run.activityDetails.referenceId.toString() === id);
-    accum[ name ] = !!accum[ name ] ? [ ...accum[ name ], ...normalNightfall ] : [ ...normalNightfall ];
-
-    return accum;
-  }, {});
-
-  const returnData = {
-    normal: normalData,
-    prestige: prestigeData
-  };
-
-  return returnData;
-};
-
 const mergeRaidsByWeek = raidHistory =>
   Object.values(raidHistory).reduce((accum, charRaids) => {
     Object.entries(charRaids).map(raidGroup => {

@@ -133,7 +133,7 @@ const RaidWeek = ({ raid='', raids, handleFetchPGCR, success=true, maxCount }) =
       }
     </RaidWeekWrapper>
   )
-}
+};
 
 RaidWeek.propTypes = {
   raids: PropTypes.array.isRequired,

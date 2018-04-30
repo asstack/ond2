@@ -13,7 +13,7 @@ const PGCRWrapper = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  margin-top: 50px;
+  margin: 50px auto;
   
   font-family: Montserrat sans-serif;
   font-weight: bolder;
@@ -47,8 +47,8 @@ const PGCRTitle = styled.div`
 
 const sortByValue = (arr, column, direction, raidName) => {
   return arr && arr.sort((a, b) => {
-    const itemA = (column === 'name') ? a.player.displayName.toUpperCase() : (column === 'score') ? a.values.score : a.values[column.toLowerCase()];
-    const itemB = (column === 'name') ? b.player.displayName.toUpperCase() : (column === 'score') ? b.values.score : b.values[column.toLowerCase()];
+    const itemA = (column === 'name') ? a.player.displayName.toUpperCase() : (column === 'score') ? a.values.score : a.values[column];
+    const itemB = (column === 'name') ? b.player.displayName.toUpperCase() : (column === 'score') ? b.values.score : b.values[column];
 
 
     const aComplete = raidName === 'Nightfall' ?
@@ -74,7 +74,6 @@ const sortByValue = (arr, column, direction, raidName) => {
     return 0;
   })
 };
-
 
 class PostGameCarnageReportTable extends Component {
   constructor(props) {
@@ -114,7 +113,7 @@ class PostGameCarnageReportTable extends Component {
 
     const isNF = !!raidName && (raidName !== 'Leviathan' && raidName !== 'Eater of Worlds' && raidName !== '');
 
-    if(column === 'score' && raidName === 'Leviathan' || raidName === 'Eater of Worlds') this.handleSort('kills');
+    if(column === 'score' && raidName === 'Leviathan' || raidName === 'Eater of Worlds') this.handleSort('killsDeathsRatio');
 
     return(
       <PGCRWrapper>
@@ -133,6 +132,9 @@ class PostGameCarnageReportTable extends Component {
                   Score
                 </Table.HeaderCell>
               }
+              <Table.HeaderCell sorted={column === 'killsDeathsRatio' ? direction : null} onClick={() => this.handleSort('killsDeathsRatio')}>
+                Kill Death Ratio
+              </Table.HeaderCell>
               <Table.HeaderCell sorted={column === 'kills' ? direction : null} onClick={() => this.handleSort('kills')}>
                 Kills
               </Table.HeaderCell>
@@ -141,9 +143,6 @@ class PostGameCarnageReportTable extends Component {
               </Table.HeaderCell>
               <Table.HeaderCell sorted={column === 'assists' ? direction : null} onClick={() => this.handleSort('assists')}>
                 Assists
-              </Table.HeaderCell>
-              <Table.HeaderCell sorted={column === 'killsDeathsRatio' ? direction : null} onClick={() => this.handleSort('killsDeathsRatio')}>
-                Kill Death Ratio
               </Table.HeaderCell>
               <Table.HeaderCell sorted={column === 'timePlayedSeconds' ? direction : null} onClick={() => this.handleSort('timePlayedSeconds')}>
                 Time Played
@@ -157,15 +156,15 @@ class PostGameCarnageReportTable extends Component {
               const completed = values.completionReason === 0 && values.completed === 1;
 
               return (
-                <Table.Row negative={!completed} key={shortid.generate()}>
+                <Table.Row negative={!completed} disabled={!completed} key={shortid.generate()}>
                   <td><Link to={`/player/${displayName.toLowerCase()}`}>{displayName}</Link></td>
                   { isNF &&
                     <Table.Cell>{ `${values.score} / ${values.teamScore}` }</Table.Cell>
                   }
+                  <Table.Cell>{Math.floor(values.killsDeathsRatio, 4)}</Table.Cell>
                   <Table.Cell>{values.kills}</Table.Cell>
                   <Table.Cell>{values.deaths}</Table.Cell>
                   <Table.Cell>{values.assists}</Table.Cell>
-                  <Table.Cell>{Math.floor(values.killsDeathsRatio, 4)}</Table.Cell>
                   <Table.Cell>{Math.floor(values.timePlayedSeconds / 60, 2)}</Table.Cell>
                 </Table.Row>
               )})}

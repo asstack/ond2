@@ -47,7 +47,6 @@ const HeaderDate = styled.span`
   color: #000000;
 `;
 
-
 const RaidStack = ({ handleFetchPGCR, viewRaid, raidWeek, raid, maxSuccessRaids, handleSetMaxSuccessRaids }) => {
   const [week, raids] = raidWeek;
   const raidValues = Object.values(raids);

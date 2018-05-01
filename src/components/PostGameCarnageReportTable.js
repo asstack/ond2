@@ -133,7 +133,7 @@ class PostGameCarnageReportTable extends Component {
                 </Table.HeaderCell>
               }
               <Table.HeaderCell sorted={column === 'killsDeathsRatio' ? direction : null} onClick={() => this.handleSort('killsDeathsRatio')}>
-                Kill Death Ratio
+                KDA
               </Table.HeaderCell>
               <Table.HeaderCell sorted={column === 'kills' ? direction : null} onClick={() => this.handleSort('kills')}>
                 Kills

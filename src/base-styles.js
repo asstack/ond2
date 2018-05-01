@@ -16,6 +16,10 @@ const baseStyles = () => injectGlobal`
       }
   }
   
+  .remove-margins.remove-margins.remove-margins {
+    margin: 0 !important;
+  }
+  
   #root {
     min-height: 100vh;
     height: 100vh;

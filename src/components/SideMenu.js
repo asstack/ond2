@@ -5,7 +5,7 @@ import OND2Logo from './OND2Logo';
 
 const SideMenu = ({ children, visible, toggle }) => {
   return (
-    <Sidebar.Pushable as={Container} fluid={true}>
+    <Sidebar.Pushable className="remove-margins" as={Container} fluid={true}>
       <Sidebar as={Menu} animation='overlay' width='wide' direction='left' visible={visible} icon='labeled' vertical inverted>
         <Menu.Item as={Link} to='/' onClick={toggle} style={{ fill: 'white' }} name='home' >
           <div style={{ width: '50%', height: '50%', margin: '0 auto'}}>

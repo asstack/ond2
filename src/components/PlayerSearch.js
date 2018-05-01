@@ -56,12 +56,12 @@ const PlayerSearchSection = styled.div`
       color: #000000;
     }
       
-      @media only screen and (max-width: 400px) {
-        width: 275px;
+      @media only screen and (max-width: 430px) {
+        width: 300px;
       }
       
-      @media only screen and (min-width: 400px) and (max-width: 574px) {
-        width: 375px;
+      @media only screen and (min-width: 430px) and (max-width: 575px) {
+        width: 425px;
       }
       
       @media only screen and (min-width: 575px) and (max-width: 750px) {

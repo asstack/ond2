@@ -1,5 +1,7 @@
-export const FETCH_LOG = 'FETCH_LOG';
+export const CONTACT_REDDIT = '' +
+  'https://www.reddit.com/message/compose/?to=videoflux&subject=OND2%20&message=Please%20include%20your%20Gamertag,%20System,%20and%20contact%20info.';
 
+export const FETCH_LOG = 'FETCH_LOG';
 export const SET_PLAYER_PROFILE = 'set_player_profile';
 export const SET_ACTIVITY_HISTORY = 'set_activity_history';
 export const SET_PGCR = 'set_pgcr';

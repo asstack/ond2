@@ -32,6 +32,10 @@ const RaidHeading = styled.div`
   line-height: normal;
   letter-spacing: normal;
   color: #000000;
+  
+  @media only screen and  (max-width: 574px) {
+    font-size: 16px;
+  }
 `;
 
 const RaidSelect = styled.div`

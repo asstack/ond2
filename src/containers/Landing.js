@@ -17,8 +17,14 @@ const HeroLogo = styled.img`
   width: 40%;
   margin: 50px 0;
   
-  @media only screen and (min-width: 340px) and (max-width: 750px) {
-    margin-top: 30px;
+  @media only screen and (max-width: 400px) {
+    width: 60%;
+    margin: 60px 0 10px 0;
+  }
+  
+  @media only screen and (min-width: 400px) and (max-width: 900px) {
+    width: 60%;
+    margin: 50px 0 10px 0;
   }
 `;
 

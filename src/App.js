@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { BrowserRouter as Router, withRouter, Route } from 'react-router-dom';
+import { withRouter, Route } from 'react-router-dom';
+import { Segment, Container, List } from 'semantic-ui-react';
 import styled from 'styled-components';
-import { Icon } from 'semantic-ui-react';
 
 import baseStyles from './base-styles';
-import { FETCH_PGCR, SET_PGCR, SET_LOADING } from "./store/constants";
+import { FETCH_PGCR, SET_PGCR, SET_LOADING, CONTACT_REDDIT } from "./store/constants";
 
 import Landing from './containers/Landing';
 import PlayerDataView from './containers/PlayerDataView';
@@ -33,6 +33,15 @@ const MenuToggleWrapper = styled.div`
   position: fixed;
   top: 25px;
   left: 10%;
+  z-index: 5;
+  
+  @media only screen and (max-width: 400px) {
+    left: 5%;
+  }
+
+  @media only screen and (min-width: 400px) and (max-width: 574px) {
+    left: 5%;
+  }
 `;
 
 class App extends Component {
@@ -90,6 +99,16 @@ class App extends Component {
             />
           )}/>
         </SideMenu>
+        <Segment vertical style={{ width: '100%', padding: '2em 0em' }}>
+          <Container textAlign='center'>
+            <List horizontal divided link small>
+              <List.Item as='a' href={CONTACT_REDDIT}>Contact Us</List.Item>
+              <List.Item as='a' href='/faq'>FAQ</List.Item>
+              <List.Item as='a' href='https://www.reddit.com/user/videoflux'>Concept and UI by Videoflux</List.Item>
+              <List.Item as='a' href='http://www.w-richardson.com'>Developed by <b>William Richardson</b></List.Item>
+            </List>
+          </Container>
+        </Segment>
       </AppWrapper>
     );
   }

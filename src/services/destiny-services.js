@@ -1,3 +1,4 @@
+import { awsURL } from '../actions';
 import { applyQueryStringParams } from "./utilities";
 import {
   searchDestinyPlayer,
@@ -6,7 +7,6 @@ import {
   getActivityHistory,
   getAggregateActivityStats,
   getPostGameCarnageReport,
-  getPublicMilestones
 } from "./destiny-endpoints";
 import { isObjectEmpty } from "./utilities";
 
@@ -29,11 +29,9 @@ const searchPlayer = async pathParams => {
   return playerData.Response;
 };
 
-const fetchProfile = async pathParams => {
-  const url = applyQueryStringParams(getProfile(pathParams), { components: 100 });
-  const res = await fetch(url, destinyInit);
-  const playerProfile = await res.json();
-  return isObjectEmpty(playerProfile.Response) ? {} : playerProfile.Response.profile.data;
+const fetchProfile = async membershipId => {
+  const res = await fetch(`${awsURL}/profile/${membershipId}`,  { method: 'GET', mode: 'cors' });
+  return await res.json();
 };
 
 const fetchCharacters = async pathParams => {
@@ -76,9 +74,8 @@ const fetchPostGameCarnageReport = async (activityId) => {
 };
 
 const fetchPublicMilestones = async () => {
-  const res = await fetch(getPublicMilestones(), destinyInit);
-  const publicMilestones = await res.json();
-  return publicMilestones.Response
+  const res = await fetch(`${awsURL}/milestones`, { method: 'GET', mode: 'cors' });
+  return await res.json();
 };
 
 export {

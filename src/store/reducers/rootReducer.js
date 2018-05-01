@@ -59,7 +59,7 @@ const setPostGameCarnageReport = (state = false, action) => {
   return state;
 };
 
-const setPublicMilestones = (state = false, action) => {
+const setPublicMilestones = (state = [], action) => {
   if(action.type === SET_PUBLIC_MILESTONES) {
     return action.data;
   }

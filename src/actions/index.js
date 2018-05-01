@@ -9,6 +9,7 @@ export const CLASS_MAP = {
     2271682572: 'Warlock',
 };
 
+export const awsURL = 'https://d4bdgvp4d1.execute-api.us-west-1.amazonaws.com/Production';
 export const destinyBaseURL = 'https://www.bungie.net';
 export const LEVIATHAN_IMAGE = `${destinyBaseURL}/img/destiny_content/pgcr/raid_gluttony.jpg`;
 export const EATER_OF_WORLDS_IMAGE = `${destinyBaseURL}/img/destiny_content/pgcr/raids_leviathan_eater_of_worlds.jpg`;

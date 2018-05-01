@@ -101,7 +101,7 @@ class App extends Component {
         </SideMenu>
         <Segment vertical style={{ width: '100%', padding: '2em 0em' }}>
           <Container textAlign='center'>
-            <List horizontal divided link small>
+            <List horizontal divided link small="true">
               <List.Item as='a' href={CONTACT_REDDIT}>Contact Us</List.Item>
               <List.Item as='a' href='/faq'>FAQ</List.Item>
               <List.Item as='a' href='https://www.reddit.com/user/videoflux'>Concept and UI by Videoflux</List.Item>

@@ -112,7 +112,7 @@ class RaidWeekViewer extends Component {
     const {
       match, loading, nightfallHistory, raidHistory,
       fetchPostGameCarnageReport, playerProfile, playerPrivacy,
-      viewRaid, viewMode, gamerTagOptions, selectGamerTag
+      viewRaid, viewMode, gamerTagOptions, selectGamerTag, publicMilestones
     } = this.props;
     const { maxSuccessRaids } = this.state;
 
@@ -177,11 +177,12 @@ class RaidWeekViewer extends Component {
 
             {shouldRender &&
               <Grid.Row reversed='computer' className="raid-stack-row" columns={6}>
-                {raidWeeks.map(raidWeek => {
+                {raidWeeks.map((raidWeek, idx) => {
                   return (
                     <Grid.Column textAlign="center" key={shortid.generate()}>
                       <RaidStack
                         handleFetchPGCR={fetchPostGameCarnageReport}
+                        weekTitle={publicMilestones[idx]}
                         viewRaid={viewRaid}
                         raidWeek={raidWeek}
                         raid={viewRaid}
@@ -209,7 +210,8 @@ const mapStateToProps = state => {
     raidHistory: state.raidHistory,
     playerProfile: state.playerProfile,
     playerPrivacy: state.playerPrivacy,
-    gamerTagOptions: state.gamerTagOptions
+    gamerTagOptions: state.gamerTagOptions,
+    publicMilestones: state.publicMilestones
   }
 };
 

@@ -1,6 +1,6 @@
-import { call, put, take, all, select } from 'redux-saga/effects';
+import { call, put, take, all, select, spawn } from 'redux-saga/effects';
 import normalize from "../normalize";
-import { fetchProfile, searchPlayer, fetchCharacters } from "../../services/destiny-services";
+import { fetchProfile, searchPlayer, fetchCharacters, fetchPublicMilestones } from "../../services/destiny-services";
 import collectNightfallData from './nightfallSaga';
 import collectRaidData from './raidSaga';
 import * as consts from "../constants";
@@ -17,6 +17,12 @@ function* clearSearchData() {
   yield put({ type: consts.SET_GAMER_TAG_OPTIONS, data: [] });
 }
 
+function* getMilestoneData() {
+  const data = yield call(fetchPublicMilestones);
+  const milestones = normalize.milestoneData(data);
+  yield put({ type: consts.SET_PUBLIC_MILESTONES, data: milestones });
+}
+
 export default function* fetchPlayerProfile({ data }) {
   try {
     yield put({ type: consts.SET_LOADING, data: true });
@@ -24,6 +30,7 @@ export default function* fetchPlayerProfile({ data }) {
     yield put({ type: consts.SET_PLAYER_PRIVACY, data: false });
 
     const searchResults = yield call(searchPlayer, data);
+    yield spawn(getMilestoneData);
 
     let playerSearch;
 
@@ -47,8 +54,7 @@ export default function* fetchPlayerProfile({ data }) {
     const memberId = playerSearch.membershipId;
     const cacheCheck = Object.keys(playerCache).indexOf(memberId) >= 0;
 
-    const [ profile, playersCharacters ] = yield all([ call(fetchProfile, playerSearch), call(fetchCharacters, playerSearch) ]);
-    const playerProfile = cacheCheck ? playerCache[memberId] : normalize.player(playerSearch, profile, playersCharacters);
+    const playerProfile = yield call(fetchProfile, memberId);
 
     if(!cacheCheck) {
       playerCache[ memberId ] = playerProfile;

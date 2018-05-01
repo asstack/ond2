@@ -220,14 +220,9 @@ const _normalizePostGameCarnageReport = (pgcr) => ({
   }
 );
 
-const _normalizeMilestoneData = (milestones, mshObj) => (
-  Object.entries(milestones)
-    .filter(entry => (entry[ 0 ] === mshObj.lev_msh.toString() || entry[ 0 ] === mshObj.nf_msh.toString()))
-    .reduce((accum, msh) => {
-      accum[ msh[ 0 ] ] = msh[ 1 ].availableQuests[ 0 ].activity.variants.map(curr => curr.activityHash);
-      return accum;
-    }, {})
-);
+const _normalizeMilestoneData = (milestones) => {
+  return Object.entries(milestones).sort().reverse();
+};
 
 const _normalizeRaidWeeks = (raid = '', history = {EOW: {}, LEV: {}}, mode = '') => {
   const slicedRaid = (

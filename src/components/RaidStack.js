@@ -47,7 +47,7 @@ const HeaderDate = styled.span`
   color: #000000;
 `;
 
-const RaidStack = ({ handleFetchPGCR, viewRaid, raidWeek, raid, maxSuccessRaids, handleSetMaxSuccessRaids }) => {
+const RaidStack = ({ handleFetchPGCR, viewRaid, raidWeek, raid, maxSuccessRaids, handleSetMaxSuccessRaids, weekTitle }) => {
   const [week, raids] = raidWeek;
   const raidValues = Object.values(raids);
 
@@ -71,13 +71,13 @@ const RaidStack = ({ handleFetchPGCR, viewRaid, raidWeek, raid, maxSuccessRaids,
     incCount > currCount ? handleSetMaxSuccessRaids(incParsed) : null;
   }
 
-  const [name, date] = week.split(':D:');
+  const [date, name] = weekTitle;
 
   return(
     <RaidWeekContainer>
       <RaidWeekHeader raid={raid}>
         {name}
-        <HeaderDate>{date}</HeaderDate>
+        <HeaderDate>{date.substring(0, 5)}</HeaderDate>
       </RaidWeekHeader>
       <RaidWeek raid={raid} raids={completedRaids} maxCount={maxSuccessRaids} handleFetchPGCR={handleFetchPGCR} />
       <RaidWeek success={false} raids={failedRaids} handleFetchPGCR={handleFetchPGCR} />

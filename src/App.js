@@ -36,11 +36,11 @@ const MenuToggleWrapper = styled.div`
   z-index: 5;
   
   @media only screen and (max-width: 400px) {
-    left: 5%;
+    left: 1%;
   }
 
   @media only screen and (min-width: 400px) and (max-width: 574px) {
-    left: 5%;
+    left: 1%;
   }
 `;
 

@@ -57,6 +57,7 @@ const PlayerSearchSection = styled.div`
     }
       
       @media only screen and (max-width: 430px) {
+        margin-left: 10px;
         width: 300px;
       }
       

@@ -71,13 +71,13 @@ const RaidStack = ({ handleFetchPGCR, viewRaid, raidWeek, raid, maxSuccessRaids,
     incCount > currCount ? handleSetMaxSuccessRaids(incParsed) : null;
   }
 
-  const [date, name] = weekTitle;
+  const [date, name] = viewRaid === 'nf' ? weekTitle : week.split(':D:').reverse();
 
   return(
     <RaidWeekContainer>
       <RaidWeekHeader raid={raid}>
         {name}
-        <HeaderDate>{date.substring(0, 5)}</HeaderDate>
+        <HeaderDate>{viewRaid === 'nf' ? date.substring(0, 5): date}</HeaderDate>
       </RaidWeekHeader>
       <RaidWeek raid={raid} raids={completedRaids} maxCount={maxSuccessRaids} handleFetchPGCR={handleFetchPGCR} />
       <RaidWeek success={false} raids={failedRaids} handleFetchPGCR={handleFetchPGCR} />

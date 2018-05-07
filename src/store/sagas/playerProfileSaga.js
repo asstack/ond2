@@ -1,8 +1,6 @@
 import { call, put, take, all, select, spawn } from 'redux-saga/effects';
 import normalize from "../normalize";
-import { fetchProfile, searchPlayer, fetchCharacters, fetchPublicMilestones } from "../../services/destiny-services";
-import collectNightfallData from './nightfallSaga';
-import collectRaidData from './raidSaga';
+import { fetchProfile, searchPlayer, fetchActivityHistory, fetchPublicMilestones } from "../../services/destiny-services";
 import * as consts from "../constants";
 
 function* handleSearchPlayerFailure() {
@@ -51,21 +49,26 @@ export default function* fetchPlayerProfile({ data }) {
     }
 
     const playerCache = yield  select(state => state.playerCache);
-    const memberId = playerSearch.membershipId;
-    const cacheCheck = Object.keys(playerCache).indexOf(memberId) >= 0;
+    const membershipId = playerSearch.membershipId;
+    const cacheCheck = Object.keys(playerCache).indexOf(membershipId) >= 0;
 
-    const playerProfile = yield call(fetchProfile, memberId);
+    const playerProfile = yield call(fetchProfile, membershipId);
 
     if(!cacheCheck) {
-      playerCache[ memberId ] = playerProfile;
+      playerCache[ membershipId ] = playerProfile;
     }
 
     yield put({type: consts.SET_PLAYER_CACHE, data: playerCache});
     yield put({type: consts.SET_PLAYER_PROFILE, data: playerProfile});
     yield put({type: consts.FETCH_LOG, data: 'Player Profile Fetch Success'});
 
-    yield call(collectNightfallData, playerProfile);
-    yield call(collectRaidData, playerProfile);
+    const activityHistory = yield call(fetchActivityHistory, membershipId);
+
+    const raidHistory = normalize.raidHistory(activityHistory.raidHistory);
+    yield put({ type: consts.SET_NF_HISTORY, data: normalize.nightfall(activityHistory.nightfallHistory)});
+    yield put({ type: consts.SET_RAID_HISTORY, data: raidHistory});
+
+    yield put({ type: consts.SET_LOADING, data: false });
   }
   catch(error) {
     //TODO: Remove error warn and store log files in s3 bucket or store errors in database.

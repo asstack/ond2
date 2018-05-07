@@ -34,6 +34,11 @@ const fetchProfile = async membershipId => {
   return await res.json();
 };
 
+const fetchActivityHistory = async membershipId => {
+  const res = await fetch(`${awsURL}/activityHistory/${membershipId}`,  { method: 'GET', mode: 'cors' });
+  return await res.json();
+};
+
 const fetchCharacters = async pathParams => {
   const url = applyQueryStringParams(getProfile(pathParams), { components: 200 });
   const res = await fetch(url, destinyInit);
@@ -47,17 +52,17 @@ const fetchGroupsForMembers = async pathParams => {
   return isObjectEmpty(groups.Response) ? {} : groups.Response.results
 };
 
-// count, mode, page
-const fetchActivityHistory = async (pathParams, queryParams) => {
-  const url = applyQueryStringParams(getActivityHistory(pathParams), queryParams);
-  const res = await fetch(url, destinyInit);
-  const activityHistory = await res.json();
-  return (
-    !!activityHistory.Response
-    ? isObjectEmpty(activityHistory.Response) ? [] : activityHistory.Response.activities
-    : { error: activityHistory.Message }
-  )
-};
+//// count, mode, page
+//const fetchActivityHistory = async (pathParams, queryParams) => {
+//  const url = applyQueryStringParams(getActivityHistory(pathParams), queryParams);
+//  const res = await fetch(url, destinyInit);
+//  const activityHistory = await res.json();
+//  return (
+//    !!activityHistory.Response
+//    ? isObjectEmpty(activityHistory.Response) ? [] : activityHistory.Response.activities
+//    : { error: activityHistory.Message }
+//  )
+//};
 
 const fetchActivityStatsAggregate = async (pathParams) => {
   const url = applyQueryStringParams(getAggregateActivityStats(pathParams));

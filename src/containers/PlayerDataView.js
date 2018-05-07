@@ -90,7 +90,7 @@ class RaidWeekViewer extends Component {
     this.props.history.push(`/player/${gamerTag}`, { gamerTag });
   };
 
-  normalizeRaidWeeks = (raid, history, mode) => normalize.raidWeeks(raid, history, mode);
+  normalizeRaidWeeks = (raids={}, size=6) => Object.entries(raids).reverse().slice(0, size);
 
   setRaid = (raid) => {
     this.props.setViewRaid(raid);
@@ -120,7 +120,6 @@ class RaidWeekViewer extends Component {
 
     const { nfCount={ prestige: '0', normal: '0' } } = nightfallHistory;
     const {
-      mergedHistory,
       raidCount={
         eow: { prestige: '0', normal: '0' },
         lev: { prestige: '0', normal: '0' }
@@ -142,9 +141,13 @@ class RaidWeekViewer extends Component {
         raidWeeks = Object.entries(nightfallHistory[viewMode]).slice(nfStartIndex, nfLen).map((item) => [ ...item ]).reverse()
       }
     } if(viewRaid === 'eow' || viewRaid === 'lev') {
-      raidWeeks = this.normalizeRaidWeeks(viewRaid, mergedHistory, viewMode) || [];
+      console.log('viewRaid', viewRaid);
+      console.log('raidHistory', raidHistory);
+      const raidKey = viewRaid.toUpperCase();
+      raidWeeks = this.normalizeRaidWeeks(raidHistory[raidKey][viewMode], 6) || [];
     }
 
+    console.log('raidWeeks', raidWeeks);
     const shouldRender = (!loading && raidWeeks.length > 0 && !notFound && !playerPrivacy);
 
     return (

@@ -28,6 +28,15 @@ const LoaderWrapper = styled.div`
     animation: spin 1.5s ease infinite
   }
   
+  div {
+    width: 300px;
+    text-align: center;
+    font-size: 14px;
+    position: absolute;
+    top: 48%;
+    left: calc(50% - 150px);
+  }
+  
   @keyframes spin {
     0% {transform: rotateY(0deg)}
     100% {transform: rotateY(360deg)
@@ -38,6 +47,10 @@ const LogoLoader = () => {
   return(
     <LoaderWrapper>
       <OND2Logo />
+      <div>
+        <p>Aggregating data...</p>
+        <p>We'll keep it up to date behind the scenes</p>
+      </div>
     </LoaderWrapper>
   )
 };

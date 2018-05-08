@@ -120,6 +120,8 @@ class RaidWeekViewer extends Component {
 
     const { nfCount={ prestige: '0', normal: '0' } } = nightfallHistory;
     const {
+      LEV={ prestige: {}, normal: {}},
+      EOW={},
       raidCount={
         eow: { prestige: '0', normal: '0' },
         lev: { prestige: '0', normal: '0' }
@@ -140,14 +142,15 @@ class RaidWeekViewer extends Component {
 
         raidWeeks = Object.entries(nightfallHistory[viewMode]).slice(nfStartIndex, nfLen).map((item) => [ ...item ]).reverse()
       }
-    } if(viewRaid === 'eow' || viewRaid === 'lev') {
-      console.log('viewRaid', viewRaid);
-      console.log('raidHistory', raidHistory);
-      const raidKey = viewRaid.toUpperCase();
-      raidWeeks = this.normalizeRaidWeeks(raidHistory[raidKey][viewMode], 6) || [];
+    }
+    else if(viewRaid === 'eow' || viewRaid === 'lev') {
+        raidWeeks = (viewRaid === 'eow')
+          ? Object.entries(EOW).reverse().slice(0, 6)
+          : Object.entries(LEV[viewMode]).reverse().slice(0, 6)
+    } else {
+      raidWeeks = [];
     }
 
-    console.log('raidWeeks', raidWeeks);
     const shouldRender = (!loading && raidWeeks.length > 0 && !notFound && !playerPrivacy);
 
     return (

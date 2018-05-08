@@ -84,7 +84,8 @@ class PostGameCarnageReportTable extends Component {
       data: this.props.pgcr.entries,
       direction: 'descending',
       raidName: null,
-      raidDate: null
+      raidDate: null,
+      initialSort: true
     }
   }
 
@@ -105,15 +106,16 @@ class PostGameCarnageReportTable extends Component {
       column: clickedColumn,
       data: sortByValue(data, clickedColumn, direction, raidName),
       direction: direction === 'ascending' ? 'descending' : 'ascending',
+      initialSort: false
     });
   };
 
   render() {
-    const { data, column, direction, raidName='Nightfall', raidDate } = this.state;
+    const { data, column, direction, raidName='Nightfall', raidDate, initialSort } = this.state;
 
-    const isNF = !!raidName && (raidName !== 'Leviathan' && raidName !== 'Eater of Worlds' && raidName !== '');
+    const isNF = !!raidName && (!raidName === 'Leviathan' && raidName !== 'Eater of Worlds' && raidName !== '');
 
-    if(column === 'score' && raidName === 'Leviathan' || raidName === 'Eater of Worlds') this.handleSort('killsDeathsRatio');
+    if(initialSort && (column === 'score' && raidName === 'Leviathan' || raidName === 'Eater of Worlds')) this.handleSort('killsDeathsRatio');
 
     return(
       <PGCRWrapper>

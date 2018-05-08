@@ -71,7 +71,7 @@ class App extends Component {
     baseStyles();
 
     const { showSideMenu } = this.state;
-    const { pgcr, clearPostGameCarnageReport, loading, clearLoader } = this.props;
+    const { pgcr, newPlayer, clearPostGameCarnageReport, loading, clearLoader } = this.props;
 
     return (
       <AppWrapper>
@@ -79,7 +79,7 @@ class App extends Component {
           <MenuToggleWrapper onClick={() => this.toggleSideMenu() }>
            <OND2Logo />
           </MenuToggleWrapper>
-          { loading && <LogoLoader /> }
+          { loading && <LogoLoader newPlayer={newPlayer} /> }
 
           <Route exact path="/" render={data => (
             <Landing loading={loading} {...data} />
@@ -117,7 +117,8 @@ class App extends Component {
 const mapStateToProps = state => {
   return {
     pgcr: state.postGameCarnageReport,
-    loading: state.loading
+    loading: state.loading,
+    newPlayer: state.playerProfile.newPlayer
   }
 };
 

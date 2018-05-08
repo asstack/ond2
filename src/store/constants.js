@@ -20,7 +20,6 @@ export const SET_RAID_HISTORY_CACHE = 'set_raid_history_cache';
 export const SET_PLAYER_CACHE = 'set_player_cache';
 
 export const FETCH_PLAYER_PROFILE = 'fetch_player_profile';
-export const FETCH_PROFILE_CHARACTERS = 'fetch_profile_characters';
 export const FETCH_PGCR = 'fetch_pgcr';
 
 export const LOAD_PUBLIC_MILESTONE_DATA = 'load_public_milestone_data';

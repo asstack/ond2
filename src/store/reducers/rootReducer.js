@@ -17,7 +17,8 @@ import {
   SET_PLAYER_CACHE,
   SET_RAID_HISTORY_CACHE,
   SET_GAMER_TAG_OPTIONS,
-  SELECT_GAMER_TAG
+  SELECT_GAMER_TAG,
+  SET_SITE_ERROR
 } from "../constants";
 
 // TODO: Need to break this into smaller files.
@@ -136,6 +137,13 @@ const setPlayerCache = (state = {}, action) => {
   return state;
 };
 
+const setSiteError = (state = false, action) => {
+  if(action.type === SET_SITE_ERROR) {
+    return action.data;
+  }
+  return state;
+};
+
 const rootReducer = combineReducers({
   fetchLogs,
   playerProfile: setPlayerProfile,
@@ -153,7 +161,8 @@ const rootReducer = combineReducers({
   raidHistoryCache: setRaidHistoryCache,
   playerCache: setPlayerCache,
   gamerTagOptions: setGamerTagOptions,
-  selectedGamerTag: selectGamerTag
+  selectedGamerTag: selectGamerTag,
+  siteError: setSiteError
 });
 
 export default rootReducer;

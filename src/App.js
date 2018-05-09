@@ -9,7 +9,7 @@ import { FETCH_PGCR, SET_PGCR, SET_LOADING, CONTACT_REDDIT } from "./store/const
 
 import Landing from './containers/Landing';
 import PlayerDataView from './containers/PlayerDataView';
-
+import ErrorMessage from './components/ErrorMessage';
 import SideMenu from './components/SideMenu';
 import PostGameCarnageReportContainer from './containers/PostGameCarnageReport';
 import LogoLoader from './components/LogoLoader';
@@ -71,14 +71,18 @@ class App extends Component {
     baseStyles();
 
     const { showSideMenu } = this.state;
-    const { pgcr, newPlayer, clearPostGameCarnageReport, loading, clearLoader } = this.props;
+    const { pgcr, siteError, newPlayer, clearPostGameCarnageReport, loading, clearLoader } = this.props;
 
     return (
       <AppWrapper>
+
+        { siteError && <ErrorMessage /> }
+
         <SideMenu toggle={this.toggleSideMenu} visible={showSideMenu}>
           <MenuToggleWrapper onClick={() => this.toggleSideMenu() }>
            <OND2Logo />
           </MenuToggleWrapper>
+
           { loading && <LogoLoader newPlayer={newPlayer} /> }
 
           <Route exact path="/" render={data => (
@@ -118,7 +122,8 @@ const mapStateToProps = state => {
   return {
     pgcr: state.postGameCarnageReport,
     loading: state.loading,
-    newPlayer: state.playerProfile.newPlayer
+    newPlayer: state.playerProfile.newPlayer,
+    siteError: state.siteError
   }
 };
 

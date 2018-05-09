@@ -59,6 +59,7 @@ export default function* fetchPlayerProfile({ data }) {
     console.log('error', error);
     yield put({ type: consts.FETCH_LOG, data: `Player Profile Fetch Error: ${error}`});
     yield put({ type: consts.SET_LOADING, data: false });
+    yield put({ type: consts.SET_SITE_ERROR, data: true });
     yield put({ type: consts.TOGGLE_PLAYER_SEARCH });
   }
 }

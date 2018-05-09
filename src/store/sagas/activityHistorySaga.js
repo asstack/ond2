@@ -25,8 +25,9 @@ export default function* collectActivityHistory(membershipId) {
   if(!isObjectEmpty(activityHistory)) {
     yield put({type: consts.SET_NF_HISTORY, data: normalize.nightfall(activityHistory.nightfallHistory)});
     yield put({type: consts.SET_RAID_HISTORY, data: normalize.raidHistory(activityHistory.raidHistory)});
+  } else {
+    console.log('Shit we had issues');
+    yield put({ type: consts.SET_SITE_ERROR, data: true });
+    yield put({ type: consts.SET_LOADING, data: false });
   }
-
-  console.log('Shit we had issues');
-  yield put({ type: consts.SET_LOADING, data: false });
 }

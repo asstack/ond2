@@ -76,6 +76,7 @@ class RaidWeekViewer extends Component {
     this.unListen = history.listen((location, action) => {
       if(action === 'PUSH' || action === 'POP') {
         if(!!location.state) {
+          this.props.clearErrorState();
           handlePlayerSearch(location.state.gamerTag);
         }
       }

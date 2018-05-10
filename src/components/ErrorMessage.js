@@ -10,13 +10,21 @@ const ErrorMessageContainer = styled.div`
   top: 0;
   left: 0;
   align-items: center;
-  background-color: rgba(255, 255, 255, 0.3);
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.9);
+  z-index: 5;
+  font-size: 18px;
+  color: white;
+  
+  & p {
+    margin-top: -50px;
+  }
 `;
 
 const ErrorMessage = () => {
   return(
     <ErrorMessageContainer>
-      <p>Yeah we suck, sorry.</p>
+      <p>Something went wrong. Please reload and try again.</p>
     </ErrorMessageContainer>
   )
 };

@@ -21,13 +21,13 @@ export default function* collectActivityHistory(membershipId) {
     console.log('attempts', activityHistoryFetchAttempts);
   }
 
-  console.log('out of while', activityHistory);
   if(!isObjectEmpty(activityHistory)) {
     yield put({type: consts.SET_NF_HISTORY, data: normalize.nightfall(activityHistory.nightfallHistory)});
     yield put({type: consts.SET_RAID_HISTORY, data: normalize.raidHistory(activityHistory.raidHistory)});
   } else {
-    console.log('Shit we had issues');
+    console.log('set error');
     yield put({ type: consts.SET_SITE_ERROR, data: true });
-    yield put({ type: consts.SET_LOADING, data: false });
   }
+
+  yield put({ type: consts.SET_LOADING, data: false });
 }

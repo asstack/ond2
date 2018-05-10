@@ -5,7 +5,7 @@ import { Segment, Container, List } from 'semantic-ui-react';
 import styled from 'styled-components';
 
 import baseStyles from './base-styles';
-import { FETCH_PGCR, SET_PGCR, SET_LOADING, CONTACT_REDDIT } from "./store/constants";
+import { FETCH_PGCR, SET_PGCR, SET_LOADING, CONTACT_REDDIT, SET_SITE_ERROR } from "./store/constants";
 
 import Landing from './containers/Landing';
 import PlayerDataView from './containers/PlayerDataView';
@@ -71,7 +71,7 @@ class App extends Component {
     baseStyles();
 
     const { showSideMenu } = this.state;
-    const { pgcr, siteError, newPlayer, clearPostGameCarnageReport, loading, clearLoader } = this.props;
+    const { pgcr, siteError, newPlayer, clearErrorState, clearPostGameCarnageReport, loading, clearLoader } = this.props;
 
     return (
       <AppWrapper>
@@ -86,11 +86,16 @@ class App extends Component {
           { loading && <LogoLoader newPlayer={newPlayer} /> }
 
           <Route exact path="/" render={data => (
-            <Landing loading={loading} {...data} />
+            <Landing loading={loading} clearErrorState={clearErrorState} {...data} />
           )} />
 
            <Route path="/player/:playerId" render={(data) => (
-             <PlayerDataView handlePlayerSearch={this.searchByGamerTag} {...this.props} {...data} />
+             <PlayerDataView
+               handlePlayerSearch={this.searchByGamerTag}
+               clearErrorState={clearErrorState}
+               {...this.props}
+               {...data}
+             />
            )}/>
 
           <Route path="/pgcr/:instanceId" render={({...rest}) => (
@@ -100,6 +105,7 @@ class App extends Component {
               handleFetchPGCR={this.fetchPGCR}
               handleClearPGCR={() => clearPostGameCarnageReport()}
               handleClearLoader={() => clearLoader() }
+              clearErrorState={clearErrorState}
             />
           )}/>
         </SideMenu>
@@ -132,7 +138,8 @@ const mapDispatchToProps = dispatch => {
     fetchPostGameCarnageReport: pathParams => dispatch({type: FETCH_PGCR, data: pathParams}),
     clearPostGameCarnageReport: () => dispatch({ type: SET_PGCR, data: false}),
     searchPlayer: pathParams => dispatch({ type: consts.FETCH_PLAYER_PROFILE, data: pathParams }),
-    clearLoader: () => dispatch({ type: SET_LOADING, data: false })
+    clearLoader: () => dispatch({ type: SET_LOADING, data: false }),
+    clearErrorState: () => dispatch({ type: SET_SITE_ERROR, data: false })
   }
 };
 

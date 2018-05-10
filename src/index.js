@@ -3,9 +3,7 @@ import { render } from 'react-dom';
 import { BrowserRouter as Router } from 'react-router-dom';
 import configureStore from './store/config/configureStore';
 import App from './App';
-// import registerServiceWorker from './registerServiceWorker';
-
-import 'semantic-ui-css/semantic.min.css';
+//import registerServiceWorker from './registerServiceWorker';
 
 const store = configureStore();
 

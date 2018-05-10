@@ -9,6 +9,7 @@ class PostGameCarnageReport extends Component {
     const { handleFetchPGCR, handleClearLoader, match } = this.props;
     handleFetchPGCR(match.params.instanceId);
     handleClearLoader();
+    this.props.clearErrorState();
   }
 
   componentWillUnmount() {

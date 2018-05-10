@@ -34,6 +34,10 @@ class Landing extends Component {
     playerId: this.props.match.params.playerId || ''
   };
 
+  componentDidMount() {
+    this.props.clearErrorState();
+  }
+
   playerSearch = (name) => {
     const { history } = this.props;
     this.setState({ playerId: name });

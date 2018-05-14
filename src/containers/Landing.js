@@ -48,7 +48,7 @@ class Landing extends Component {
     const { playerId } = this.state;
     return (
       <LandingWrapper loading={this.props.loading}>
-        <HeroLogo src="/assets/ond2-logo.png"/>
+        <HeroLogo srcSet="/assets/ond2-logo-small.png 401w, /assets/ond2-logo.png 1281w" />
         <PlayerSearchForm playerId={playerId} handlePlayerSearch={this.playerSearch}/>
       </LandingWrapper>
     )

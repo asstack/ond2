@@ -20,6 +20,7 @@ const PlayerSearchSection = styled.div`
       
       i {
         margin-left: -45px;
+        margin-top: -15px;
         z-index: 1;
       }
     }
@@ -29,6 +30,7 @@ const PlayerSearchSection = styled.div`
     max-width: 756px;
     
     i {
+      maring-bottom: 5px;
       margin-right: 30px;
     }
 
@@ -57,19 +59,11 @@ const PlayerSearchSection = styled.div`
       
       @media only screen and (max-width: 430px) {
         margin-left: 10px;
-        width: 300px;
+        width: 80%;
       }
       
-      @media only screen and (min-width: 430px) and (max-width: 575px) {
-        width: 425px;
-      }
-      
-      @media only screen and (min-width: 575px) and (max-width: 750px) {
-        width: 525px;
-      }
-      
-      @media only screen and (min-width: 750px) and (max-width: 1250px) {
-        width: 650px;
+      @media only screen and (min-width: 430px) {
+        width: 80%;
       }
     }
   }

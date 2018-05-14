@@ -1,18 +1,18 @@
-import { call, put } from 'redux-saga/effects';
+import { call, put, select } from 'redux-saga/effects';
 import { fetchProfile } from "../../services/destiny-services";
 import * as consts from "../constants";
+import moment from "moment/moment";
 
 export default function* collectProfile(membershipId) {
-  //const playerCache = yield  select(state => state.playerCache);
-  //const cacheCheck = Object.keys(playerCache).indexOf(membershipId) >= 0;
+  const playerProfileCache = yield  select(state => state.playerCache);
 
   const playerProfile = yield call(fetchProfile, membershipId);
 
-  //if(!cacheCheck) {
-  //  playerCache[ membershipId ] = playerProfile;
-  //}
-  //
-  //yield put({type: consts.SET_PLAYER_CACHE, data: playerCache});
-  yield put({type: consts.SET_PLAYER_PROFILE, data: playerProfile});
+  const fiveMinutesFromNow = moment().add(5, 'm');
+  const profile = {...playerProfile, expires: fiveMinutesFromNow};
+  playerProfileCache[membershipId] = profile;
+
+  yield put({type: consts.SET_PLAYER_PROFILE, data: profile});
+  yield put({ type: consts.SET_PLAYER_CACHE, data: playerProfileCache });
   yield put({type: consts.FETCH_LOG, data: 'Player Profile Fetch Success'});
 }

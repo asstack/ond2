@@ -1,6 +1,6 @@
-import { call, put, take, spawn } from 'redux-saga/effects';
-import normalize from "../normalize";
-import { searchPlayer, fetchPublicMilestones } from "../../services/destiny-services";
+import moment from 'moment';
+import { call, put, take, spawn, select } from 'redux-saga/effects';
+import { searchPlayer } from "../../services/destiny-services";
 import * as consts from "../constants";
 import collectActivityHistory from './activityHistorySaga';
 import collectProfile from './profileSaga';
@@ -17,12 +17,6 @@ function* clearSearchData() {
   yield put({ type: consts.SET_GAMER_TAG_OPTIONS, data: [] });
 }
 
-function* getMilestoneData() {
-  const data = yield call(fetchPublicMilestones);
-  const milestones = normalize.milestoneData(data);
-  yield put({ type: consts.SET_PUBLIC_MILESTONES, data: milestones });
-}
-
 export default function* fetchPlayerProfile({ data }) {
   try {
     yield put({ type: consts.SET_LOADING, data: true });
@@ -30,7 +24,6 @@ export default function* fetchPlayerProfile({ data }) {
     yield put({ type: consts.SET_PLAYER_PRIVACY, data: false });
 
     const searchResults = yield call(searchPlayer, data);
-    yield spawn(getMilestoneData);
 
     let playerSearch;
 
@@ -49,11 +42,29 @@ export default function* fetchPlayerProfile({ data }) {
       playerSearch = searchResults.filter(curr => curr.membershipId === searchSelection.data.key)[0];
     }
 
-
     const membershipId = playerSearch.membershipId;
-    yield spawn(collectProfile, membershipId);
-    yield spawn(collectActivityHistory, membershipId);
 
+    const playerProfileCache = yield select(state => state.playerProfile);
+    const playerProfileCacheCheck = Object.keys(playerProfileCache).indexOf(membershipId) >= 0;
+
+    if(playerProfileCacheCheck && playerProfileCache[membershipId].expires.isAfter(moment)) {
+      yield put({type: consts.SET_RAID_HISTORY, data: playerProfileCache[membershipId]});
+    } else {
+      yield spawn(collectProfile, membershipId);
+    }
+
+    const activityHistoryCache = yield select(state => state.activityHistoryCache);
+    const activityHistoryCacheCheck = Object.keys(activityHistoryCache).indexOf(membershipId) >= 0;
+
+    const playersActivityHistory = activityHistoryCache[membershipId];
+    if(activityHistoryCacheCheck && playersActivityHistory.expires.isAfter(moment())) {
+      console.log('servedFromCache');
+      yield put({type: consts.SET_RAID_HISTORY, data: playersActivityHistory.raidHistory });
+      yield put({type: consts.SET_NF_HISTORY, data: playersActivityHistory.nightfallHistory });
+      yield put({ type: consts.SET_LOADING, data: false });
+    } else {
+      yield spawn(collectActivityHistory, membershipId);
+    }
   }
   catch(error) {
     console.log('error', error);

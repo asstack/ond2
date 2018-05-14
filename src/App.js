@@ -5,9 +5,17 @@ import { Segment, Container, List } from 'semantic-ui-react';
 import styled from 'styled-components';
 
 import baseStyles from './base-styles';
-import { FETCH_PGCR, SET_PGCR, SET_LOADING, CONTACT_REDDIT, SET_SITE_ERROR } from "./store/constants";
+import {
+  FETCH_PGCR,
+  SET_PGCR,
+  SET_LOADING,
+  CONTACT_REDDIT,
+  SET_SITE_ERROR,
+  SET_UPDATE_PROMPT
+} from "./store/constants";
 
 import Landing from './containers/Landing';
+import UpdatePrompt from './components/UpdatePrompt';
 import PlayerDataView from './containers/PlayerDataView';
 import ErrorMessage from './components/ErrorMessage';
 import SideMenu from './components/SideMenu';
@@ -35,12 +43,12 @@ const MenuToggleWrapper = styled.div`
   left: 10%;
   z-index: 5;
   
-  @media only screen and (max-width: 400px) {
+  @media only screen and (max-width: 875px) {
     left: 1%;
   }
-
-  @media only screen and (min-width: 400px) and (max-width: 574px) {
-    left: 1%;
+  
+  @media only screen and (min-width: 875px) and (max-width: 1100px) {
+    left: 5%;
   }
 `;
 
@@ -71,7 +79,17 @@ class App extends Component {
     baseStyles();
 
     const { showSideMenu } = this.state;
-    const { pgcr, siteError, newPlayer, clearErrorState, clearPostGameCarnageReport, loading, clearLoader } = this.props;
+    const {
+      pgcr, siteError, newPlayer, clearErrorState,
+      clearPostGameCarnageReport, loading, clearLoader,
+      showUpdatePrompt
+    } = this.props;
+
+    const handleUpdatePromptClicked = () => {
+      this.props.clearUpdatePrompt();
+      localStorage.setItem('userUpdate', 'true');
+      window.location.reload(true);
+    };
 
     return (
       <AppWrapper>
@@ -109,6 +127,7 @@ class App extends Component {
             />
           )}/>
         </SideMenu>
+        { showUpdatePrompt && <UpdatePrompt clearUpdatePrompt={handleUpdatePromptClicked} showUpdatePrompt={showUpdatePrompt} /> }
         <Segment vertical style={{ width: '100%', padding: '2em 0em' }}>
           <Container textAlign='center'>
             <List horizontal divided link small="true">
@@ -129,7 +148,8 @@ const mapStateToProps = state => {
     pgcr: state.postGameCarnageReport,
     loading: state.loading,
     newPlayer: state.playerProfile.newPlayer,
-    siteError: state.siteError
+    siteError: state.siteError,
+    showUpdatePrompt: state.showUpdatePrompt
   }
 };
 
@@ -139,7 +159,8 @@ const mapDispatchToProps = dispatch => {
     clearPostGameCarnageReport: () => dispatch({ type: SET_PGCR, data: false}),
     searchPlayer: pathParams => dispatch({ type: consts.FETCH_PLAYER_PROFILE, data: pathParams }),
     clearLoader: () => dispatch({ type: SET_LOADING, data: false }),
-    clearErrorState: () => dispatch({ type: SET_SITE_ERROR, data: false })
+    clearErrorState: () => dispatch({ type: SET_SITE_ERROR, data: false }),
+    clearUpdatePrompt: () => dispatch({ type: SET_UPDATE_PROMPT, data: false })
   }
 };
 

@@ -2,6 +2,7 @@ export const CONTACT_REDDIT = '' +
   'https://www.reddit.com/message/compose/?to=videoflux&subject=OND2%20&message=Please%20include%20your%20Gamertag,%20System,%20and%20contact%20info.';
 
 export const FETCH_LOG = 'FETCH_LOG';
+export const SET_CACHE_TIMEOUT = 'set_cache_timeout';
 export const SET_PLAYER_PROFILE = 'set_player_profile';
 export const SET_ACTIVITY_HISTORY = 'set_activity_history';
 export const SET_PGCR = 'set_pgcr';
@@ -15,8 +16,9 @@ export const SET_GAMER_TAG_OPTIONS = 'set_gamer_tag_suggestions';
 export const SELECT_GAMER_TAG = 'select_gamer_tag';
 
 export const SET_PGCR_CACHE = 'set_pgcr_cache';
-export const SET_NF_HISTORY_CACHE = 'set_nf_history_cache';
-export const SET_RAID_HISTORY_CACHE = 'set_raid_history_cache';
+export const SET_ACTIVITY_HISTORY_CACHE = 'set_activity_history_cache';
+export const SET_APP_VERSION = 'set_app_version';
+export const SET_UPDATE_PROMPT = 'set_update_prompt';
 export const SET_PLAYER_CACHE = 'set_player_cache';
 
 export const FETCH_PLAYER_PROFILE = 'fetch_player_profile';

@@ -13,17 +13,18 @@ import {
   SET_VIEW_RAID,
   TOGGLE_PLAYER_SEARCH,
   SET_PGCR_CACHE,
-  SET_NF_HISTORY_CACHE,
+  SET_ACTIVITY_HISTORY_CACHE,
   SET_PLAYER_CACHE,
-  SET_RAID_HISTORY_CACHE,
   SET_GAMER_TAG_OPTIONS,
   SELECT_GAMER_TAG,
-  SET_SITE_ERROR
+  SET_SITE_ERROR, SET_CACHE_TIMEOUT, SET_APP_VERSION, SET_UPDATE_PROMPT
 } from "../constants";
 
 // TODO: Need to break this into smaller files.
 const fetchLogs = (state=[], action) =>
   action.type === FETCH_LOG ? [...state, action.data] : state;
+
+const setCacheTimeOut = (state = false, action) => action.type === SET_CACHE_TIMEOUT ? action.data : state;
 
 const setLoading = (state=false, action) => {
   return action.type === SET_LOADING ? action.data : state;
@@ -116,15 +117,8 @@ const setPGCRCache = (state = {}, action) => {
   return state;
 };
 
-const setNFHistoryCache = (state = {}, action) => {
-  if(action.type === SET_NF_HISTORY_CACHE) {
-    return action.data;
-  }
-  return state;
-};
-
-const setRaidHistoryCache = (state = {}, action) => {
-  if(action.type === SET_RAID_HISTORY_CACHE) {
+const setActivityHistoryCache = (state = {}, action) => {
+  if(action.type === SET_ACTIVITY_HISTORY_CACHE) {
     return action.data;
   }
   return state;
@@ -132,6 +126,20 @@ const setRaidHistoryCache = (state = {}, action) => {
 
 const setPlayerCache = (state = {}, action) => {
   if(action.type === SET_PLAYER_CACHE) {
+    return action.data;
+  }
+  return state;
+};
+
+const setAppVersion = (state='1.0.0', action) => {
+  if(action.type === SET_APP_VERSION) {
+    return action.data;
+  }
+  return state;
+};
+
+const setUpdatePrompt = (state = false, action) => {
+  if(action.type === SET_UPDATE_PROMPT) {
     return action.data;
   }
   return state;
@@ -146,6 +154,7 @@ const setSiteError = (state = false, action) => {
 
 const rootReducer = combineReducers({
   fetchLogs,
+  cacheTimeout: setCacheTimeOut,
   playerProfile: setPlayerProfile,
   raidHistory: setRaidHistory,
   postGameCarnageReport: setPostGameCarnageReport,
@@ -157,12 +166,13 @@ const rootReducer = combineReducers({
   viewRaid: setViewRaid,
   newPlayerSearch: setPlayerSearch,
   pgcrCache: setPGCRCache,
-  nfHistoryCache: setNFHistoryCache,
-  raidHistoryCache: setRaidHistoryCache,
+  activityHistoryCache: setActivityHistoryCache,
   playerCache: setPlayerCache,
   gamerTagOptions: setGamerTagOptions,
   selectedGamerTag: selectGamerTag,
-  siteError: setSiteError
+  siteError: setSiteError,
+  appVersion: setAppVersion,
+  showUpdatePrompt: setUpdatePrompt
 });
 
 export default rootReducer;

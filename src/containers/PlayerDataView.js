@@ -6,8 +6,6 @@ import shortid from 'shortid';
 
 import { Grid } from 'semantic-ui-react';
 
-import normalize from '../store/normalize';
-
 import RaidSelection from '../components/RaidSelection';
 import RaidStack from '../components/RaidStack';
 import PlayerSearch from '../components/PlayerSearch';

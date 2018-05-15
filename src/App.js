@@ -33,6 +33,8 @@ const AppWrapper = styled.div`
   flex-direction: column;
   align-items: center;
   background-color: #f4f4f4;
+  overflow-y: scroll;
+ -webkit-overflow-scrolling: touch;
 `;
 
 const MenuToggleWrapper = styled.div`
@@ -107,14 +109,14 @@ class App extends Component {
             <Landing loading={loading} clearErrorState={clearErrorState} {...data} />
           )} />
 
-           <Route path="/player/:playerId" render={(data) => (
-             <PlayerDataView
-               handlePlayerSearch={this.searchByGamerTag}
-               clearErrorState={clearErrorState}
-               {...this.props}
-               {...data}
-             />
-           )}/>
+          <Route path="/player/:playerId" render={(data) => (
+            <PlayerDataView
+              handlePlayerSearch={this.searchByGamerTag}
+              clearErrorState={clearErrorState}
+              {...this.props}
+              {...data}
+            />
+          )}/>
 
           <Route path="/pgcr/:instanceId" render={({...rest}) => (
             <PostGameCarnageReportContainer

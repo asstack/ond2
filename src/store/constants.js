@@ -20,6 +20,7 @@ export const SET_ACTIVITY_HISTORY_CACHE = 'set_activity_history_cache';
 export const SET_APP_VERSION = 'set_app_version';
 export const SET_UPDATE_PROMPT = 'set_update_prompt';
 export const SET_PLAYER_CACHE = 'set_player_cache';
+export const SET_RAID_VIEW_Y_OFFSET = 'set_raid_view_y_offset';
 
 export const FETCH_PLAYER_PROFILE = 'fetch_player_profile';
 export const FETCH_PGCR = 'fetch_pgcr';

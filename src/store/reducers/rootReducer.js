@@ -17,7 +17,7 @@ import {
   SET_PLAYER_CACHE,
   SET_GAMER_TAG_OPTIONS,
   SELECT_GAMER_TAG,
-  SET_SITE_ERROR, SET_CACHE_TIMEOUT, SET_APP_VERSION, SET_UPDATE_PROMPT
+  SET_SITE_ERROR, SET_CACHE_TIMEOUT, SET_APP_VERSION, SET_UPDATE_PROMPT, SET_RAID_VIEW_Y_OFFSET
 } from "../constants";
 
 // TODO: Need to break this into smaller files.
@@ -152,6 +152,13 @@ const setSiteError = (state = false, action) => {
   return state;
 };
 
+const setRaidViewYOffset = (state=0, action) => {
+  if(action.type === SET_RAID_VIEW_Y_OFFSET) {
+    return action.data;
+  }
+  return state;
+};
+
 const rootReducer = combineReducers({
   fetchLogs,
   cacheTimeout: setCacheTimeOut,
@@ -172,7 +179,8 @@ const rootReducer = combineReducers({
   selectedGamerTag: selectGamerTag,
   siteError: setSiteError,
   appVersion: setAppVersion,
-  showUpdatePrompt: setUpdatePrompt
+  showUpdatePrompt: setUpdatePrompt,
+  raidViewYOffset: setRaidViewYOffset
 });
 
 export default rootReducer;

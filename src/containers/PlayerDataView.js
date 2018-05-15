@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 import { withRouter } from 'react-router-dom';
 import { connect } from "react-redux";
 import styled from 'styled-components';
@@ -63,7 +64,9 @@ class RaidWeekViewer extends Component {
     this.state = {
       player: this.props.match.params.playerId || '',
       maxSuccessRaids: 0
-    }
+    };
+
+    this.yOffsetRef = React.createRef();
   }
 
   componentDidMount = () => {
@@ -71,7 +74,7 @@ class RaidWeekViewer extends Component {
     handlePlayerSearch(match.params.playerId);
 
     // Prevents a new search on "history back" actions.
-    this.unListen = history.listen((location, action) => {
+    history.listen((location, action) => {
       if(action === 'PUSH' || action === 'POP') {
         if(!!location.state) {
           this.props.clearErrorState();
@@ -79,10 +82,6 @@ class RaidWeekViewer extends Component {
         }
       }
     });
-  };
-
-  componentWillUnmount = () => {
-    this.unListen();
   };
 
   searchPlayer = (gamerTag) => {
@@ -111,7 +110,8 @@ class RaidWeekViewer extends Component {
     const {
       match, loading, nightfallHistory, raidHistory,
       fetchPostGameCarnageReport, playerProfile, playerPrivacy,
-      viewRaid, viewMode, gamerTagOptions, selectGamerTag, publicMilestones
+      viewRaid, viewMode, gamerTagOptions, selectGamerTag,
+      publicMilestones
     } = this.props;
     const { maxSuccessRaids } = this.state;
 
@@ -150,10 +150,11 @@ class RaidWeekViewer extends Component {
       raidWeeks = [];
     }
 
+
     const shouldRender = (!loading && raidWeeks.length > 0 && !notFound && !playerPrivacy);
 
     return (
-      <PlayerDataViewWrapper>
+      <PlayerDataViewWrapper ref={this.yOffsetRef}>
         <Grid stackable={true} container centered>
           <Grid.Row centered>
             <PlayerSearch
@@ -216,7 +217,8 @@ const mapStateToProps = state => {
     playerProfile: state.playerProfile,
     playerPrivacy: state.playerPrivacy,
     gamerTagOptions: state.gamerTagOptions,
-    publicMilestones: state.publicMilestones
+    publicMilestones: state.publicMilestones,
+    raidViewYOffset: state.raidViewYOffset
   }
 };
 
@@ -227,7 +229,8 @@ const mapDispatchToProps = dispatch => {
     searchPlayer: pathParams => dispatch({ type: consts.FETCH_PLAYER_PROFILE, data: pathParams }),
     setViewRaid: raid => dispatch({ type: consts.SET_VIEW_RAID, data: raid }),
     setViewMode: mode => dispatch({ type: consts.SET_VIEW_MODE, data: mode }),
-    selectGamerTag: gamerTag => dispatch({ type: consts.SELECT_GAMER_TAG, data: gamerTag })
+    selectGamerTag: gamerTag => dispatch({ type: consts.SELECT_GAMER_TAG, data: gamerTag }),
+    setYOffset: yOffset => dispatch({ type: consts.SET_RAID_VIEW_Y_OFFSET, data: yOffset })
   }
 };
 

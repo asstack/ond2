@@ -30,12 +30,7 @@ const PGCRWrapper = styled.div`
   h2 {
     font-size: 14px;
   }
-  
-  @media only screen and (max-width: 770px) {
-    width: 100%;
-    font-size: 12px;
-    
-  }
+ 
 `;
 
 const PGCRTitle = styled.div`
@@ -43,6 +38,7 @@ const PGCRTitle = styled.div`
   flex-direction: column;
   justify-content: flex-end;
   align-items: center;
+  color: white;
 `;
 
 const sortByValue = (arr, column, direction, raidName) => {

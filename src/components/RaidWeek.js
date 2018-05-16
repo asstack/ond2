@@ -124,7 +124,7 @@ const RaidWeek = ({ raid='nf', raids, handleFetchPGCR, success=true, maxCount })
 
 
         const RaidProgressBar = (
-          <Link className="pgcr-link" to={ `/pgcr/${currRaid.activityDetails.instanceId}` }>
+          <Link className="pgcr-link" to={{ pathname: `/pgcr/${currRaid.activityDetails.instanceId}`, state: { modal: true } }} >
             { (success && !manyRaids && isNF) && <BarValues>{currRaid.values.teamScore || ''}</BarValues> }
             { (success && !manyRaids && !isNF) && <BarValues>{percentWidth}m</BarValues> }
             <Progress

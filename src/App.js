@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { withRouter, Route } from 'react-router-dom';
+import { withRouter, Route, Switch } from 'react-router-dom';
 import { Segment, Container, List } from 'semantic-ui-react';
 import styled from 'styled-components';
 
@@ -23,6 +23,7 @@ import PostGameCarnageReportContainer from './containers/PostGameCarnageReport';
 import LogoLoader from './components/LogoLoader';
 import OND2Logo from './components/OND2Logo';
 import * as consts from "./store/constants";
+import PGCRModal from "./components/PGCRModal";
 
 const AppWrapper = styled.div`
   min-width: 100vw;
@@ -56,14 +57,17 @@ const MenuToggleWrapper = styled.div`
 
 class App extends Component {
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
 
     this.state = {
       internalRouting: false,
       showSideMenu: false
-    }
+    };
+
+    this.previousLocation = this.props.location;
   }
+
 
   searchByGamerTag = (gamerTag) => {
     const { searchPlayer } = this.props;
@@ -84,7 +88,7 @@ class App extends Component {
     const {
       pgcr, siteError, newPlayer, clearErrorState,
       clearPostGameCarnageReport, loading, clearLoader,
-      showUpdatePrompt
+      showUpdatePrompt, location
     } = this.props;
 
     const handleUpdatePromptClicked = () => {
@@ -93,9 +97,16 @@ class App extends Component {
       window.location.reload(true);
     };
 
+    const isModal = !!(
+      location.state &&
+      location.state.modal &&
+      this.previousLocation !== location
+    ); // Not initial render
+
+    const renderFooter = !isModal && location.pathname.indexOf('pgcr') < 0;
+
     return (
       <AppWrapper>
-
         { siteError && <ErrorMessage /> }
 
         <SideMenu toggle={this.toggleSideMenu} visible={showSideMenu}>
@@ -105,41 +116,63 @@ class App extends Component {
 
           { loading && <LogoLoader newPlayer={newPlayer} /> }
 
-          <Route exact path="/" render={data => (
-            <Landing loading={loading} clearErrorState={clearErrorState} {...data} />
-          )} />
+          <Switch location={ isModal ? this.previousLocation : location}>
+            <Route exact path="/" render={data => (
+              <Landing loading={loading} clearErrorState={clearErrorState} {...data} />
+            )} />
 
-          <Route path="/player/:playerId" render={(data) => (
-            <PlayerDataView
-              handlePlayerSearch={this.searchByGamerTag}
-              clearErrorState={clearErrorState}
-              {...this.props}
-              {...data}
-            />
-          )}/>
+            <Route path="/player/:playerId" render={(data) => (
+              <PlayerDataView
+                handlePlayerSearch={this.searchByGamerTag}
+                clearErrorState={clearErrorState}
+                {...this.props}
+                {...data}
+              />
+            )}/>
 
-          <Route path="/pgcr/:instanceId" render={({...rest}) => (
-            <PostGameCarnageReportContainer
-              {...rest}
-              pgcr={pgcr}
-              handleFetchPGCR={this.fetchPGCR}
-              handleClearPGCR={() => clearPostGameCarnageReport()}
-              handleClearLoader={() => clearLoader() }
-              clearErrorState={clearErrorState}
-            />
-          )}/>
+            {!isModal &&
+              <Route path="/pgcr/:instanceId" render={({...rest}) => (
+                <PGCRModal
+                {...rest}
+                isModal={isModal}
+                pgcr={pgcr}
+                handleFetchPGCR={this.fetchPGCR}
+                handleClearPGCR={() => clearPostGameCarnageReport()}
+                handleClearLoader={() => clearLoader()}
+                clearErrorState={clearErrorState}
+              />
+              )}/>
+            }
+          </Switch>
+
+          {isModal &&
+            <Route path="/pgcr/:instanceId" render={({...rest}) => (
+              <PGCRModal
+                {...rest}
+                isModal={isModal}
+                pgcr={pgcr}
+                handleFetchPGCR={this.fetchPGCR}
+                handleClearPGCR={() => clearPostGameCarnageReport()}
+                handleClearLoader={() => clearLoader()}
+                clearErrorState={clearErrorState}
+              />
+            )}/>
+          }
+
         </SideMenu>
-        { showUpdatePrompt && <UpdatePrompt clearUpdatePrompt={handleUpdatePromptClicked} showUpdatePrompt={showUpdatePrompt} /> }
-        <Segment vertical style={{ width: '100%', padding: '2em 0em' }}>
-          <Container textAlign='center'>
+        { renderFooter &&
+          <Segment vertical style={{width: '100%', padding: '2em 0em', zIndex: 999}}>
+            <Container textAlign='center'>
             <List horizontal divided link small="true">
               <List.Item as='a' href={CONTACT_REDDIT}>Contact Us</List.Item>
               <List.Item as='a' href='/faq'>FAQ</List.Item>
               <List.Item as='a' href='https://www.reddit.com/user/videoflux'>Concept and UI by Videoflux</List.Item>
               <List.Item as='a' href='http://www.w-richardson.com'>Developed by <b>William Richardson</b></List.Item>
             </List>
-          </Container>
-        </Segment>
+            </Container>
+          </Segment>
+        }
+        { showUpdatePrompt && <UpdatePrompt clearUpdatePrompt={handleUpdatePromptClicked} showUpdatePrompt={showUpdatePrompt} /> }
       </AppWrapper>
     );
   }

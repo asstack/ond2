@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
-import { withRouter } from 'react-router-dom';
+import { withRouter, Route } from 'react-router-dom';
 import { connect } from "react-redux";
 import styled from 'styled-components';
 import shortid from 'shortid';
@@ -9,11 +8,13 @@ import { Grid } from 'semantic-ui-react';
 
 import RaidSelection from '../components/RaidSelection';
 import RaidStack from '../components/RaidStack';
+import PGCRModal from '../components/PGCRModal';
 import PlayerSearch from '../components/PlayerSearch';
 import * as consts from "../store/constants";
 
 import { SET_PGCR } from "../store/constants";
 import { FETCH_PGCR } from "../store/constants";
+
 
 const PlayerDataViewWrapper = styled.div`
   &&& {
@@ -63,7 +64,7 @@ class RaidWeekViewer extends Component {
 
     this.state = {
       player: this.props.match.params.playerId || '',
-      maxSuccessRaids: 0
+      maxSuccessRaids: 0,
     };
 
     this.yOffsetRef = React.createRef();
@@ -76,7 +77,7 @@ class RaidWeekViewer extends Component {
     // Prevents a new search on "history back" actions.
     history.listen((location, action) => {
       if(action === 'PUSH' || action === 'POP') {
-        if(!!location.state) {
+        if(!!location.state && !location.state.modal) {
           this.props.clearErrorState();
           handlePlayerSearch(location.state.gamerTag);
         }
@@ -130,7 +131,6 @@ class RaidWeekViewer extends Component {
     let raidWeeks = [];
     const player = match.params.playerId;
 
-
     if(viewRaid === 'nf' && !!nightfallHistory[viewMode]) {
 
       if (Object.keys(nightfallHistory[ viewMode ]).length > 1) {
@@ -155,6 +155,7 @@ class RaidWeekViewer extends Component {
 
     return (
       <PlayerDataViewWrapper ref={this.yOffsetRef}>
+
         <Grid stackable={true} container centered>
           <Grid.Row centered>
             <PlayerSearch

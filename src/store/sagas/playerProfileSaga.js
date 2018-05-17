@@ -36,9 +36,11 @@ export default function* fetchPlayerProfile({ data }) {
     else {
       yield put({ type: consts.SET_LOADING, data: true });
       yield put({ type: consts.SET_GAMER_TAG_OPTIONS, data: searchResults });
+      yield put({ type: consts.SET_LOADING, data: false });
 
       const searchSelection = yield take([consts.SELECT_GAMER_TAG]);
       yield put({ type: consts.SET_GAMER_TAG_OPTIONS, data: [] });
+      yield put({ type: consts.SET_LOADING, data: true });
       playerSearch = searchResults.filter(curr => curr.membershipId === searchSelection.data.key)[0];
     }
 

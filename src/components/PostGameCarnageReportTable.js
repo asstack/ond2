@@ -38,7 +38,7 @@ const PGCRTitle = styled.div`
   flex-direction: column;
   justify-content: flex-end;
   align-items: center;
-  color: white;
+  color: black;
 `;
 
 const sortByValue = (arr, column, direction, raidName) => {

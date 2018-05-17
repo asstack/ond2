@@ -116,51 +116,32 @@ class App extends Component {
 
           { loading && <LogoLoader newPlayer={newPlayer} /> }
 
-          <Switch location={ isModal ? this.previousLocation : location}>
-            <Route exact path="/" render={data => (
-              <Landing loading={loading} clearErrorState={clearErrorState} {...data} />
-            )} />
+          <Route exact path="/" render={data => (
+            <Landing loading={loading} clearErrorState={clearErrorState} {...data} />
+          )} />
 
-            <Route path="/player/:playerId" render={(data) => (
-              <PlayerDataView
-                handlePlayerSearch={this.searchByGamerTag}
-                clearErrorState={clearErrorState}
-                {...this.props}
-                {...data}
-              />
-            )}/>
+          <Route path="/player/:playerId" render={(data) => (
+            <PlayerDataView
+              handlePlayerSearch={this.searchByGamerTag}
+              clearErrorState={clearErrorState}
+              {...this.props}
+              {...data}
+            />
+          )}/>
 
-            {!isModal &&
-              <Route path="/pgcr/:instanceId" render={({...rest}) => (
-                <PGCRModal
-                {...rest}
-                isModal={isModal}
-                pgcr={pgcr}
-                handleFetchPGCR={this.fetchPGCR}
-                handleClearPGCR={() => clearPostGameCarnageReport()}
-                handleClearLoader={() => clearLoader()}
-                clearErrorState={clearErrorState}
-              />
-              )}/>
-            }
-          </Switch>
-
-          {isModal &&
-            <Route path="/pgcr/:instanceId" render={({...rest}) => (
-              <PGCRModal
-                {...rest}
-                isModal={isModal}
-                pgcr={pgcr}
-                handleFetchPGCR={this.fetchPGCR}
-                handleClearPGCR={() => clearPostGameCarnageReport()}
-                handleClearLoader={() => clearLoader()}
-                clearErrorState={clearErrorState}
-              />
-            )}/>
-          }
+          <Route path="/pgcr/:instanceId" render={({...rest}) => (
+            <PostGameCarnageReportContainer
+            {...rest}
+            isModal={isModal}
+            pgcr={pgcr}
+            handleFetchPGCR={this.fetchPGCR}
+            handleClearPGCR={() => clearPostGameCarnageReport()}
+            handleClearLoader={() => clearLoader()}
+            clearErrorState={clearErrorState}
+          />
+          )}/>
 
         </SideMenu>
-        { renderFooter &&
           <Segment vertical style={{width: '100%', padding: '2em 0em', zIndex: 999}}>
             <Container textAlign='center'>
             <List horizontal divided link small="true">
@@ -171,7 +152,6 @@ class App extends Component {
             </List>
             </Container>
           </Segment>
-        }
         { showUpdatePrompt && <UpdatePrompt clearUpdatePrompt={handleUpdatePromptClicked} showUpdatePrompt={showUpdatePrompt} /> }
       </AppWrapper>
     );

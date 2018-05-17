@@ -23,6 +23,10 @@ const PlayerSearchSection = styled.div`
         margin-top: -15px;
         z-index: 1;
       }
+      
+      .visible {
+        display: block !important;
+      }
     }
 
   .playerSearch {
@@ -115,6 +119,7 @@ class PlayerSearch extends Component {
     const { handlePlayerSearch, gamerTagOptions } = this.props;
 
     const openSearchSelection = gamerTagOptions ? gamerTagOptions.length > 0 : false;
+    console.log('openSearchSelection', openSearchSelection);
 
     const options = !openSearchSelection
       ? []
@@ -127,6 +132,8 @@ class PlayerSearch extends Component {
           };
           return accum;
     }, []);
+
+    console.log('options', options);
 
     const playerSearchDisplay = playerSearch.replace('%23', '#');
 

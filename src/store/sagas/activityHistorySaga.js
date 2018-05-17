@@ -1,29 +1,49 @@
 import moment from 'moment';
 import { call, put, select, all } from 'redux-saga/effects';
-import { fetchActivityHistory } from "../../services/destiny-services";
+import { fetchActivityHistory, fetchFallbackActivityHistory } from "../../services/destiny-services";
 import { delay } from "redux-saga";
-import { isObjectEmpty } from "../../services/utilities";
 import normalize from "../normalize";
 import * as consts from "../constants";
 
+const isActivityData = (activity) => {
+  console.log('activity', activity);
+  console.log('len', activity.length > 0);
+  return activity.length > 0;
+};
+
+const activityDataFound = ({ nightfallHistory={ normal: [], prestige: []}, raidHistory={ EOW: [], LEV: { normal: [], prestige: []}} }) =>
+  (
+    isActivityData(raidHistory.EOW) ||
+    isActivityData(raidHistory.LEV.normal) ||
+    isActivityData(raidHistory.LEV.prestige) ||
+    isActivityData(nightfallHistory.normal) || isActivityData(nightfallHistory.prestige)
+  );
+
 export default function* collectActivityHistory(membershipId) {
   let activityHistory = yield call(fetchActivityHistory, membershipId);
-  let activityHistoryFetchAttempts = 0;
+  let activityHistoryFetchAttempts = 1;
 
-  while(activityHistoryFetchAttempts < 3 && isObjectEmpty(activityHistory)) {
+  while(activityHistoryFetchAttempts <= 3 && !activityDataFound(activityHistory)) {
    //TODO: Need to cancel this if a new player search is initiated. Don't want data to be overwritten
-   yield delay(3500);
-   activityHistory = yield call(fetchActivityHistory, membershipId);
+   if(activityHistoryFetchAttempts > 1) {
+     yield delay(3500);
+     activityHistory = yield call(fetchActivityHistory, membershipId);
+   } else {
+     const { characterIds, membershipType } = yield select(state => state.playerProfile);
+     activityHistory = yield call(fetchFallbackActivityHistory, {membershipId, characterIds, membershipType});
+   }
    console.log('activityHistory', activityHistory);
-   activityHistoryFetchAttempts += 1;
    console.log('activityHistory fetch attempts', activityHistoryFetchAttempts);
+   activityHistoryFetchAttempts += 1;
  }
 
- if(!isObjectEmpty(activityHistory)) {
+ console.log('activityDataCheck', activityDataFound(activityHistory));
+
+ if(activityDataFound(activityHistory)) {
    const normalizedNF = normalize.nightfall(activityHistory.nightfallHistory);
    const normalizedRH = normalize.raidHistory(activityHistory.raidHistory);
 
-   if (!isObjectEmpty(activityHistory)) {
+   if (activityDataFound(activityHistory)) {
      yield all([
        put({type: consts.SET_NF_HISTORY, data: normalizedNF}),
        put({type: consts.SET_RAID_HISTORY, data: normalizedRH})

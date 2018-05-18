@@ -44,7 +44,6 @@ const fetchFallbackActivityHistory = async (data) => {
   return await res.json();
 };
 
-
 const fetchPostGameCarnageReport = async (activityId) => {
   const url = getPostGameCarnageReport(activityId);
   const res = await fetch(url, destinyInit);

@@ -107,6 +107,12 @@ class RaidWeekViewer extends Component {
     })
   };
 
+  checkPlayerForEmpty = (statePlayer, player) => {
+    if(statePlayer === '') {
+      this.setState({ player: player });
+    }
+  };
+
   render() {
     const {
       match, loading, nightfallHistory, raidHistory,
@@ -130,6 +136,8 @@ class RaidWeekViewer extends Component {
 
     let raidWeeks = [];
     const player = match.params.playerId;
+
+    this.checkPlayerForEmpty(this.state.player, player);
 
     if(viewRaid === 'nf' && !!nightfallHistory[viewMode]) {
 

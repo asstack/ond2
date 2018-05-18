@@ -1,13 +1,11 @@
 import moment from 'moment';
-import { call, put, select, all } from 'redux-saga/effects';
+import { call, put, select, all, spawn } from 'redux-saga/effects';
 import { fetchActivityHistory, fetchFallbackActivityHistory } from "../../services/destiny-services";
 import { delay } from "redux-saga";
 import normalize from "../normalize";
 import * as consts from "../constants";
 
 const isActivityData = (activity) => {
-  console.log('activity', activity);
-  console.log('len', activity.length > 0);
   return activity.length > 0;
 };
 
@@ -23,21 +21,13 @@ export default function* collectActivityHistory(membershipId) {
   let activityHistory = yield call(fetchActivityHistory, membershipId);
   let activityHistoryFetchAttempts = 1;
 
-  while(activityHistoryFetchAttempts <= 3 && !activityDataFound(activityHistory)) {
+  while(activityHistoryFetchAttempts < 3 && !activityDataFound(activityHistory)) {
    //TODO: Need to cancel this if a new player search is initiated. Don't want data to be overwritten
-   if(activityHistoryFetchAttempts > 1) {
-     yield delay(3500);
-     activityHistory = yield call(fetchActivityHistory, membershipId);
-   } else {
-     const { characterIds, membershipType } = yield select(state => state.playerProfile);
-     activityHistory = yield call(fetchFallbackActivityHistory, {membershipId, characterIds, membershipType});
+    yield delay(2000);
+    const { characterIds, membershipType } = yield select(state => state.playerProfile);
+    activityHistory = yield call(fetchFallbackActivityHistory, {membershipId, characterIds, membershipType});
+    activityHistoryFetchAttempts += 1;
    }
-   console.log('activityHistory', activityHistory);
-   console.log('activityHistory fetch attempts', activityHistoryFetchAttempts);
-   activityHistoryFetchAttempts += 1;
- }
-
- console.log('activityDataCheck', activityDataFound(activityHistory));
 
  if(activityDataFound(activityHistory)) {
    const normalizedNF = normalize.nightfall(activityHistory.nightfallHistory);
@@ -49,18 +39,17 @@ export default function* collectActivityHistory(membershipId) {
        put({type: consts.SET_RAID_HISTORY, data: normalizedRH})
      ]);
    } else {
-     console.log('set error');
      yield put({type: consts.SET_SITE_ERROR, data: true});
    }
 
    const activityHistoryCache = yield select(state => state.activityHistoryCache);
    const fiveMinutesFromNow = moment().add(5, 'm');
-   const normalizedActivityHistory = {
-     nightfallHistory: normalizedNF,
-     raidHistory: normalizedRH,
-     expires: fiveMinutesFromNow
-   };
-   activityHistoryCache[ membershipId ] = normalizedActivityHistory;
+
+   activityHistoryCache[ membershipId ] = {
+        nightfallHistory: normalizedNF,
+        raidHistory: normalizedRH,
+        expires: fiveMinutesFromNow
+      };
 
    yield put({type: consts.SET_ACTIVITY_HISTORY_CACHE, data: activityHistoryCache});
    yield put({type: consts.SET_RAID_HISTORY, data: normalizedRH});

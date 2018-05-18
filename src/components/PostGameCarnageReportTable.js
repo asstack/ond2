@@ -46,18 +46,20 @@ const sortByValue = (arr, column, direction, raidName) => {
     const itemA = (column === 'name') ? a.player.displayName.toUpperCase() : (column === 'score') ? a.values.score : a.values[column];
     const itemB = (column === 'name') ? b.player.displayName.toUpperCase() : (column === 'score') ? b.values.score : b.values[column];
 
-
     const aComplete = raidName === 'Nightfall' ?
       a.values.timePlayedSeconds > 300 && a.values.completionReason === 0 && a.values.completed === 1
-      : a.values.timePlayedSeconds > 300 && a.values.completionReason === 0;
+      : a.values.timePlayedSeconds > 300 && a.values.completionReason === 0 && a.values.completed === 1;
 
     const bComplete = raidName === 'Nightfall' ?
       b.values.timePlayedSeconds > 300 && b.values.completionReason === 0 && b.values.completed === 1
-        : b.values.timePlayedSeconds > 300 && b.values.completionReason === 0;
+        : b.values.timePlayedSeconds > 300 && b.values.completionReason === 0 && b.values.completed === 1;
 
 
-    if(!aComplete) return direction === 'ascending' ? 1 : 1;
-    if(!bComplete) return direction === 'ascending' ? -1 : -1;
+    const aDidComplete = a.values.completionReason === 0 && a.values.completed === 1;
+    const bDidComplete = b.values.completionReason === 0 && b.values.completed === 1;
+
+    if(!aComplete && !aDidComplete) return direction === 'ascending' ? -1 : 1;
+    if(!bComplete && !bDidComplete) return direction === 'ascending' ? 1 : -1;
 
     if (itemA < itemB) {
       return direction === 'ascending' ? -1 : 1;

@@ -113,7 +113,7 @@ class PostGameCarnageReportTable extends Component {
 
     const isNF = !!raidName && (!raidName === 'Leviathan' && raidName !== 'Eater of Worlds' && raidName !== '');
 
-    if(initialSort && (column === 'score' && raidName === 'Leviathan' || raidName === 'Eater of Worlds')) this.handleSort('killsDeathsRatio');
+    if(initialSort && (column === 'score' && raidName === 'Leviathan' || raidName === 'Eater of Worlds')) this.handleSort('kills');
 
     return(
       <PGCRWrapper>
@@ -121,7 +121,7 @@ class PostGameCarnageReportTable extends Component {
           <h1>{raidName}</h1>
           <h2>{raidDate}</h2>
         </PGCRTitle>
-        <Table unstackable sortable celled fixed>
+        <Table singleLine sortable celled fixed>
           <Table.Header>
             <Table.Row>
               <Table.HeaderCell sorted={column === 'name' ? direction : null} onClick={() => this.handleSort('name')}>
@@ -132,9 +132,6 @@ class PostGameCarnageReportTable extends Component {
                   Score
                 </Table.HeaderCell>
               }
-              <Table.HeaderCell sorted={column === 'killsDeathsRatio' ? direction : null} onClick={() => this.handleSort('killsDeathsRatio')}>
-                KDA
-              </Table.HeaderCell>
               <Table.HeaderCell sorted={column === 'kills' ? direction : null} onClick={() => this.handleSort('kills')}>
                 Kills
               </Table.HeaderCell>
@@ -143,6 +140,9 @@ class PostGameCarnageReportTable extends Component {
               </Table.HeaderCell>
               <Table.HeaderCell sorted={column === 'assists' ? direction : null} onClick={() => this.handleSort('assists')}>
                 Assists
+              </Table.HeaderCell>
+              <Table.HeaderCell sorted={column === 'killsDeathsRatio' ? direction : null} onClick={() => this.handleSort('killsDeathsRatio')}>
+                KDA
               </Table.HeaderCell>
               <Table.HeaderCell sorted={column === 'timePlayedSeconds' ? direction : null} onClick={() => this.handleSort('timePlayedSeconds')}>
                 Time Played
@@ -161,10 +161,10 @@ class PostGameCarnageReportTable extends Component {
                   { isNF &&
                     <Table.Cell>{ `${values.score} / ${values.teamScore}` }</Table.Cell>
                   }
-                  <Table.Cell>{Math.floor(values.killsDeathsRatio, 4)}</Table.Cell>
                   <Table.Cell>{values.kills}</Table.Cell>
                   <Table.Cell>{values.deaths}</Table.Cell>
                   <Table.Cell>{values.assists}</Table.Cell>
+                  <Table.Cell>{Math.floor(values.killsDeathsRatio, 4)}</Table.Cell>
                   <Table.Cell>{Math.floor(values.timePlayedSeconds / 60, 2)}</Table.Cell>
                 </Table.Row>
               )})}

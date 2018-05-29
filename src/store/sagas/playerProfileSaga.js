@@ -4,7 +4,7 @@ import { searchPlayer } from "../../services/destiny-services";
 import * as consts from "../constants";
 import collectActivityHistory from './activityHistorySaga';
 import collectProfile from './profileSaga';
-import { delay } from "redux-saga/index";
+import { delay } from "redux-saga";
 
 function* handleSearchPlayerFailure() {
   yield put({ type: consts.SET_PLAYER_PROFILE, data: { notFound: true } });

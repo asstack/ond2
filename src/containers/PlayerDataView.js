@@ -191,7 +191,7 @@ class RaidWeekViewer extends Component {
 
 
             {shouldRender &&
-              <Grid.Row reversed='computer' className="raid-stack-row" columns={6}>
+              <Grid.Row reversed='computer tablet' className="raid-stack-row" columns={6}>
                 {raidWeeks.map((raidWeek, idx) => {
                   return (
                     <Grid.Column textAlign="center" key={shortid.generate()}>

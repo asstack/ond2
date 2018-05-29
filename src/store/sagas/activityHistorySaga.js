@@ -18,7 +18,9 @@ const activityDataFound = ({ nightfallHistory={ normal: [], prestige: []}, raidH
   );
 
 export default function* collectActivityHistory(membershipId) {
-  let activityHistory = yield call(fetchActivityHistory, membershipId);
+  yield delay(2000);
+  const { characterIds, membershipType } = yield select(state => state.playerProfile);
+  let activityHistory = yield call(fetchFallbackActivityHistory, {membershipId, characterIds, membershipType}); //yield call(fetchActivityHistory, membershipId);
   let activityHistoryFetchAttempts = 1;
 
   while(activityHistoryFetchAttempts < 3 && !activityDataFound(activityHistory)) {

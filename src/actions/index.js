@@ -846,6 +846,12 @@ export const NF_HASHES = {
   }
 };
 
+export const EP = {
+  raidName: 'Escalation Protocol',
+  allActivityHashes: [4028522574],
+  launchDate: ''
+};
+
 export const NIGHTFALL = {
   milestoneHash: 2171429505,
 };
@@ -890,6 +896,17 @@ export const NIGHTFALL = {
      }
    }
  };
+
+ export const LEV_SPIRE_OF_STARS = {
+   raidName: 'Leviathan, Spire of Stars',
+   launchDate: '',
+   milestoneHash:  '',
+   allActivityHashes: [119944200]
+ };
+
+ export const ESCALATION_PROTOCOL = {
+
+ }
 
  export const RAID_HASHES = {
    LEV: [

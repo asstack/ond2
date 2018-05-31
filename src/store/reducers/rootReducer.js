@@ -47,7 +47,13 @@ const setPlayerProfile = (state=false, action) => {
   }
 };
 
-const setRaidHistory = (state={ raidCount: { eow: { normal: 0, prestige: 0 }, lev: { normal: 0, prestige: 0 } } }, action) => {
+const setRaidHistory = (state={
+  raidCount:
+    { eow: { normal: 0, prestige: 0 },
+      lev: { normal: 0, prestige: 0 },
+      spire: { normal: 0, prestige: 0 }
+    }
+  }, action) => {
   if(action.type === SET_RAID_HISTORY) {
    return action.data;
   }

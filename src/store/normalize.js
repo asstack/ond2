@@ -1,11 +1,13 @@
 import moment from 'moment';
-import { NF_HASHES, RAID_HASHES, NF_START_DATE, EATER_OF_WORLDS, LEVIATHAN } from "../actions";
+import { NF_HASHES, RAID_HASHES, NF_START_DATE, EATER_OF_WORLDS, LEVIATHAN, SPIRE_OF_STARS } from "../actions";
 
 const getCount = (data) => Object.values(data).reduce((accum, arr) => accum + arr.length, 0);
 
 const getRaidWeeks = (launch) => {
   const launchDate = moment.utc(launch);
+  console.log('launchDate', launchDate);
   const weeksSinceRelease = moment.utc().diff(launchDate, 'w');
+  console.log('weeksSinceRelease', weeksSinceRelease);
   return Array.apply(null, {length: weeksSinceRelease}).map((_, index) => moment(launchDate).add(index + 1, 'week'));
 };
 
@@ -96,19 +98,32 @@ const _normalizeRaidData = (raidData) => (
   }, {})
 );
 
-const _normalizeRaidHistory = ({ EOW, LEV }) => {
+const _normalizeRaidHistory = ({ EOW, LEV, SPIRE }) => {
   const EOW_RaidWeeks = getRaidWeeks(EATER_OF_WORLDS.launchDate);
   const LEV_RaidWeeks = getRaidWeeks(LEVIATHAN.launchDate);
+  const SPIRE_RaidWeeks = getRaidWeeks(SPIRE_OF_STARS.launchDate);
+
+  console.log('spire rw', SPIRE_RaidWeeks);
 
   const EOW_Raids = Object.values(EOW);
   const LEV_NormalRaids = Object.values(LEV.normal);
   const LEV_PrestigeRaids = Object.values(LEV.prestige);
+  const SPIRE_NormalRaids = Object.values(SPIRE.normal);
+  const SPIRE_PrestigeRaids = Object.values(SPIRE.prestige);
+
+  console.log('spire n raids', SPIRE_NormalRaids);
+  console.log('spire p raids', SPIRE_NormalRaids);
 
   const EOW_RaidsByWeek = splitRaidByWeek(EOW_RaidWeeks, EOW_Raids);
   const LEV_NormalRaidsByWeek = splitRaidByWeek(LEV_RaidWeeks, LEV_NormalRaids);
   const LEV_PrestigeRaidsByWeek = splitRaidByWeek(LEV_RaidWeeks, LEV_PrestigeRaids);
+  const SPIRE_NormalRaidsByWeek = splitRaidByWeek(SPIRE_RaidWeeks, SPIRE_NormalRaids);
+  const SPIRE_PrestigeRaidsByWeek = splitRaidByWeek(SPIRE_RaidWeeks, SPIRE_PrestigeRaids);
 
-  const raidHistory = { EOW: {}, LEV: { normal: {}, prestige: {} }};
+  console.log('spire s n r', SPIRE_NormalRaidsByWeek);
+  console.log('spire s p r', SPIRE_PrestigeRaidsByWeek);
+
+  const raidHistory = { EOW: {}, LEV: { normal: {}, prestige: {} }, SPIRE: { normal: {}, prestige: {} }};
 
   raidHistory.raidCount = {
     eow: {
@@ -117,12 +132,18 @@ const _normalizeRaidHistory = ({ EOW, LEV }) => {
     lev: {
       prestige: Object.values(LEV.prestige).filter(curr => curr.values.completed === 1).length,
       normal: Object.values(LEV.normal).filter(curr => curr.values.completed === 1).length
+    },
+    spire: {
+      prestige: Object.values(SPIRE.prestige).filter(curr => curr.values.completed === 1).length,
+      normal: Object.values(SPIRE.normal).filter(curr => curr.values.completed === 1).length,
     }
   };
 
   raidHistory.EOW = EOW_RaidsByWeek;
   raidHistory.LEV.normal = LEV_NormalRaidsByWeek;
   raidHistory.LEV.prestige = LEV_PrestigeRaidsByWeek;
+  raidHistory.SPIRE.normal = SPIRE_NormalRaidsByWeek;
+  raidHistory.SPIRE.prestige = SPIRE_PrestigeRaidsByWeek;
 
   raidHistory.mergedHistory = mergeRaidsByWeek(raidHistory);
 

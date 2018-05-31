@@ -28,6 +28,10 @@ const PlayerDataViewWrapper = styled.div`
     .raid-selection {
       max-width: 90%;
       
+      @media only screen and (max-width: 875px) {
+        max-width: 100%;
+      }
+      
       .column {
         padding: 0;
       }
@@ -127,10 +131,12 @@ class RaidWeekViewer extends Component {
     const { nfCount={ prestige: '0', normal: '0' } } = nightfallHistory;
     const {
       LEV={ prestige: {}, normal: {}},
+      SPIRE={ prestige: {}, normal: {}},
       EOW={},
       raidCount={
         eow: { prestige: '0', normal: '0' },
-        lev: { prestige: '0', normal: '0' }
+        lev: { prestige: '0', normal: '0' },
+        spire: { prestige: '0', normal: '0' }
       }
     } = raidHistory;
 
@@ -150,12 +156,13 @@ class RaidWeekViewer extends Component {
         raidWeeks = Object.entries(nightfallHistory[viewMode]).slice(nfStartIndex, nfLen).map((item) => [ ...item ]).reverse()
       }
     }
-    else if(viewRaid === 'eow' || viewRaid === 'lev') {
-        raidWeeks = (viewRaid === 'eow')
-          ? Object.entries(EOW).reverse().slice(0, 6)
-          : Object.entries(LEV[viewMode]).reverse().slice(0, 6)
-    } else {
-      raidWeeks = [];
+    else if(viewRaid === 'eow'){
+      raidWeeks = Object.entries(EOW).reverse().slice(0, 6)
+    }
+    else if(viewRaid === 'lev') {
+      raidWeeks = Object.entries(LEV[viewMode]).reverse().slice(0, 6)
+    } else if(viewRaid === 'spire') {
+      raidWeeks = Object.entries(SPIRE[viewMode]).reverse().slice(0, 6);
     }
 
 

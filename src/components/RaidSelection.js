@@ -8,14 +8,6 @@ const SelectionGroup = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: space-evenly;
-  
-  @media only screen and (max-width: 750px) {
-    width: 92%;
-  }
-  
-  @media only screen and (min-width: 750px) and (max-width: 1100px) {
-  
-  }
 `;
 
 const RaidHeading = styled.div`
@@ -34,16 +26,14 @@ const RaidHeading = styled.div`
   color: #000000;
   
   @media only screen and  (max-width: 574px) {
-    font-size: 16px;
+    text-align: center;
+    font-size: 14px;
   }
 `;
 
 const RaidSelect = styled.div`
   width: 100%;
   height: 88px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
   align-items: center;
   padding-top: 20px;
   border-radius: 4px;
@@ -70,8 +60,33 @@ const Selection = styled.div`
 `;
 
 const RaidSelection = ({ handleSetRaid, handleSetMode, nfCount, raidCount, viewRaid, viewMode }) => {
+  console.log('raidCount', raidCount);
   return (
-    <Grid className="raid-selection" centered columns={3}>
+    <Grid className="raid-selection" centered columns={4}>
+      <Grid.Column>
+        <RaidSelect selected={viewRaid==='spire'}>
+          <RaidHeading onClick={() => { handleSetRaid('spire'); handleSetMode('prestige');}}>
+            <p>Spire of Stars</p>
+          </RaidHeading>
+          <SelectionGroup>
+            <Selection
+              href="javascript:void(0)"
+              selected={viewRaid==='spire' && viewMode ==='normal'}
+              onClick={() => { handleSetRaid('spire'); handleSetMode('normal');}}
+            >
+              <p>N {raidCount.spire.normal}</p>
+            </Selection>
+            <Selection
+              href="javascript:void(0)"
+              selected={viewRaid==='spire' && viewMode ==='prestige'}
+              onClick={() => { handleSetRaid('spire'); handleSetMode('prestige');}}
+            >
+              <p>P {raidCount.spire.prestige}</p>
+            </Selection>
+          </SelectionGroup>
+        </RaidSelect>
+      </Grid.Column>
+
       <Grid.Column>
         <RaidSelect selected={viewRaid==='eow'}>
           <RaidHeading onClick={() => { handleSetRaid('eow'); handleSetMode('normal');}}>

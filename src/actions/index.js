@@ -16,6 +16,7 @@ export const EATER_OF_WORLDS_IMAGE = `${destinyBaseURL}/img/destiny_content/pgcr
 
 export const EATER_OF_WORLDS_LAUNCH_WEEK = '2017-12-11T17:00:00Z';
 export const LEVIATHAN_LAUNCH_WEEK = '2017-09-12T17:00:00Z';
+export const SPIRE_OF_STARS_LAUNCH_WEEK = '2018-05-14T17:00:00Z';
 export const NF_START_DATE = '2018-02-13T17:00:00Z';
 
 export const tier = {
@@ -897,11 +898,11 @@ export const NIGHTFALL = {
    }
  };
 
- export const LEV_SPIRE_OF_STARS = {
+ export const SPIRE_OF_STARS = {
    raidName: 'Leviathan, Spire of Stars',
-   launchDate: '',
+   launchDate: SPIRE_OF_STARS_LAUNCH_WEEK,
    milestoneHash:  '',
-   allActivityHashes: [119944200]
+   allActivityHashes: [3213556450, 119944200]
  };
 
  export const ESCALATION_PROTOCOL = {

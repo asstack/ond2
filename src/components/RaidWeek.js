@@ -95,7 +95,14 @@ const RaidWeek = ({ raid='nf', raids, handleFetchPGCR, success=true, maxCount })
     <RaidWeekWrapper success={success} maxCount={Math.abs(maxCount)} neg={maxCount < 0}>
       {raids && Object.values(raids).map(currRaid => {
         const tinyBarSizeRequired = manyRaids || !success;
+        console.log('currRaid.totalKills', currRaid.totalKills);
+        const color = success
+          ? currRaid.totalKills >= 400
+            ? 'green'
+              : 'yellow'
+          : 'red';
 
+        console.log('color', color);
         const barSize = tinyBarSizeRequired ? 'tiny' : 'small';
 
         const time = `${Number.parseFloat(currRaid.values.activityDurationSeconds/60).toFixed(2)}`;
@@ -111,7 +118,7 @@ const RaidWeek = ({ raid='nf', raids, handleFetchPGCR, success=true, maxCount })
             ? (
               <div>
                 <BarValues>{ isNF ? currRaid.values.teamScore : `${percentWidth} m`}</BarValues>
-                <Progress style={{ minWidth: 150}} value={value} total={total} size="small" success={success} error={!success} />
+                <Progress style={{ minWidth: 150}} value={value} total={total} size="small" color={color} />
                 {isNF
                   ? `Score: ${currRaid.values.score}/${currRaid.values.teamScore} | ${time} m`
                     : `Time: ${time}m | KDA: ${currRaid.values.kills} / ${currRaid.values.deaths} / ${currRaid.values.assists}`
@@ -133,8 +140,7 @@ const RaidWeek = ({ raid='nf', raids, handleFetchPGCR, success=true, maxCount })
               total={total || 0}
               on={['hover', 'focus']}
               size={barSize}
-              success={success}
-              error={!success}
+              color={color}
             />
           </Link>
         );

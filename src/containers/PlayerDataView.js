@@ -6,9 +6,8 @@ import shortid from 'shortid';
 
 import { Grid } from 'semantic-ui-react';
 
-import RaidSelection from '../components/RaidSelection';
+import ActivityTypeSelector from '../components/activity-selections/ActivityTypeSelector';
 import RaidStack from '../components/RaidStack';
-import PGCRModal from '../components/PGCRModal';
 import PlayerSearch from '../components/PlayerSearch';
 import * as consts from "../store/constants";
 
@@ -20,10 +19,6 @@ const PlayerDataViewWrapper = styled.div`
   &&& {
     width: 100%;
     margin-bottom: 20px;
-    
-    .row {
-      padding: 0;  
-    }
     
     .raid-selection {
       max-width: 90%;
@@ -39,7 +34,8 @@ const PlayerDataViewWrapper = styled.div`
     
     .raid-stack-row {
       background-color: white;
-      padding: 15px;
+      padding-top: 0px;
+      padding-bottom: 2px;
       
       .column {
         padding: 0;
@@ -105,6 +101,11 @@ class RaidWeekViewer extends Component {
     this.setState({ maxSuccessRaids: 0 });
   };
 
+  setActivity = (activity) => {
+    const type = activity === 'raid' ? 'spire' : 'nf';
+      this.props.setActivityType(activity, type);
+  };
+
   setMaxSuccessRaids = count => {
     this.setState({
       maxSuccessRaids: count
@@ -122,7 +123,7 @@ class RaidWeekViewer extends Component {
       match, loading, nightfallHistory, raidHistory,
       fetchPostGameCarnageReport, playerProfile, playerPrivacy,
       viewRaid, viewMode, gamerTagOptions, selectGamerTag,
-      publicMilestones
+      setActivityType, publicMilestones, activityType
     } = this.props;
     const { maxSuccessRaids } = this.state;
 
@@ -148,11 +149,8 @@ class RaidWeekViewer extends Component {
     if(viewRaid === 'nf' && !!nightfallHistory[viewMode]) {
 
       if (Object.keys(nightfallHistory[ viewMode ]).length > 1) {
-
-        //hack get this shit outta here
         const nfLen = Object.entries(nightfallHistory[viewMode]).length;
         const nfStartIndex = Math.abs(6 - nfLen);
-
         raidWeeks = Object.entries(nightfallHistory[viewMode]).slice(nfStartIndex, nfLen).map((item) => [ ...item ]).reverse()
       }
     }
@@ -166,6 +164,7 @@ class RaidWeekViewer extends Component {
     }
 
 
+    console.log('activityType', activityType);
     const shouldRender = (!loading && raidWeeks.length > 0 && !notFound && !playerPrivacy);
 
     return (
@@ -184,13 +183,13 @@ class RaidWeekViewer extends Component {
           { playerPrivacy && <Grid.Row><h1 style={{ fontSize: 24 }}>The player has set their account to private</h1></Grid.Row>}
           { notFound && <Grid.Row><h1 style={{ fontSize: 24 }}>Sorry player not found</h1></Grid.Row> }
 
-          <Grid.Row>
+          <Grid.Row style={{ paddingBottom: 0}} centered>
           {
             (!loading && !notFound) &&
-              <RaidSelection
+              <ActivityTypeSelector
                 handleSetRaid={this.setRaid} handleSetMode={this.setMode}
-                nfCount={nfCount} raidCount={raidCount}
-                viewRaid={viewRaid} viewMode={viewMode}
+                handleSetActivityType={this.setActivity} nfCount={nfCount} raidCount={raidCount}
+                activityType={activityType} viewRaid={viewRaid} viewMode={viewMode}
                 resetMaxSuccessRaids={() => this.setMaxSuccessRaids(0)}
               />
           }
@@ -227,6 +226,7 @@ const mapStateToProps = state => {
     pgcr: state.postGameCarnageReport,
     loading: state.loading,
     viewMode: state.viewMode,
+    activityType: state.activityType,
     viewRaid: state.viewRaid,
     nightfallHistory: state.nightfallHistory,
     raidHistory: state.raidHistory,
@@ -245,6 +245,10 @@ const mapDispatchToProps = dispatch => {
     searchPlayer: pathParams => dispatch({ type: consts.FETCH_PLAYER_PROFILE, data: pathParams }),
     setViewRaid: raid => dispatch({ type: consts.SET_VIEW_RAID, data: raid }),
     setViewMode: mode => dispatch({ type: consts.SET_VIEW_MODE, data: mode }),
+    setActivityType: (type, raid) => ([
+      dispatch({ type: consts.SET_ACTIVITY_TYPE, data: type }),
+      dispatch({ type: consts.SET_VIEW_RAID, data: raid })
+    ]),
     selectGamerTag: gamerTag => dispatch({ type: consts.SELECT_GAMER_TAG, data: gamerTag }),
     setYOffset: yOffset => dispatch({ type: consts.SET_RAID_VIEW_Y_OFFSET, data: yOffset })
   }

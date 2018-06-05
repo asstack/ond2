@@ -9,6 +9,7 @@ import {
   SET_PUBLIC_MILESTONES,
   SET_LOADING,
   SET_PLAYER_PRIVACY,
+  SET_ACTIVITY_TYPE,
   SET_VIEW_MODE,
   SET_VIEW_RAID,
   TOGGLE_PLAYER_SEARCH,
@@ -88,14 +89,14 @@ const setPlayerPrivacy = (state = false, action) => {
   return state;
 };
 
-const setViewMode = (state = 'prestige', action) => {
+const setViewMode = (state = 'normal', action) => {
   if(action.type === SET_VIEW_MODE) {
     return action.data;
   }
   return state;
 };
 
-const setViewRaid = (state = 'nf', action) => {
+const setViewRaid = (state = 'spire', action) => {
   if(action.type === SET_VIEW_RAID) {
     return action.data;
   }
@@ -165,6 +166,13 @@ const setRaidViewYOffset = (state=0, action) => {
   return state;
 };
 
+const setActivityType = (state='raid', action) => {
+  if(action.type === SET_ACTIVITY_TYPE) {
+    return action.data;
+  }
+  return state;
+};
+
 const rootReducer = combineReducers({
   fetchLogs,
   cacheTimeout: setCacheTimeOut,
@@ -175,6 +183,7 @@ const rootReducer = combineReducers({
   nightfallHistory: setNightfallHistory,
   loading: setLoading,
   playerPrivacy: setPlayerPrivacy,
+  activityType: setActivityType,
   viewMode: setViewMode,
   viewRaid: setViewRaid,
   newPlayerSearch: setPlayerSearch,

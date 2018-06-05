@@ -28,7 +28,6 @@ const ModalContent = styled.div`
   -webkit-transform: translateZ(0);
 `;
 
-
 class PGCRModal extends Component {
 
   componentDidMount() {

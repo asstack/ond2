@@ -42,7 +42,6 @@ const RaidSelect = styled.div`
 `;
 
 const Selection = styled.div`
-  margin-bottom: 15px;
   
   p {
     font-family: Montserrat;
@@ -60,13 +59,12 @@ const Selection = styled.div`
 `;
 
 const RaidSelection = ({ handleSetRaid, handleSetMode, nfCount, raidCount, viewRaid, viewMode }) => {
-  console.log('raidCount', raidCount);
   return (
-    <Grid className="raid-selection" centered columns={4}>
-      <Grid.Column>
+    <Grid className="raid-selection" centered columns={3}>
+      <Grid.Column >
         <RaidSelect selected={viewRaid==='spire'}>
           <RaidHeading onClick={() => { handleSetRaid('spire'); handleSetMode('prestige');}}>
-            <p>Spire of Stars</p>
+            <pl>Spire of Stars</pl>
           </RaidHeading>
           <SelectionGroup>
             <Selection
@@ -123,29 +121,6 @@ const RaidSelection = ({ handleSetRaid, handleSetMode, nfCount, raidCount, viewR
               onClick={() => { handleSetRaid('lev'); handleSetMode('prestige');}}
             >
               <p>P {raidCount.lev.prestige}</p>
-            </Selection>
-          </SelectionGroup>
-        </RaidSelect>
-      </Grid.Column>
-
-      <Grid.Column>
-        <RaidSelect selected={viewRaid ==='nf'}>
-          <RaidHeading onClick={() => { handleSetRaid('nf'); handleSetMode('prestige');}}>
-            <p>Nightfall</p>
-          </RaidHeading>
-          <SelectionGroup>
-            <Selection
-              href="javascript:void(0)"
-              selected={viewRaid==='nf' && viewMode ==='normal'}
-              onClick={() => { handleSetRaid('nf'); handleSetMode('normal');}}
-            >
-              <p>N {nfCount.normal}</p>
-            </Selection>
-            <Selection
-              href="javascript:void(0)"
-              selected={viewRaid==='nf' && viewMode ==='prestige'}
-              onClick={() => { handleSetRaid('nf'); handleSetMode('prestige');}}>
-              <p>P {nfCount.prestige}</p>
             </Selection>
           </SelectionGroup>
         </RaidSelect>

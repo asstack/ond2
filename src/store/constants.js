@@ -10,6 +10,7 @@ export const SET_RAID_HISTORY = 'set_raid_history';
 export const SET_NF_HISTORY = 'set_nightfall_history';
 export const SET_PUBLIC_MILESTONES = 'set_public_milestones';
 export const SET_PLAYER_PRIVACY = 'set_player_privacy';
+export const SET_ACTIVITY_TYPE = 'set_activity_type';
 export const SET_VIEW_MODE = 'set_view_mode';
 export const SET_VIEW_RAID = 'set_view_raid';
 export const SET_GAMER_TAG_OPTIONS = 'set_gamer_tag_suggestions';

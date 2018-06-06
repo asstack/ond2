@@ -34,8 +34,7 @@ const PlayerDataViewWrapper = styled.div`
     
     .raid-stack-row {
       background-color: white;
-      padding-top: 0px;
-      padding-bottom: 2px;
+      padding: 2px;
       
       .column {
         padding: 0;

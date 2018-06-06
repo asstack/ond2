@@ -18,9 +18,7 @@ const activityDataFound = ({ nightfallHistory={ normal: [], prestige: []}, raidH
   );
 
 export default function* collectActivityHistory(membershipId) {
-  yield delay(2000);
-  const { characterIds, membershipType } = yield select(state => state.playerProfile);
-  let activityHistory = yield call(fetchFallbackActivityHistory, {membershipId, characterIds, membershipType}); //yield call(fetchActivityHistory, membershipId);
+  let activityHistory = yield call(fetchActivityHistory, membershipId);
   let activityHistoryFetchAttempts = 1;
 
   while(activityHistoryFetchAttempts < 3 && !activityDataFound(activityHistory)) {
@@ -29,6 +27,11 @@ export default function* collectActivityHistory(membershipId) {
     const { characterIds, membershipType } = yield select(state => state.playerProfile);
     activityHistory = yield call(fetchFallbackActivityHistory, {membershipId, characterIds, membershipType});
     activityHistoryFetchAttempts += 1;
+   }
+
+   if(activityHistoryFetchAttempts === 1) {
+      //Data exists, so we update behind the scenes. Call update in 10 seconds.
+     console.log('Need to update data until lambda to auto update is done');
    }
 
  if(activityDataFound(activityHistory)) {

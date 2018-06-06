@@ -142,16 +142,18 @@ class App extends Component {
           )}/>
 
         </SideMenu>
+        {!pgcr &&
           <Segment vertical style={{width: '100%', padding: '2em 0em', zIndex: 999}}>
             <Container textAlign='center'>
-            <List horizontal divided link small="true">
-              <List.Item as='a' href={CONTACT_REDDIT}>Contact Us</List.Item>
-              <List.Item as='a' href='/faq'>FAQ</List.Item>
-              <List.Item as='a' href='https://www.reddit.com/user/videoflux'>Concept and UI by Videoflux</List.Item>
-              <List.Item as='a' href='http://www.w-richardson.com'>Developed by <b>William Richardson</b></List.Item>
-            </List>
+              <List horizontal divided link small="true">
+                <List.Item as='a' href={CONTACT_REDDIT}>Contact Us</List.Item>
+                <List.Item as='a' href='/faq'>FAQ</List.Item>
+                <List.Item as='a' href='https://www.reddit.com/user/videoflux'>Concept and UI by Videoflux</List.Item>
+                <List.Item as='a' href='http://www.w-richardson.com'>Developed by <b>William Richardson</b></List.Item>
+              </List>
             </Container>
           </Segment>
+        }
         { showUpdatePrompt && <UpdatePrompt clearUpdatePrompt={handleUpdatePromptClicked} showUpdatePrompt={showUpdatePrompt} /> }
       </AppWrapper>
     );

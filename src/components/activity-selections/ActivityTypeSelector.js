@@ -6,12 +6,16 @@ import ActivitiesSelection from "./ActivitiesSelection";
 import styled from 'styled-components';
 
 const TypeSelectorContainer = styled.div`
-  width: 40%;
+  width: 60%;
   height: 50px;
   display: flex;
   flex-direction: row;
   border: 1px solid black;
   cursor: pointer;
+  
+  @media only screen and (min-width: 767px) {
+    width: 40%;
+  }
 `;
 
 const ActivitySelector = styled.div`
@@ -22,8 +26,6 @@ const ActivitySelector = styled.div`
   justify-content: center;
   background-color: ${({ selected }) => selected ? 'white' : '#eeeeee'};
 `;
-
-
 
 const ActivityTypeSelector = (props) => {
   return (

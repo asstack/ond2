@@ -95,9 +95,8 @@ const RaidWeek = ({ raid='nf', raids, handleFetchPGCR, success=true, maxCount })
     <RaidWeekWrapper success={success} maxCount={Math.abs(maxCount)} neg={maxCount < 0}>
       {raids && Object.values(raids).map(currRaid => {
         const tinyBarSizeRequired = manyRaids || !success;
-        console.log('currRaid.totalKills', currRaid.totalKills);
         const color = success
-          ? currRaid.totalKills >= 400
+          ? currRaid.totalKills >= 400 || raid === 'nf'
             ? 'green'
               : 'yellow'
           : 'red';

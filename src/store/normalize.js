@@ -125,17 +125,49 @@ const _normalizeRaidHistory = ({ EOW, LEV, SPIRE }) => {
 
   const raidHistory = { EOW: {}, LEV: { normal: {}, prestige: {} }, SPIRE: { normal: {}, prestige: {} }};
 
+  const isApplicableRaid = (raid) => {
+    return (
+      raid.teamCount >= 6 ||
+      raid.values.activityDurationSeconds >= (60 * 5) ||
+      raid.values.kills > 0
+    )
+  };
+
+  const eowFailCount = Object.values(EOW).filter(
+    (raid) => raid.values.timePlayedSeconds < 300 || raid.values.completed !== 1 || raid.values.completionReason !== 0 && isApplicableRaid(raid));
+
+  const levPFailCount = Object.values(LEV.prestige).filter(
+      (raid) => raid.values.timePlayedSeconds < 300 || raid.values.completed !== 1 || raid.values.completionReason !== 0 && isApplicableRaid(raid));
+
+  const levNFailCount = Object.values(LEV.normal).filter(
+        (raid) => raid.values.timePlayedSeconds < 300 || raid.values.completed !== 1 || raid.values.completionReason !== 0 && isApplicableRaid(raid));
+
+  const spirePFailCount = Object.values(SPIRE.prestige).filter(
+        (raid) => raid.values.timePlayedSeconds < 300 || raid.values.completed !== 1 || raid.values.completionReason !== 0 && isApplicableRaid(raid));
+
+    const spireNFailCount = Object.values(SPIRE.normal).filter(
+          (raid) => raid.values.timePlayedSeconds < 300 || raid.values.completed !== 1 || raid.values.completionReason !== 0 && isApplicableRaid(raid));
+
   raidHistory.raidCount = {
     eow: {
-      normal: Object.values(EOW).filter(curr => curr.values.completed === 1).length
+      normal: Object.values(EOW).filter(curr => curr.values.completed === 1).length,
+      failCount: eowFailCount
     },
     lev: {
       prestige: Object.values(LEV.prestige).filter(curr => curr.values.completed === 1).length,
-      normal: Object.values(LEV.normal).filter(curr => curr.values.completed === 1).length
+      normal: Object.values(LEV.normal).filter(curr => curr.values.completed === 1).length,
+      failCount: {
+        prestige: levPFailCount,
+        normal: levNFailCount
+      }
     },
     spire: {
       prestige: Object.values(SPIRE.prestige).filter(curr => curr.values.completed === 1).length,
       normal: Object.values(SPIRE.normal).filter(curr => curr.values.completed === 1).length,
+      failCount: {
+        prestige: spirePFailCount,
+        normal: spireNFailCount
+      }
     }
   };
 
@@ -144,15 +176,32 @@ const _normalizeRaidHistory = ({ EOW, LEV, SPIRE }) => {
   raidHistory.LEV.prestige = LEV_PrestigeRaidsByWeek;
   raidHistory.SPIRE.normal = SPIRE_NormalRaidsByWeek;
   raidHistory.SPIRE.prestige = SPIRE_PrestigeRaidsByWeek;
-
   raidHistory.mergedHistory = mergeRaidsByWeek(raidHistory);
 
   return raidHistory;
 };
 
+//const failedRaids =
+//  viewRaid === 'nf' ?
+//    raidValues.filter(raid => raid.values.completionReason !== 0 && raid.values.completed !== 1)
+//      : raidValues.filter(raid => raid.values.timePlayedSeconds < 300 || raid.values.completed !== 1 || raid.values.completionReason !== 0 && isApplicableRaid(raid));
+
+
+
 // To get date, add string to header value, and split on some unique character. ::--
 const _normalizeNightfallHistory = ({ prestige, normal }) => {
   const NF_Weeks = getRaidWeeks(NF_START_DATE);
+
+  const prestigeFailCount = Object.values(prestige).filter((raid) => {
+    return(raid.values.completionReason !== 0 && raid.values.completed !== 1)
+  });
+
+  const normalFailCount = Object.values(normal).filter((raid) => {
+    return(raid.values.completionReason !== 0 && raid.values.completed !== 1)
+  });
+
+  console.log('prestigeFailCount', prestigeFailCount);
+  console.log('normalFailCount', normalFailCount);
 
   const splitPrestigeWeeks = splitNightfallByWeek(NF_Weeks,  Object.values(prestige));
   const splitNormalWeeks = splitNightfallByWeek(NF_Weeks,  Object.values(normal));
@@ -163,7 +212,8 @@ const _normalizeNightfallHistory = ({ prestige, normal }) => {
   return ({
     prestige: splitPrestigeWeeks,
     normal: splitNormalWeeks,
-    nfCount: {prestige: prestigeCount, normal: normalCount}
+    nfCount: {prestige: prestigeCount, normal: normalCount},
+    nfFailCount: { prestige: prestigeFailCount, normal: normalFailCount}
   });
 };
 

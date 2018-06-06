@@ -47,19 +47,32 @@ const HeaderDate = styled.span`
   color: #000000;
 `;
 
+// Non-applicable raids
+// 1. Fewer than 6 characters in the raid.
+// 2. Not longer than 5 minutes. - activityDurationSeconds > (60 * 5)
+// 3. No kill - Individual
+
+const isApplicableRaid = (raid) => {
+  return (
+    raid.teamCount >= 6 ||
+    raid.values.activityDurationSeconds >= (60 * 5) ||
+    raid.values.kills > 0
+  )
+};
+
 const RaidStack = ({ handleFetchPGCR, viewRaid, raidWeek, raid, maxSuccessRaids, handleSetMaxSuccessRaids, weekTitle }) => {
   const [week, raids] = raidWeek;
   const raidValues = Object.values(raids);
 
   const completedRaids =
     viewRaid === 'nf' ?
-      raidValues.filter(raid => raid.values.completionReason === 0)
+      raidValues.filter(raid => raid.values.completionReason === 0 && raid.values.completed === 1)
       : raidValues.filter(raid => raid.values.timePlayedSeconds >= 300 && raid.values.completed === 1 && raid.values.completionReason === 0);
 
   const failedRaids =
     viewRaid === 'nf' ?
-      raidValues.filter(raid => raid.values.completionReason !== 0)
-        : raidValues.filter(raid => raid.values.timePlayedSeconds < 300 || raid.values.completed !== 1 || raid.values.completionReason !== 0);
+      raidValues.filter(raid => raid.values.completionReason !== 0 && raid.values.completed !== 1)
+        : raidValues.filter(raid => raid.values.timePlayedSeconds < 300 || raid.values.completed !== 1 || raid.values.completionReason !== 0 && isApplicableRaid(raid));
 
   const completedCount = Object.keys(completedRaids).length;
 

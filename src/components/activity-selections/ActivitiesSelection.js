@@ -25,7 +25,7 @@ const RaidHeading = styled.div`
   letter-spacing: normal;
   color: #000000;
   
-  @media only screen and  (max-width: 574px) {
+  @media only screen and (max-width: 767px) {
     text-align: center;
     font-size: 14px;
   }
@@ -64,7 +64,7 @@ const ActivitiesSelection = ({ handleSetRaid, handleSetMode, nfCount, raidCount,
   console.log('viewRaid', viewRaid);
   console.log('viewMode', viewMode);
   return (
-    <Grid className="raid-selection" centered columns={2}>
+    <Grid className="raid-selection" centered columns={1}>
       <Grid.Column>
         <RaidSelect selected={viewRaid ==='nf'}>
           <RaidHeading onClick={() => { handleSetRaid('nf'); handleSetMode('prestige');}}>
@@ -87,6 +87,13 @@ const ActivitiesSelection = ({ handleSetRaid, handleSetMode, nfCount, raidCount,
           </SelectionGroup>
         </RaidSelect>
       </Grid.Column>
+    </Grid>
+  );
+};
+
+export default ActivitiesSelection;
+
+/*
       <Grid.Column>
         <RaidSelect selected={viewRaid ==='ep'}>
           <RaidHeading onClick={() => { handleSetRaid('ep'); handleSetMode('prestige');}}>
@@ -109,8 +116,4 @@ const ActivitiesSelection = ({ handleSetRaid, handleSetMode, nfCount, raidCount,
           </SelectionGroup>
         </RaidSelect>
       </Grid.Column>
-    </Grid>
-  );
-};
-
-export default ActivitiesSelection;
+ */

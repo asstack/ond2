@@ -25,7 +25,7 @@ const RaidHeading = styled.div`
   letter-spacing: normal;
   color: #000000;
   
-  @media only screen and  (max-width: 574px) {
+  @media only screen and  (max-width: 767px) {
     text-align: center;
     font-size: 14px;
   }
@@ -64,7 +64,7 @@ const RaidSelection = ({ handleSetRaid, handleSetMode, nfCount, raidCount, viewR
       <Grid.Column >
         <RaidSelect selected={viewRaid==='spire'}>
           <RaidHeading onClick={() => { handleSetRaid('spire'); handleSetMode('prestige');}}>
-            <pl>Spire of Stars</pl>
+            <p>Spire of Stars</p>
           </RaidHeading>
           <SelectionGroup>
             <Selection

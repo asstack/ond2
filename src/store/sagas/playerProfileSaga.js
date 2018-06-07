@@ -4,7 +4,6 @@ import { searchPlayer } from "../../services/destiny-services";
 import * as consts from "../constants";
 import collectActivityHistory from './activityHistorySaga';
 import collectProfile from './profileSaga';
-import { delay } from "redux-saga";
 
 function* handleSearchPlayerFailure() {
   yield put({ type: consts.SET_PLAYER_PROFILE, data: { notFound: true } });
@@ -16,13 +15,6 @@ function* clearSearchData() {
   yield put({ type: consts.SET_ACTIVITY_HISTORY, data: { normal: {}, prestige: {}, nfCount: { normal: 0, prestige: 0 } } });
   yield put({ type: consts.SET_NF_HISTORY, data: {} });
   yield put({ type: consts.SET_GAMER_TAG_OPTIONS, data: [] });
-}
-
-function* syncPlayerNewData(membershipId, delayMs) {
-  console.log('Sync Player New Data Called');
-  yield delay(delayMs);
-  console.log('After delay');
-  yield call(collectActivityHistory, membershipId);
 }
 
 export default function* fetchPlayerProfile({ data }) {
@@ -61,7 +53,6 @@ export default function* fetchPlayerProfile({ data }) {
       yield put({type: consts.SET_RAID_HISTORY, data: playerProfileCache[membershipId]});
     } else {
       yield spawn(collectProfile, membershipId);
-      yield spawn(syncPlayerNewData, membershipId, 8000);
     }
 
     const activityHistoryCache = yield select(state => state.activityHistoryCache);

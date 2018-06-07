@@ -17,6 +17,13 @@ const activityDataFound = ({ nightfallHistory={ normal: [], prestige: []}, raidH
     isActivityData(nightfallHistory.normal) || isActivityData(nightfallHistory.prestige)
   );
 
+function* syncPlayerNewData(membershipId, delayMs) {
+  console.log('Sync Player New Data Called');
+  yield delay(delayMs);
+  console.log('After delay');
+  yield call(collectActivityHistory, membershipId);
+}
+
 export default function* collectActivityHistory(membershipId) {
   let activityHistory = yield call(fetchActivityHistory, membershipId);
   let activityHistoryFetchAttempts = 1;
@@ -29,8 +36,11 @@ export default function* collectActivityHistory(membershipId) {
     activityHistoryFetchAttempts += 1;
    }
 
+   console.log('activityHistoryAttempts', activityHistoryFetchAttempts);
+
    if(activityHistoryFetchAttempts === 1) {
       //Data exists, so we update behind the scenes. Call update in 10 seconds.
+     yield spawn(syncPlayerNewData, membershipId, 15000);
      console.log('Need to update data until lambda to auto update is done');
    }
 

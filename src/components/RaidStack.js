@@ -54,8 +54,8 @@ const HeaderDate = styled.span`
 
 const isApplicableRaid = (raid) => {
   return (
-    raid.teamCount >= 6 ||
-    raid.values.activityDurationSeconds >= (60 * 5) ||
+    raid.teamCount >= 6 &&
+    raid.values.activityDurationSeconds >= (60 * 5) &&
     raid.values.kills > 0
   )
 };
@@ -72,7 +72,7 @@ const RaidStack = ({ handleFetchPGCR, viewRaid, raidWeek, raid, maxSuccessRaids,
   const failedRaids =
     viewRaid === 'nf' ?
       raidValues.filter(raid => raid.values.completionReason !== 0 && raid.values.completed !== 1)
-        : raidValues.filter(raid => raid.values.timePlayedSeconds < 300 || raid.values.completed !== 1 || raid.values.completionReason !== 0 && isApplicableRaid(raid));
+        : raidValues.filter(raid => (raid.values.timePlayedSeconds < 300 || raid.values.completed !== 1 || raid.values.completionReason !== 0) && isApplicableRaid(raid));
 
   const completedCount = Object.keys(completedRaids).length;
 

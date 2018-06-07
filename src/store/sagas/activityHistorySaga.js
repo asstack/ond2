@@ -24,6 +24,8 @@ function* syncPlayerNewData(membershipId, delayMs) {
   yield call(collectActivityHistory, membershipId);
 }
 
+let currentMembershipId = false;
+
 export default function* collectActivityHistory(membershipId) {
   let activityHistory = yield call(fetchActivityHistory, membershipId);
   let activityHistoryFetchAttempts = 1;
@@ -38,11 +40,14 @@ export default function* collectActivityHistory(membershipId) {
 
    console.log('activityHistoryAttempts', activityHistoryFetchAttempts);
 
-   if(activityHistoryFetchAttempts === 1) {
+   if(activityHistoryFetchAttempts === 1 && membershipId !== currentMembershipId) {
       //Data exists, so we update behind the scenes. Call update in 10 seconds.
      yield spawn(syncPlayerNewData, membershipId, 15000);
      console.log('Need to update data until lambda to auto update is done');
    }
+
+   // Set current so we can compare to override 'fetching data updates'
+  currentMembershipId = membershipId;
 
  if(activityDataFound(activityHistory)) {
    const normalizedNF = normalize.nightfall(activityHistory.nightfallHistory);

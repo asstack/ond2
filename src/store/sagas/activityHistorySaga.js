@@ -18,9 +18,7 @@ const activityDataFound = ({ nightfallHistory={ normal: [], prestige: []}, raidH
   );
 
 function* syncPlayerNewData(membershipId, delayMs) {
-  console.log('Sync Player New Data Called');
   yield delay(delayMs);
-  console.log('After delay');
   yield call(collectActivityHistory, membershipId);
 }
 
@@ -32,18 +30,17 @@ export default function* collectActivityHistory(membershipId) {
 
   while(activityHistoryFetchAttempts < 3 && !activityDataFound(activityHistory)) {
    //TODO: Need to cancel this if a new player search is initiated. Don't want data to be overwritten
+    yield put({ type: consts.SET_NEW_PLAYER, data: true });
     yield delay(2000);
     const { characterIds, membershipType } = yield select(state => state.playerProfile);
     activityHistory = yield call(fetchFallbackActivityHistory, {membershipId, characterIds, membershipType});
+    yield put({ type: consts.SET_NEW_PLAYER, data: false });
     activityHistoryFetchAttempts += 1;
    }
-
-   console.log('activityHistoryAttempts', activityHistoryFetchAttempts);
 
    if(activityHistoryFetchAttempts === 1 && membershipId !== currentMembershipId) {
       //Data exists, so we update behind the scenes. Call update in 10 seconds.
      yield spawn(syncPlayerNewData, membershipId, 15000);
-     console.log('Need to update data until lambda to auto update is done');
    }
 
    // Set current so we can compare to override 'fetching data updates'
@@ -52,6 +49,7 @@ export default function* collectActivityHistory(membershipId) {
  if(activityDataFound(activityHistory)) {
    const normalizedNF = normalize.nightfall(activityHistory.nightfallHistory);
    const normalizedRH = normalize.raidHistory(activityHistory.raidHistory);
+   const normalizedEP = normalize.epHistory(activityHistory.epHistory);
 
    if (activityDataFound(activityHistory)) {
      yield all([
@@ -74,6 +72,7 @@ export default function* collectActivityHistory(membershipId) {
    yield put({type: consts.SET_ACTIVITY_HISTORY_CACHE, data: activityHistoryCache});
    yield put({type: consts.SET_RAID_HISTORY, data: normalizedRH});
    yield put({type: consts.SET_NF_HISTORY, data: normalizedNF});
+   yield put({type: consts.SET_EP_HISTORY, data: normalizedEP});
  } else {
     yield put({ type: consts.SET_SITE_ERROR, data: true });
  }

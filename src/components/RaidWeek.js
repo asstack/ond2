@@ -101,7 +101,6 @@ const RaidWeek = ({ raid='nf', raids, handleFetchPGCR, success=true, maxCount })
               : 'yellow'
           : 'red';
 
-        console.log('color', color);
         const barSize = tinyBarSizeRequired ? 'tiny' : 'small';
 
         const time = `${Number.parseFloat(currRaid.values.activityDurationSeconds/60).toFixed(2)}`;

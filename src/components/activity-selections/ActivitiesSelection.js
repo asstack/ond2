@@ -59,12 +59,10 @@ const Selection = styled.div`
   }
 `;
 
-const ActivitiesSelection = ({ handleSetRaid, handleSetMode, nfCount, raidCount, epCount={normal: 0, prestige: 0}, viewRaid, viewMode }) => {
+const ActivitiesSelection = ({ handleSetRaid, handleSetMode, nfSuccessCount, raidCount, epSuccessCount, viewRaid, viewMode }) => {
 
-  console.log('viewRaid', viewRaid);
-  console.log('viewMode', viewMode);
   return (
-    <Grid className="raid-selection" centered columns={1}>
+    <Grid className="raid-selection" centered columns={2}>
       <Grid.Column>
         <RaidSelect selected={viewRaid ==='nf'}>
           <RaidHeading onClick={() => { handleSetRaid('nf'); handleSetMode('prestige');}}>
@@ -76,13 +74,29 @@ const ActivitiesSelection = ({ handleSetRaid, handleSetMode, nfCount, raidCount,
               selected={viewRaid==='nf' && viewMode ==='normal'}
               onClick={() => { handleSetRaid('nf'); handleSetMode('normal');}}
             >
-              <p>N {nfCount.normal}</p>
+              <p>N {nfSuccessCount.normal}</p>
             </Selection>
             <Selection
               href="javascript:void(0)"
               selected={viewRaid==='nf' && viewMode ==='prestige'}
               onClick={() => { handleSetRaid('nf'); handleSetMode('prestige');}}>
-              <p>P {nfCount.prestige}</p>
+              <p>P {nfSuccessCount.prestige}</p>
+            </Selection>
+          </SelectionGroup>
+        </RaidSelect>
+      </Grid.Column>
+      <Grid.Column>
+        <RaidSelect selected={viewRaid ==='ep'}>
+          <RaidHeading onClick={() => { handleSetRaid('ep'); handleSetMode('normal');}}>
+            <p>Escalation Protocol</p>
+          </RaidHeading>
+          <SelectionGroup>
+            <Selection
+              href="javascript:void(0)"
+              selected={viewRaid==='ep' && viewMode ==='normal'}
+              onClick={() => { handleSetRaid('ep'); handleSetMode('normal');}}
+            >
+              <p>N {epSuccessCount}</p>
             </Selection>
           </SelectionGroup>
         </RaidSelect>
@@ -92,28 +106,3 @@ const ActivitiesSelection = ({ handleSetRaid, handleSetMode, nfCount, raidCount,
 };
 
 export default ActivitiesSelection;
-
-/*
-      <Grid.Column>
-        <RaidSelect selected={viewRaid ==='ep'}>
-          <RaidHeading onClick={() => { handleSetRaid('ep'); handleSetMode('prestige');}}>
-            <p>Escalation Protocol</p>
-          </RaidHeading>
-          <SelectionGroup>
-            <Selection
-              href="javascript:void(0)"
-              selected={viewRaid==='nf' && viewMode ==='normal'}
-              onClick={() => { handleSetRaid('ep'); handleSetMode('normal');}}
-            >
-              <p>N {epCount.normal}</p>
-            </Selection>
-            <Selection
-              href="javascript:void(0)"
-              selected={viewRaid==='nf' && viewMode ==='prestige'}
-              onClick={() => { handleSetRaid('ep'); handleSetMode('prestige');}}>
-              <p>P {epCount.prestige}</p>
-            </Selection>
-          </SelectionGroup>
-        </RaidSelect>
-      </Grid.Column>
- */

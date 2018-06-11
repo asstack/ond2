@@ -11,10 +11,12 @@ export const SET_NF_HISTORY = 'set_nightfall_history';
 export const SET_PUBLIC_MILESTONES = 'set_public_milestones';
 export const SET_PLAYER_PRIVACY = 'set_player_privacy';
 export const SET_ACTIVITY_TYPE = 'set_activity_type';
+export const SET_NEW_PLAYER = 'set_new_player';
 export const SET_VIEW_MODE = 'set_view_mode';
 export const SET_VIEW_RAID = 'set_view_raid';
 export const SET_GAMER_TAG_OPTIONS = 'set_gamer_tag_suggestions';
 export const SELECT_GAMER_TAG = 'select_gamer_tag';
+export const SET_EP_HISTORY = 'set_ep_history';
 
 export const SET_PGCR_CACHE = 'set_pgcr_cache';
 export const SET_ACTIVITY_HISTORY_CACHE = 'set_activity_history_cache';

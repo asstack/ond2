@@ -43,20 +43,6 @@ const PlayerDataViewWrapper = styled.div`
   }
 `;
 
-const RaidView = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-`;
-
-const RaidStackList = styled.div`
-  width: 100%;
-  padding: 15px 15px;
-  border-radius: 4px;
-  background-color: white;
-`;
-
 class RaidWeekViewer extends Component {
   constructor(props) {
     super(props);
@@ -64,6 +50,7 @@ class RaidWeekViewer extends Component {
     this.state = {
       player: this.props.match.params.playerId || '',
       maxSuccessRaids: 0,
+
     };
 
     this.yOffsetRef = React.createRef();
@@ -117,9 +104,13 @@ class RaidWeekViewer extends Component {
     }
   };
 
+  setFarmCount = (farmCount) => {
+    this.setState({ farmCount })
+  };
+
   render() {
     const {
-      match, loading, nightfallHistory, raidHistory,
+      match, loading, nightfallHistory, raidHistory, epHistory,
       fetchPostGameCarnageReport, playerProfile, playerPrivacy,
       viewRaid, viewMode, gamerTagOptions, selectGamerTag,
       setActivityType, publicMilestones, activityType
@@ -128,16 +119,44 @@ class RaidWeekViewer extends Component {
 
     const { notFound } = playerProfile;
 
-    const { nfCount={ prestige: '0', normal: '0' } } = nightfallHistory;
+    const { nfSuccessCount={ prestige: '0', normal: '0' } } = nightfallHistory;
+    const { EP={}, epSuccessCount='0' } = epHistory;
     const {
       LEV={ prestige: {}, normal: {}},
       SPIRE={ prestige: {}, normal: {}},
       EOW={},
       raidCount={
-        eow: { prestige: '0', normal: '0' },
-        lev: { prestige: '0', normal: '0' },
-        spire: { prestige: '0', normal: '0' }
-      }
+          eow: {
+            prestige: '0',
+            normal: '0',
+            successCount: '0',
+            farmCount: '0'
+          },
+          lev: {
+            prestige: '0',
+            normal: '0',
+            successCount: {
+              prestige: '0',
+              normal: '0'
+            },
+            farmCount: {
+              prestige: '0',
+              normal: '0'
+            }
+          },
+          spire: {
+            prestige: '0',
+            normal: '0',
+            successCount: {
+              prestige: '0',
+              normal: '0'
+            },
+            farmCount: {
+              prestige: '0',
+              normal: '0'
+            }
+          }
+        }
     } = raidHistory;
 
     let raidWeeks = [];
@@ -158,12 +177,14 @@ class RaidWeekViewer extends Component {
     }
     else if(viewRaid === 'lev') {
       raidWeeks = Object.entries(LEV[viewMode]).reverse().slice(0, 6)
-    } else if(viewRaid === 'spire') {
+    }
+    else if(viewRaid === 'spire') {
       raidWeeks = Object.entries(SPIRE[viewMode]).reverse().slice(0, 6);
     }
+    else if(viewRaid === 'ep') {
+      raidWeeks = Object.entries(EP).reverse().slice(0, 6);
+    }
 
-
-    console.log('activityType', activityType);
     const shouldRender = (!loading && raidWeeks.length > 0 && !notFound && !playerPrivacy);
 
     return (
@@ -186,8 +207,8 @@ class RaidWeekViewer extends Component {
           {
             (!loading && !notFound) &&
               <ActivityTypeSelector
-                handleSetRaid={this.setRaid} handleSetMode={this.setMode}
-                handleSetActivityType={this.setActivity} nfCount={nfCount} raidCount={raidCount}
+                handleSetRaid={this.setRaid} handleSetMode={this.setMode} epSuccessCount={epSuccessCount}
+                handleSetActivityType={this.setActivity} nfSuccessCount={nfSuccessCount} raidCount={raidCount}
                 activityType={activityType} viewRaid={viewRaid} viewMode={viewMode}
                 resetMaxSuccessRaids={() => this.setMaxSuccessRaids(0)}
               />
@@ -229,6 +250,7 @@ const mapStateToProps = state => {
     viewRaid: state.viewRaid,
     nightfallHistory: state.nightfallHistory,
     raidHistory: state.raidHistory,
+    epHistory: state.epHistory,
     playerProfile: state.playerProfile,
     playerPrivacy: state.playerPrivacy,
     gamerTagOptions: state.gamerTagOptions,

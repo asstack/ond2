@@ -18,6 +18,7 @@ export const EATER_OF_WORLDS_LAUNCH_WEEK = '2017-12-11T17:00:00Z';
 export const LEVIATHAN_LAUNCH_WEEK = '2017-09-12T17:00:00Z';
 export const SPIRE_OF_STARS_LAUNCH_WEEK = '2018-05-14T17:00:00Z';
 export const NF_START_DATE = '2018-02-13T17:00:00Z';
+export const EP_LAUNCH_WEEK = '2018-05-08T17:00:00Z';
 
 export const tier = {
   0: 'Normal',
@@ -906,8 +907,9 @@ export const NIGHTFALL = {
  };
 
  export const ESCALATION_PROTOCOL = {
-
- }
+   name: 'Escalation Protocol',
+   launchDate: EP_LAUNCH_WEEK
+ };
 
  export const RAID_HASHES = {
    LEV: [
@@ -925,7 +927,7 @@ export const NIGHTFALL = {
    }
  };
 
-export const RAIDS = {EATER_OF_WORLDS, LEVIATHAN, NIGHTFALL};
+export const RAIDS = {EATER_OF_WORLDS, LEVIATHAN, NIGHTFALL, EP};
 
 export const activityModes = {
   0: 'none',

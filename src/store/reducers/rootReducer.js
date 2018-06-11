@@ -18,7 +18,8 @@ import {
   SET_PLAYER_CACHE,
   SET_GAMER_TAG_OPTIONS,
   SELECT_GAMER_TAG,
-  SET_SITE_ERROR, SET_CACHE_TIMEOUT, SET_APP_VERSION, SET_UPDATE_PROMPT, SET_RAID_VIEW_Y_OFFSET
+  SET_NEW_PLAYER,
+  SET_SITE_ERROR, SET_CACHE_TIMEOUT, SET_APP_VERSION, SET_UPDATE_PROMPT, SET_RAID_VIEW_Y_OFFSET, SET_EP_HISTORY
 } from "../constants";
 
 // TODO: Need to break this into smaller files.
@@ -48,13 +49,47 @@ const setPlayerProfile = (state=false, action) => {
   }
 };
 
+const setEPHistory = (state={ epActivities: {}, epSuccessCount: '0'}, action) => {
+  if(action.type === SET_EP_HISTORY) {
+   return action.data;
+  }
+  return state;
+};
+
 const setRaidHistory = (state={
-  raidCount:
-    { eow: { normal: 0, prestige: 0 },
-      lev: { normal: 0, prestige: 0 },
-      spire: { normal: 0, prestige: 0 }
+  raidCount: {
+    eow: {
+      prestige: '0',
+      normal: '0',
+      successCount:  '0',
+      farmCount: '0',
+    },
+    lev: {
+      prestige: '0',
+      normal: '0',
+      successCount: {
+        prestige: '0',
+        normal: '0'
+      },
+      farmCount: {
+        prestige: '0',
+        normal: '0'
+      }
+    },
+    spire: {
+      prestige: '0',
+      normal: '0',
+      successCount: {
+        prestige: '0',
+        normal: '0'
+      },
+      farmCount: {
+        prestige: '0',
+        normal: '0'
+      }
     }
-  }, action) => {
+  }
+}, action) => {
   if(action.type === SET_RAID_HISTORY) {
    return action.data;
   }
@@ -173,11 +208,20 @@ const setActivityType = (state='raid', action) => {
   return state;
 };
 
+const setNewPlayer = (state=false, action) => {
+  if(action.type === SET_NEW_PLAYER) {
+    return action.data;
+  }
+  return state;
+};
+
 const rootReducer = combineReducers({
   fetchLogs,
   cacheTimeout: setCacheTimeOut,
+  newPlayer: setNewPlayer,
   playerProfile: setPlayerProfile,
   raidHistory: setRaidHistory,
+  epHistory: setEPHistory,
   postGameCarnageReport: setPostGameCarnageReport,
   publicMilestones: setPublicMilestones,
   nightfallHistory: setNightfallHistory,

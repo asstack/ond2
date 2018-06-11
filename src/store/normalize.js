@@ -1,13 +1,28 @@
 import moment from 'moment';
-import { NF_HASHES, RAID_HASHES, NF_START_DATE, EATER_OF_WORLDS, LEVIATHAN, SPIRE_OF_STARS } from "../actions";
+import {
+  NF_HASHES,
+  RAID_HASHES,
+  NF_START_DATE,
+  EATER_OF_WORLDS,
+  LEVIATHAN,
+  SPIRE_OF_STARS,
+  ESCALATION_PROTOCOL
+} from "../actions";
 
 const getCount = (data) => Object.values(data).reduce((accum, arr) => accum + arr.length, 0);
+const getSuccessCount = (data) => Object.values(data).reduce((accum, curr) => {
+  const successCount = curr.filter(raid => raid.values.completionReason === 0 && raid.values.completed === 1).length || 0;
+  return accum += successCount;
+}, 0);
+
+const getEPSuccessCount = (data) => Object.values(data).reduce((accum, curr) => {
+  const successCount = curr.filter(raid => raid.values.completionReason === 0 && raid.values.completed === 1);
+  return accum += successCount.length;
+}, 0);
 
 const getRaidWeeks = (launch) => {
   const launchDate = moment.utc(launch);
-  console.log('launchDate', launchDate);
   const weeksSinceRelease = moment.utc().diff(launchDate, 'w');
-  console.log('weeksSinceRelease', weeksSinceRelease);
   return Array.apply(null, {length: weeksSinceRelease}).map((_, index) => moment(launchDate).add(index + 1, 'week'));
 };
 
@@ -103,25 +118,17 @@ const _normalizeRaidHistory = ({ EOW, LEV, SPIRE }) => {
   const LEV_RaidWeeks = getRaidWeeks(LEVIATHAN.launchDate);
   const SPIRE_RaidWeeks = getRaidWeeks(SPIRE_OF_STARS.launchDate);
 
-  console.log('spire rw', SPIRE_RaidWeeks);
-
   const EOW_Raids = Object.values(EOW);
   const LEV_NormalRaids = Object.values(LEV.normal);
   const LEV_PrestigeRaids = Object.values(LEV.prestige);
   const SPIRE_NormalRaids = Object.values(SPIRE.normal);
   const SPIRE_PrestigeRaids = Object.values(SPIRE.prestige);
 
-  console.log('spire n raids', SPIRE_NormalRaids);
-  console.log('spire p raids', SPIRE_NormalRaids);
-
   const EOW_RaidsByWeek = splitRaidByWeek(EOW_RaidWeeks, EOW_Raids);
   const LEV_NormalRaidsByWeek = splitRaidByWeek(LEV_RaidWeeks, LEV_NormalRaids);
   const LEV_PrestigeRaidsByWeek = splitRaidByWeek(LEV_RaidWeeks, LEV_PrestigeRaids);
   const SPIRE_NormalRaidsByWeek = splitRaidByWeek(SPIRE_RaidWeeks, SPIRE_NormalRaids);
   const SPIRE_PrestigeRaidsByWeek = splitRaidByWeek(SPIRE_RaidWeeks, SPIRE_PrestigeRaids);
-
-  console.log('spire s n r', SPIRE_NormalRaidsByWeek);
-  console.log('spire s p r', SPIRE_PrestigeRaidsByWeek);
 
   const raidHistory = { EOW: {}, LEV: { normal: {}, prestige: {} }, SPIRE: { normal: {}, prestige: {} }};
 
@@ -133,29 +140,52 @@ const _normalizeRaidHistory = ({ EOW, LEV, SPIRE }) => {
     )
   };
 
+
+  const eowSuccessCount = Object.values(EOW).filter(raid => raid.values.timePlayedSeconds >= 300 && raid.values.completed === 1 && raid.values.completionReason === 0);
+  const levPSuccessCount = Object.values(LEV.prestige).filter(raid => raid.values.timePlayedSeconds >= 300 && raid.values.completed === 1 && raid.values.completionReason === 0);
+  const levNSuccessCount = Object.values(LEV.normal).filter(raid => raid.values.timePlayedSeconds >= 300 && raid.values.completed === 1 && raid.values.completionReason === 0);
+  const spirePSuccessCount = Object.values(SPIRE.prestige).filter(raid => raid.values.timePlayedSeconds >= 300 && raid.values.completed === 1 && raid.values.completionReason === 0);
+  const spireNSuccessCount = Object.values(SPIRE.normal).filter(raid => raid.values.timePlayedSeconds >= 300 && raid.values.completed === 1 && raid.values.completionReason === 0);
+
+  const eowFarmCount = eowSuccessCount.reduce((accum, currRaid) => currRaid.totalKills < 400 ? accum += 1 : accum, 0);
+  const levPFarmCount = levPSuccessCount.reduce((accum, currRaid) => currRaid.totalKills < 400 ? accum += 1 : accum, 0);
+  const levNFarmCount = levNSuccessCount.reduce((accum, currRaid) => currRaid.totalKills < 400 ? accum += 1 : accum, 0);
+  const spirePFarmCount = spirePSuccessCount.reduce((accum, currRaid) => currRaid.totalKills < 400 ? accum += 1 : accum, 0);
+  const spireNFarmCount = spireNSuccessCount.reduce((accum, currRaid) => currRaid.totalKills < 400 ? accum +=1 : accum, 0);
+
   const eowFailCount = Object.values(EOW).filter(
-    (raid) => raid.values.timePlayedSeconds < 300 || raid.values.completed !== 1 || raid.values.completionReason !== 0 && isApplicableRaid(raid));
+    (raid) => raid.values.timePlayedSeconds < 300 || raid.values.completed !== 1 || raid.values.completionReason !== 0 && isApplicableRaid(raid)).length;
 
   const levPFailCount = Object.values(LEV.prestige).filter(
-      (raid) => raid.values.timePlayedSeconds < 300 || raid.values.completed !== 1 || raid.values.completionReason !== 0 && isApplicableRaid(raid));
+      (raid) => raid.values.timePlayedSeconds < 300 || raid.values.completed !== 1 || raid.values.completionReason !== 0 && isApplicableRaid(raid)).length;
 
   const levNFailCount = Object.values(LEV.normal).filter(
-        (raid) => raid.values.timePlayedSeconds < 300 || raid.values.completed !== 1 || raid.values.completionReason !== 0 && isApplicableRaid(raid));
+        (raid) => raid.values.timePlayedSeconds < 300 || raid.values.completed !== 1 || raid.values.completionReason !== 0 && isApplicableRaid(raid)).length;
 
   const spirePFailCount = Object.values(SPIRE.prestige).filter(
-        (raid) => raid.values.timePlayedSeconds < 300 || raid.values.completed !== 1 || raid.values.completionReason !== 0 && isApplicableRaid(raid));
+        (raid) => raid.values.timePlayedSeconds < 300 || raid.values.completed !== 1 || raid.values.completionReason !== 0 && isApplicableRaid(raid)).length;
 
-    const spireNFailCount = Object.values(SPIRE.normal).filter(
-          (raid) => raid.values.timePlayedSeconds < 300 || raid.values.completed !== 1 || raid.values.completionReason !== 0 && isApplicableRaid(raid));
+  const spireNFailCount = Object.values(SPIRE.normal).filter(
+        (raid) => raid.values.timePlayedSeconds < 300 || raid.values.completed !== 1 || raid.values.completionReason !== 0 && isApplicableRaid(raid)).length;
 
   raidHistory.raidCount = {
     eow: {
       normal: Object.values(EOW).filter(curr => curr.values.completed === 1).length,
+      successCount: eowSuccessCount.length + 1,
+      farmCount: eowFarmCount,
       failCount: eowFailCount
     },
     lev: {
       prestige: Object.values(LEV.prestige).filter(curr => curr.values.completed === 1).length,
       normal: Object.values(LEV.normal).filter(curr => curr.values.completed === 1).length,
+      successCount: {
+        prestige: levPSuccessCount.length ,
+        normal: levNSuccessCount.length
+      },
+      farmCount: {
+        prestige: levPFarmCount,
+        normal: levNFarmCount
+      },
       failCount: {
         prestige: levPFailCount,
         normal: levNFailCount
@@ -164,6 +194,14 @@ const _normalizeRaidHistory = ({ EOW, LEV, SPIRE }) => {
     spire: {
       prestige: Object.values(SPIRE.prestige).filter(curr => curr.values.completed === 1).length,
       normal: Object.values(SPIRE.normal).filter(curr => curr.values.completed === 1).length,
+      successCount: {
+        prestige: spirePSuccessCount.length,
+        normal: spireNSuccessCount.length
+      },
+      farmCount: {
+        prestige: spirePFarmCount,
+        normal: spireNFarmCount
+      },
       failCount: {
         prestige: spirePFailCount,
         normal: spireNFailCount
@@ -200,19 +238,16 @@ const _normalizeNightfallHistory = ({ prestige, normal }) => {
     return(raid.values.completionReason !== 0 && raid.values.completed !== 1)
   });
 
-  console.log('prestigeFailCount', prestigeFailCount);
-  console.log('normalFailCount', normalFailCount);
-
   const splitPrestigeWeeks = splitNightfallByWeek(NF_Weeks,  Object.values(prestige));
   const splitNormalWeeks = splitNightfallByWeek(NF_Weeks,  Object.values(normal));
 
-  const prestigeCount = getCount(splitPrestigeWeeks);
-  const normalCount = getCount(splitNormalWeeks);
+  const prestigeCount = getSuccessCount(splitPrestigeWeeks);
+  const normalCount = getSuccessCount(splitNormalWeeks);
 
   return ({
     prestige: splitPrestigeWeeks,
     normal: splitNormalWeeks,
-    nfCount: {prestige: prestigeCount, normal: normalCount},
+    nfSuccessCount: {prestige: prestigeCount, normal: normalCount},
     nfFailCount: { prestige: prestigeFailCount, normal: normalFailCount}
   });
 };
@@ -267,6 +302,18 @@ const _normalizeRaidWeeks = (raid = '', history = {EOW: {}, LEV: {}}, mode = '')
           ? Object.entries(history.LEV.prestige).slice(0, 6)
             : Object.entries(history.LEV.normal).slice(0, 6);
 
+const _normalizeEP = (history) => {
+  const EP_RaidWeeks = getRaidWeeks(ESCALATION_PROTOCOL.launchDate);
+  const splitEP = splitRaidByWeek(EP_RaidWeeks, history);
+
+  const successCount = getEPSuccessCount(splitEP);
+
+  return {
+    EP: splitEP,
+    epSuccessCount: successCount
+  }
+};
+
 const normalize = {
   player: _normalizePlayerProfile,
   raidData: _normalizeRaidData,
@@ -275,7 +322,8 @@ const normalize = {
   nightfall: _normalizeNightfallHistory,
   postGameCarnageReport: _normalizePostGameCarnageReport,
   milestoneData: _normalizeMilestoneData,
-  raidWeeks: _normalizeRaidWeeks
+  raidWeeks: _normalizeRaidWeeks,
+  epHistory: _normalizeEP
 };
 
 export default normalize;

@@ -20,21 +20,36 @@ const LoaderWrapper = styled.div`
   svg {
     position: absolute;
     top: 25%;
-    left: calc(50% - 50px);
+    left: calc(50% - 100px);
     margin-top: 50px;
     fill: black;
-    width: 100px;
+    width: 200px;
     height: 100px;
     animation: spin 1.5s ease infinite
   }
   
   div {
-    width: 300px;
+    width: 350px;
     text-align: center;
-    font-size: 14px;
+    font-size: 28px;
     position: absolute;
     top: 48%;
-    left: calc(50% - 150px);
+    left: calc(50% - 175px);
+    
+    p {
+      margin-bottom: 10px;
+      
+      &:last-child {
+        margin-top: 20px;
+      }
+    }
+    
+    @media only screen and (max-width: 450px) {
+      width: 200px;
+      font-size: 18px;
+      left: calc(50% - 100px);
+      top: 53%;
+    }
   }
   
   @keyframes spin {
@@ -43,14 +58,18 @@ const LoaderWrapper = styled.div`
   }
 `;
 
-const LogoLoader = () => {
+const LogoLoader = ({ newPlayer = false }) => {
   return(
     <LoaderWrapper>
       <OND2Logo />
-      <div>
-        <p>Aggregating data...</p>
-        <p>We'll keep it up to date behind the scenes</p>
-      </div>
+      { newPlayer &&
+        <div>
+          <p>Next time this will be fast,</p>
+          <p>but for now we have to get</p>
+          <p>your data from BUNGIE.</p>
+          <p>Hang in there!</p>
+        </div>
+      }
     </LoaderWrapper>
   )
 };

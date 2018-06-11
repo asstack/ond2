@@ -105,6 +105,7 @@ class App extends Component {
 
     const renderFooter = !isModal && location.pathname.indexOf('pgcr') < 0;
 
+    console.log('NEWPL', newPlayer);
     return (
       <AppWrapper>
         { siteError && <ErrorMessage /> }
@@ -164,7 +165,7 @@ const mapStateToProps = state => {
   return {
     pgcr: state.postGameCarnageReport,
     loading: state.loading,
-    newPlayer: state.playerProfile.newPlayer,
+    newPlayer: state.newPlayer,
     siteError: state.siteError,
     showUpdatePrompt: state.showUpdatePrompt
   }

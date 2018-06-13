@@ -14,9 +14,9 @@ export const destinyBaseURL = 'https://www.bungie.net';
 export const LEVIATHAN_IMAGE = `${destinyBaseURL}/img/destiny_content/pgcr/raid_gluttony.jpg`;
 export const EATER_OF_WORLDS_IMAGE = `${destinyBaseURL}/img/destiny_content/pgcr/raids_leviathan_eater_of_worlds.jpg`;
 
-export const EATER_OF_WORLDS_LAUNCH_WEEK = '2017-12-11T17:00:00Z';
+export const EATER_OF_WORLDS_LAUNCH_WEEK = '2017-12-12T17:00:00Z';
 export const LEVIATHAN_LAUNCH_WEEK = '2017-09-12T17:00:00Z';
-export const SPIRE_OF_STARS_LAUNCH_WEEK = '2018-05-14T17:00:00Z';
+export const SPIRE_OF_STARS_LAUNCH_WEEK = '2018-05-15T17:00:00Z';
 export const NF_START_DATE = '2018-02-13T17:00:00Z';
 export const EP_LAUNCH_WEEK = '2018-05-08T17:00:00Z';
 
@@ -900,7 +900,7 @@ export const NIGHTFALL = {
  };
 
  export const SPIRE_OF_STARS = {
-   raidName: 'Leviathan, Spire of Stars',
+   raidName: 'Spire of Stars',
    launchDate: SPIRE_OF_STARS_LAUNCH_WEEK,
    milestoneHash:  '',
    allActivityHashes: [3213556450, 119944200]

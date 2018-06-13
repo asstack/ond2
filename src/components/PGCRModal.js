@@ -1,6 +1,6 @@
 import  React, { Component } from 'react';
 import styled from 'styled-components';
-import PostGameCarnageReportTable from "./PostGameCarnageReportTable";
+import PostGameCarnageReportTable from "./pgcr-table/PostGameCarnageReportTable";
 
 const ModalOverlay = styled.div`
   position: fixed;

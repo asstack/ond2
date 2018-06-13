@@ -7,7 +7,8 @@ const SelectionGroup = styled.div`
   width: 100%;
   flex-direction: row;
   align-items: center;
-  justify-content: space-evenly;
+  justify-content: ${({ oneSelection }) => oneSelection ? 'flex-start' : 'space-evenly' };
+  margin-left: ${({ oneSelection }) => oneSelection ? '20px' : '0px' };;
 `;
 
 const RaidHeading = styled.div`
@@ -15,7 +16,7 @@ const RaidHeading = styled.div`
   width: 100%;
   flex-direction: row;
   justify-content: center;
-  margin-bottom: 15px;
+  margin-bottom: 5px;
   font-family: Montserrat;
   font-size: 20px;
   font-weight: 500;
@@ -25,7 +26,7 @@ const RaidHeading = styled.div`
   letter-spacing: normal;
   color: #000000;
   
-  @media only screen and  (max-width: 767px) {
+  @media only screen and (max-width: 767px) {
     text-align: center;
     font-size: 14px;
   }
@@ -33,18 +34,21 @@ const RaidHeading = styled.div`
 
 const RaidSelect = styled.div`
   width: 100%;
-  height: 88px;
   align-items: center;
   padding-top: 20px;
-  border-radius: 4px;
   background-color: ${props => props.selected ? 'white' : '#eeeeee'};
-  }
+  ${props => props.selected ? 'border: 1px solid #BEBEBE' : '' };
+  border-bottom: none;
+  ${({ noRightBorder }) => noRightBorder ? 'border-right: none' : ''};
+  ${({ noLeftBorder }) => noLeftBorder ? 'border-left: none' : ''};
 `;
 
 const Selection = styled.div`
   display: flex;
-  justify-content: space-around;
   align-items: baseline;
+  margin-bottom: 10px;
+  ${({ selected }) => selected ? '' : 'border-bottom: 1px solid #2b76ed' };
+  
 `;
 
 const ActivityCount = styled.p`
@@ -60,70 +64,65 @@ const ActivityCount = styled.p`
   vertical-align: text-bottom;
   color: ${({ selected }) => selected ? 'black' : '#2b76ed'};
   cursor: ${({ selected }) => selected ? 'default' : 'pointer' };
-  text-decoration: ${({ selected }) => selected ? 'none' : 'underline' };
+  
+  @media only screen and (max-width: 400px) {
+    font-size: 12px;
+  }
 `;
 
 const FarmCount = ActivityCount.extend`
   font-size: 12px;
-  color: #fbbd08;
-  text-decoration: none;
+  
+  @media only screen and (max-width: 400px) {
+    font-size: 8px;
+  }
 `;
 
-const RaidSelection = ({ handleSetRaid, handleSetMode, nfCount, raidCount, viewRaid, viewMode }) => {
+const RaidSelection = ({ handleSetRaid, handleSetMode, nfCount, raidCount, activityType, viewRaid, viewMode }) => {
   return (
     <Grid className="raid-selection" centered columns={3}>
       <Grid.Column >
-        <RaidSelect selected={viewRaid==='spire'}>
+        <RaidSelect noRightBorder={viewRaid !== 'spire'} selected={viewRaid === 'spire'}>
           <RaidHeading onClick={() => { handleSetRaid('spire'); handleSetMode('prestige');}}>
-            <p>Spire</p>
+            <p>SOS</p>
           </RaidHeading>
-          <SelectionGroup>
+          <SelectionGroup oneSelection>
             <Selection
               href="javascript:void(0)"
               selected={viewRaid==='spire' && viewMode ==='normal'}
               onClick={() => { handleSetRaid('spire'); handleSetMode('normal');}}
             >
               <ActivityCount selected={viewRaid==='spire' && viewMode ==='normal'}>
-                N {raidCount.spire.successCount.normal}
+                N{raidCount.spire.successCount.normal}
               </ActivityCount>
-              <FarmCount>({raidCount.spire.farmCount.normal})</FarmCount>
-            </Selection>
-            <Selection
-              href="javascript:void(0)"
-              selected={viewRaid==='spire' && viewMode ==='prestige'}
-              onClick={() => { handleSetRaid('spire'); handleSetMode('prestige');}}
-            >
-              <ActivityCount selected={viewRaid==='spire' && viewMode ==='prestige'}>
-                P {raidCount.spire.successCount.prestige}
-              </ActivityCount>
-              <FarmCount>({raidCount.spire.farmCount.prestige})</FarmCount>
+              <FarmCount selected={viewRaid==='spire' && viewMode ==='normal'}>{raidCount.spire.farmCount.normal}</FarmCount>
             </Selection>
           </SelectionGroup>
         </RaidSelect>
       </Grid.Column>
 
       <Grid.Column>
-        <RaidSelect selected={viewRaid==='eow'}>
+        <RaidSelect noRightBorder={viewRaid !== 'eow'} noLeftBorder={viewRaid !== 'eow'} selected={viewRaid ==='eow'}>
           <RaidHeading onClick={() => { handleSetRaid('eow'); handleSetMode('normal');}}>
             <p>EOW</p>
           </RaidHeading>
-          <SelectionGroup>
+          <SelectionGroup oneSelection>
             <Selection
               href="javascript:void(0)"
               selected={viewRaid==='eow' && viewMode ==='normal'}
               onClick={() => { handleSetRaid('eow'); handleSetMode('normal');}}
             >
               <ActivityCount selected={viewRaid==='eow' && viewMode ==='normal'}>
-                N {raidCount.eow.successCount}
+                N{raidCount.eow.successCount}
               </ActivityCount>
-              <FarmCount>({raidCount.eow.farmCount})</FarmCount>
+              <FarmCount selected={viewRaid==='eow' && viewMode ==='normal'}>{raidCount.eow.farmCount}</FarmCount>
             </Selection>
           </SelectionGroup>
         </RaidSelect>
       </Grid.Column>
 
       <Grid.Column>
-        <RaidSelect selected={viewRaid==='lev'}>
+        <RaidSelect noLeftBorder={viewRaid !== 'lev'} selected={viewRaid ==='lev'}>
           <RaidHeading onClick={() => { handleSetRaid('lev'); handleSetMode('prestige');}}>
             <p>Leviathan</p>
           </RaidHeading>
@@ -134,9 +133,9 @@ const RaidSelection = ({ handleSetRaid, handleSetMode, nfCount, raidCount, viewR
               onClick={() => { handleSetRaid('lev'); handleSetMode('normal');}}
             >
               <ActivityCount selected={viewRaid==='lev' && viewMode ==='normal'}>
-                N {raidCount.lev.successCount.normal}
+                N{raidCount.lev.successCount.normal}
               </ActivityCount>
-              <FarmCount>({raidCount.lev.farmCount.prestige})</FarmCount>
+              <FarmCount selected={viewRaid==='lev' && viewMode ==='normal'}>{raidCount.lev.farmCount.prestige}</FarmCount>
             </Selection>
             <Selection
               href="javascript:void(0)"
@@ -144,9 +143,9 @@ const RaidSelection = ({ handleSetRaid, handleSetMode, nfCount, raidCount, viewR
               onClick={() => { handleSetRaid('lev'); handleSetMode('prestige');}}
             >
               <ActivityCount selected={viewRaid==='lev' && viewMode ==='prestige'}>
-                P {raidCount.lev.successCount.prestige}
+                P{raidCount.lev.successCount.prestige}
               </ActivityCount>
-              <FarmCount>({raidCount.lev.farmCount.prestige})</FarmCount>
+              <FarmCount selected={viewRaid==='lev' && viewMode ==='prestige'}>{raidCount.lev.farmCount.prestige}</FarmCount>
             </Selection>
           </SelectionGroup>
         </RaidSelect>
@@ -156,3 +155,16 @@ const RaidSelection = ({ handleSetRaid, handleSetMode, nfCount, raidCount, viewR
 };
 
 export default RaidSelection;
+
+/*
+ <Selection
+              href="javascript:void(0)"
+              selected={viewRaid==='spire' && viewMode ==='prestige'}
+              onClick={() => { handleSetRaid('spire'); handleSetMode('prestige');}}
+            >
+              <ActivityCount selected={viewRaid==='spire' && viewMode ==='prestige'}>
+                P{raidCount.spire.successCount.prestige}
+              </ActivityCount>
+              <FarmCount selected={viewRaid==='spire' && viewMode ==='prestige'}>{raidCount.spire.farmCount.prestige}</FarmCount>
+            </Selection>
+ */

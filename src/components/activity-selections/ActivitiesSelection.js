@@ -7,7 +7,8 @@ const SelectionGroup = styled.div`
   width: 100%;
   flex-direction: row;
   align-items: center;
-  justify-content: space-evenly;
+  justify-content: ${({ oneSelection }) => oneSelection ? 'flex-start' : 'space-evenly' };
+  margin-left: ${({ oneSelection }) => oneSelection ? '20px' : '0px' };;
 `;
 
 const RaidHeading = styled.div`
@@ -15,7 +16,7 @@ const RaidHeading = styled.div`
   width: 100%;
   flex-direction: row;
   justify-content: center;
-  margin-bottom: 15px;
+  margin-bottom: 5px;
   font-family: Montserrat;
   font-size: 20px;
   font-weight: 500;
@@ -33,16 +34,17 @@ const RaidHeading = styled.div`
 
 const RaidSelect = styled.div`
   width: 100%;
-  height: 88px;
   align-items: center;
   padding-top: 20px;
-  border-radius: 4px;
   background-color: ${props => props.selected ? 'white' : '#eeeeee'};
-  }
+  ${props => props.selected ? 'border: 1px solid #BEBEBE' : '' };
+  border-bottom: none;
+  ${({ noRightBorder }) => noRightBorder ? 'border-right: none' : ''};
+  ${({ noLeftBorder }) => noLeftBorder ? 'border-left: none' : ''};
 `;
 
 const Selection = styled.div`
-  margin-bottom: 15px;
+  margin-bottom: 10px;
   
   p {
     font-family: Montserrat;
@@ -56,15 +58,16 @@ const Selection = styled.div`
     color: ${({ selected }) => selected ? 'black' : '#2b76ed'};
     cursor: ${({ selected }) => selected ? 'default' : 'pointer' };
     text-decoration: ${({ selected }) => selected ? 'none' : 'underline' };
+    
   }
 `;
 
-const ActivitiesSelection = ({ handleSetRaid, handleSetMode, nfSuccessCount, raidCount, epSuccessCount, viewRaid, viewMode }) => {
+const ActivitiesSelection = ({ handleSetRaid, handleSetMode, nfSuccessCount, raidCount, epSuccessCount, activityType, viewRaid, viewMode }) => {
 
   return (
     <Grid className="raid-selection" centered columns={2}>
       <Grid.Column>
-        <RaidSelect selected={viewRaid ==='nf'}>
+        <RaidSelect noRightBorder={viewRaid  !== 'nf'} selected={viewRaid ==='nf'}>
           <RaidHeading onClick={() => { handleSetRaid('nf'); handleSetMode('prestige');}}>
             <p>Nightfall</p>
           </RaidHeading>
@@ -86,11 +89,11 @@ const ActivitiesSelection = ({ handleSetRaid, handleSetMode, nfSuccessCount, rai
         </RaidSelect>
       </Grid.Column>
       <Grid.Column>
-        <RaidSelect selected={viewRaid ==='ep'}>
+        <RaidSelect noLeftBorder={viewRaid !== 'ep'} selected={viewRaid ==='ep'}>
           <RaidHeading onClick={() => { handleSetRaid('ep'); handleSetMode('normal');}}>
             <p>Escalation Protocol</p>
           </RaidHeading>
-          <SelectionGroup>
+          <SelectionGroup oneSelection>
             <Selection
               href="javascript:void(0)"
               selected={viewRaid==='ep' && viewMode ==='normal'}

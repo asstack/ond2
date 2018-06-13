@@ -6,6 +6,16 @@ import shortid from "shortid";
 
 import { Popup, Progress } from 'semantic-ui-react';
 
+/*
+  @media only screen and (max-width: 750px) {
+    height: 199px;
+  }
+
+  @media only screen and (min-width: 750px) and (max-width: 1100px) {
+    height: 199px;
+  }
+  */
+
 const RaidWeekWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -27,13 +37,7 @@ const RaidWeekWrapper = styled.div`
     background: transparent;  /* optional: just make scrollbar invisible */
   }
   
-  @media only screen and (max-width: 750px) {
-    height: 199px;
-  }
-  
-  @media only screen and (min-width: 750px) and (max-width: 1100px) {
-    height: 199px;
-  }
+
   
   .pgcr-link {
     width: 100%;

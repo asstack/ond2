@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
-import shortid from "shortid";
 import styled from 'styled-components';
+import { isMobile } from 'react-device-detect';
 
-import { Table } from 'semantic-ui-react';
+import BigTable from "./BigTable";
+import SmallTable from "./SmallTable";
 
 const PGCRWrapper = styled.div`
-  width: 80%;
   height: 100%;
+  max-width: 90%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -42,6 +42,7 @@ const PGCRTitle = styled.div`
 `;
 
 const sortByValue = (arr, column, direction, raidName) => {
+
   return arr && arr.sort((a, b) => {
     const itemA = (column === 'name') ? a.player.displayName.toUpperCase() : (column === 'score') ? a.values.score : a.values[column];
     const itemB = (column === 'name') ? b.player.displayName.toUpperCase() : (column === 'score') ? b.values.score : b.values[column];
@@ -83,8 +84,21 @@ class PostGameCarnageReportTable extends Component {
       direction: 'descending',
       raidName: null,
       raidDate: null,
-      initialSort: true
-    }
+      initialSort: true,
+      screenResize: false
+    };
+  }
+
+  handleResize = () => {
+    this.setState({ screenResize: !this.state.screenResize })
+  };
+
+  componentDidMount() {
+      window.addEventListener("resize", this.handleResize);
+  }
+
+  componentWillUnmount() {
+      window.removeEventListener("resize", this.handleResize);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -97,7 +111,7 @@ class PostGameCarnageReportTable extends Component {
     }
   }
 
-  handleSort = clickedColumn => {
+  handleSort = (clickedColumn, resize=false) => {
     const { data, direction, raidName } = this.state;
 
     this.setState({
@@ -111,9 +125,15 @@ class PostGameCarnageReportTable extends Component {
   render() {
     const { data, column, direction, raidName='Nightfall', raidDate, initialSort } = this.state;
 
-    const isNF = !!raidName && (!raidName === 'Leviathan' && raidName !== 'Eater of Worlds' && raidName !== '');
+    const landscape = window.innerWidth > window.innerHeight;
+    const mobilePortrait = isMobile && !landscape;
 
-    if(initialSort && (column === 'score' && raidName === 'Leviathan' || raidName === 'Eater of Worlds')) this.handleSort('kills');
+    const isNF = raidName === 'Nightfall' ;
+
+
+    if(initialSort && (column === 'score' && raidName === 'Leviathan' || raidName === 'Eater of Worlds' || raidName === 'Spire of Stars')) {
+      this.handleSort('kills');
+    }
 
     return(
       <PGCRWrapper>
@@ -121,55 +141,10 @@ class PostGameCarnageReportTable extends Component {
           <h1>{raidName}</h1>
           <h2>{raidDate}</h2>
         </PGCRTitle>
-        <Table singleLine sortable celled fixed>
-          <Table.Header>
-            <Table.Row>
-              <Table.HeaderCell sorted={column === 'name' ? direction : null} onClick={() => this.handleSort('name')}>
-                Name
-              </Table.HeaderCell>
-              { isNF &&
-                <Table.HeaderCell sorted={ column === 'score' ? direction : null } onClick={ () => this.handleSort('score') }>
-                  Score
-                </Table.HeaderCell>
-              }
-              <Table.HeaderCell sorted={column === 'kills' ? direction : null} onClick={() => this.handleSort('kills')}>
-                Kills
-              </Table.HeaderCell>
-              <Table.HeaderCell sorted={column === 'deaths' ? direction : null} onClick={() => this.handleSort('deaths')}>
-                Deaths
-              </Table.HeaderCell>
-              <Table.HeaderCell sorted={column === 'assists' ? direction : null} onClick={() => this.handleSort('assists')}>
-                Assists
-              </Table.HeaderCell>
-              <Table.HeaderCell sorted={column === 'killsDeathsRatio' ? direction : null} onClick={() => this.handleSort('killsDeathsRatio')}>
-                KDA
-              </Table.HeaderCell>
-              <Table.HeaderCell sorted={column === 'timePlayedSeconds' ? direction : null} onClick={() => this.handleSort('timePlayedSeconds')}>
-                Time Played
-              </Table.HeaderCell>
-            </Table.Row>
-          </Table.Header>
-          <Table.Body>
-            {data && data.map(entry => {
-              const { player: { displayName }, values } = entry;
-
-              const completed = values.completionReason === 0 && values.completed === 1;
-
-              return (
-                <Table.Row negative={!completed} disabled={!completed} key={shortid.generate()}>
-                  <td><Link to={`/player/${displayName.toLowerCase()}`}>{displayName}</Link></td>
-                  { isNF &&
-                    <Table.Cell>{ `${values.score} / ${values.teamScore}` }</Table.Cell>
-                  }
-                  <Table.Cell>{values.kills}</Table.Cell>
-                  <Table.Cell>{values.deaths}</Table.Cell>
-                  <Table.Cell>{values.assists}</Table.Cell>
-                  <Table.Cell>{Math.floor(values.killsDeathsRatio, 4)}</Table.Cell>
-                  <Table.Cell>{Math.floor(values.timePlayedSeconds / 60, 2)}</Table.Cell>
-                </Table.Row>
-              )})}
-          </Table.Body>
-        </Table>
+        {mobilePortrait ?
+          <SmallTable raidData={data} isNF={isNF} column={column} direction={direction} handleSort={this.handleSort} />
+          : <BigTable raidData={data} isNF={isNF} column={column} direction={direction} handleSort={this.handleSort} />
+        }
       </PGCRWrapper>
     );
   }

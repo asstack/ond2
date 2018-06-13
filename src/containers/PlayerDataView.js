@@ -3,6 +3,7 @@ import { withRouter, Route } from 'react-router-dom';
 import { connect } from "react-redux";
 import styled from 'styled-components';
 import shortid from 'shortid';
+import { isMobile } from 'react-device-detect';
 
 import { Grid } from 'semantic-ui-react';
 
@@ -21,20 +22,19 @@ const PlayerDataViewWrapper = styled.div`
     margin-bottom: 20px;
     
     .raid-selection {
-      max-width: 90%;
-      
-      @media only screen and (max-width: 875px) {
-        max-width: 100%;
-      }
-      
       .column {
         padding: 0;
       }
     }
     
     .raid-stack-row {
+      padding-top: 0 !important;
+      justify-content: ${({ flexMobile } ) => flexMobile ? 'flex-start !important' : 'flex-end !important'};
       background-color: white;
-      padding: 2px;
+      border-left: 1px solid #BEBEBE;
+      border-right: 1px solid	#BEBEBE;
+      border-bottom: 1px solid	#BEBEBE;
+      padding-left: 1px;
       
       .column {
         padding: 0;
@@ -188,7 +188,7 @@ class RaidWeekViewer extends Component {
     const shouldRender = (!loading && raidWeeks.length > 0 && !notFound && !playerPrivacy);
 
     return (
-      <PlayerDataViewWrapper ref={this.yOffsetRef}>
+      <PlayerDataViewWrapper flexMobile={isMobile} ref={this.yOffsetRef}>
 
         <Grid stackable={true} container centered>
           <Grid.Row centered>
@@ -214,7 +214,6 @@ class RaidWeekViewer extends Component {
               />
           }
           </Grid.Row>
-
 
             {shouldRender &&
               <Grid.Row reversed='computer tablet' className="raid-stack-row" columns={6}>

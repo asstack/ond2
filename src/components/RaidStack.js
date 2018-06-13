@@ -8,7 +8,6 @@ const RaidWeekContainer = styled.div`
   width: 100%;
   max-width: 212px;
   display: inline-block;  
-  border-radius: 4px;
   background-color: #ffffff;
   border: solid 1px #e2e2e2;
   

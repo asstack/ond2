@@ -31,10 +31,11 @@ const PlayerSearchSection = styled.div`
 
   .playerSearch {
     width: 100%;
-    max-width: 756px;
+    max-width: 556px;
+    margin-left: 0 !important;
     
     i {
-      maring-bottom: 5px;
+      margin-bottom: 5px;
       margin-right: 30px;
     }
 
@@ -44,8 +45,9 @@ const PlayerSearchSection = styled.div`
     
     input {
       width: 100%;
-      max-width: 756px;
-      height: 68px;
+      margin-left: 0 !important;
+      max-width: 556px;
+      height: 48px;
       border-radius: 34px;
       border: solid 2px black;
       padding: 32px;
@@ -62,12 +64,12 @@ const PlayerSearchSection = styled.div`
     }
       
       @media only screen and (max-width: 430px) {
-        margin-left: 10px;
-        width: 80%;
+        margin-left: 60px;
+        width: 65%;
       }
       
       @media only screen and (min-width: 430px) {
-        width: 80%;
+        width: 65%;
       }
     }
   }

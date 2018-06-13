@@ -1,6 +1,6 @@
 import moment from 'moment';
-import { call, put, select, all, spawn } from 'redux-saga/effects';
-import { fetchActivityHistory, fetchFallbackActivityHistory } from "../../services/destiny-services";
+import { call, put, select, all, spawn, cancel } from 'redux-saga/effects';
+import { fetchActivityHistory, fetchActivityUpdate, fetchFallbackActivityHistory } from "../../services/destiny-services";
 import { delay } from "redux-saga";
 import normalize from "../normalize";
 import * as consts from "../constants";
@@ -17,14 +17,47 @@ const activityDataFound = ({ nightfallHistory={ normal: [], prestige: []}, raidH
     isActivityData(nightfallHistory.normal) || isActivityData(nightfallHistory.prestige)
   );
 
+const playerActivityUpdate = {};
+const shouldUpdate = {};
+let newSearch = false;
+
 function* syncPlayerNewData(membershipId, delayMs) {
-  yield delay(delayMs);
-  yield call(collectActivityHistory, membershipId);
+  let activityUpdateReady = false;
+  let count = 0;
+
+  while(true) {
+
+    if(shouldUpdate[membershipId]) {
+      yield delay(delayMs);
+
+      if(shouldUpdate[membershipId]) {
+        const hasUpdate = yield call(fetchActivityUpdate, membershipId);
+
+        if ((hasUpdate || count >= 24) && shouldUpdate[membershipId]) {
+          activityUpdateReady = true;
+          yield spawn(fetchActivityHistory, membershipId);
+          yield cancel();
+        }
+      }
+    } else {
+      yield cancel();
+    }
+  }
 }
 
-let currentMembershipId = false;
+let previousMembershipId = false;
 
 export default function* collectActivityHistory(membershipId) {
+
+  if(previousMembershipId !== membershipId) {
+    newSearch = true;
+    shouldUpdate[membershipId] = true;
+
+    if(previousMembershipId) {
+      shouldUpdate[previousMembershipId] = false;
+    }
+  }
+
   let activityHistory = yield call(fetchActivityHistory, membershipId);
   let activityHistoryFetchAttempts = 1;
 
@@ -38,13 +71,13 @@ export default function* collectActivityHistory(membershipId) {
     activityHistoryFetchAttempts += 1;
    }
 
-   if(activityHistoryFetchAttempts === 1 && membershipId !== currentMembershipId) {
+   if(!playerActivityUpdate[membershipId] && activityHistoryFetchAttempts === 1 && membershipId !== previousMembershipId) {
       //Data exists, so we update behind the scenes. Call update in 10 seconds.
-     yield spawn(syncPlayerNewData, membershipId, 15000);
+     yield spawn(syncPlayerNewData, membershipId, 5000);
    }
 
    // Set current so we can compare to override 'fetching data updates'
-  currentMembershipId = membershipId;
+  previousMembershipId = membershipId;
 
  if(activityDataFound(activityHistory)) {
    const normalizedNF = normalize.nightfall(activityHistory.nightfallHistory);

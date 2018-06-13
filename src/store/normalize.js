@@ -286,6 +286,12 @@ const _normalizePostGameCarnageReport = (pgcr) => ({
           mode: (() => EATER_OF_WORLDS.versions.prestige.activityHashes.indexOf(activityHash) ? 'Prestige' : 'Normal')()
         };
       }
+      else if(SPIRE_OF_STARS.allActivityHashes.indexOf(pgcr.activityDetails.referenceId) >= 0) {
+        return {
+          ...SPIRE_OF_STARS,
+          mode: (() => SPIRE_OF_STARS.allActivityHashes.indexOf(pgcr.activityDetails.referenceId) ? 'Prestige' : 'Normal')()
+        };
+      }
       return false;
     })(),
   }

@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { withRouter, Route, Switch } from 'react-router-dom';
 import { Segment, Container, List } from 'semantic-ui-react';
 import styled from 'styled-components';
+import { isMobile } from 'react-device-detect';
 
 import baseStyles from './base-styles';
 import {
@@ -23,7 +24,6 @@ import PostGameCarnageReportContainer from './containers/PostGameCarnageReport';
 import LogoLoader from './components/LogoLoader';
 import OND2Logo from './components/OND2Logo';
 import * as consts from "./store/constants";
-import PGCRModal from "./components/PGCRModal";
 
 const AppWrapper = styled.div`
   min-width: 100vw;
@@ -41,13 +41,13 @@ const AppWrapper = styled.div`
 const MenuToggleWrapper = styled.div`
   width: 50px;
   height: 50px;
-  position: fixed;
+  position: absolute;
   top: 25px;
   left: 10%;
-  z-index: 5;
+  z-index: 99999999;
   
   @media only screen and (max-width: 875px) {
-    left: 1%;
+    left: 5%;
   }
   
   @media only screen and (min-width: 875px) and (max-width: 1100px) {
@@ -62,12 +62,16 @@ class App extends Component {
 
     this.state = {
       internalRouting: false,
-      showSideMenu: false
+      showSideMenu: false,
+      resize: true
     };
 
     this.previousLocation = this.props.location;
   }
 
+  componentDidMount() {
+
+  }
 
   searchByGamerTag = (gamerTag) => {
     const { searchPlayer } = this.props;
@@ -105,16 +109,16 @@ class App extends Component {
 
     const renderFooter = !isModal && location.pathname.indexOf('pgcr') < 0;
 
-    console.log('NEWPL', newPlayer);
     return (
       <AppWrapper>
         { siteError && <ErrorMessage /> }
 
         <SideMenu toggle={this.toggleSideMenu} visible={showSideMenu}>
-          <MenuToggleWrapper onClick={() => this.toggleSideMenu() }>
-           <OND2Logo />
-          </MenuToggleWrapper>
-
+          {(!pgcr || !isMobile) &&
+            <MenuToggleWrapper onClick={() => this.toggleSideMenu()}>
+              <OND2Logo/>
+            </MenuToggleWrapper>
+          }
           { loading && <LogoLoader newPlayer={newPlayer} /> }
 
           <Route exact path="/" render={data => (
@@ -143,7 +147,7 @@ class App extends Component {
           )}/>
 
         </SideMenu>
-        {!pgcr &&
+        {(!pgcr && !isMobile) &&
           <Segment vertical style={{width: '100%', padding: '2em 0em', zIndex: 999}}>
             <Container textAlign='center'>
               <List horizontal divided link small="true">

@@ -4,7 +4,6 @@ import {
   searchDestinyPlayer,
   getProfile,
   getGroupsForMember,
-  getActivityHistory,
   getAggregateActivityStats,
   getPostGameCarnageReport,
 } from "./destiny-endpoints";
@@ -30,45 +29,24 @@ const searchPlayer = async pathParams => {
 };
 
 const fetchProfile = async membershipId => {
-  const res = await fetch(`${awsURL}/profile/${membershipId}`,  { method: 'GET', mode: 'cors' });
+  const res = await fetch(`${awsURL}/profile/${membershipId}`, { method: 'GET', mode: 'cors' });
   return await res.json();
 };
 
 const fetchActivityHistory = async membershipId => {
-  const res = await fetch(`${awsURL}/activityHistory/${membershipId}`,  { method: 'GET', mode: 'cors' });
+  const res = await fetch(`${awsURL}/activityHistory/${membershipId}`, { method: 'GET', mode: 'cors' });
   return await res.json();
 };
 
-const fetchCharacters = async pathParams => {
-  const url = applyQueryStringParams(getProfile(pathParams), { components: 200 });
-  const res = await fetch(url, destinyInit);
-  const characters = await res.json();
-  return isObjectEmpty(characters.Response) ? {} : characters.Response.characters.data;
+const fetchFallbackActivityHistory = async (data) => {
+  const bodyData = JSON.stringify(data);
+  const res = await fetch(`${awsURL}/fallbackActivityHistory`, { method: 'POST', headers: destinyHeaders, mode: 'cors', body: bodyData });
+  return await res.json();
 };
 
-const fetchGroupsForMembers = async pathParams => {
-  const res = await fetch(getGroupsForMember(pathParams), destinyInit);
-  const groups = await res.json();
-  return isObjectEmpty(groups.Response) ? {} : groups.Response.results
-};
-
-//// count, mode, page
-//const fetchActivityHistory = async (pathParams, queryParams) => {
-//  const url = applyQueryStringParams(getActivityHistory(pathParams), queryParams);
-//  const res = await fetch(url, destinyInit);
-//  const activityHistory = await res.json();
-//  return (
-//    !!activityHistory.Response
-//    ? isObjectEmpty(activityHistory.Response) ? [] : activityHistory.Response.activities
-//    : { error: activityHistory.Message }
-//  )
-//};
-
-const fetchActivityStatsAggregate = async (pathParams) => {
-  const url = applyQueryStringParams(getAggregateActivityStats(pathParams));
-  const res = await fetch(url, destinyInit);
-  const activityHistory = await res.json();
-  return isObjectEmpty(activityHistory.Response) ? {} : activityHistory.Response.activities;
+const fetchActivityUpdate = async membershipId => {
+  const res = await fetch(`${awsURL}/getActivityUpdate/${membershipId}`, { method: 'GET', mode: 'cors' });
+  return await res.json();
 };
 
 const fetchPostGameCarnageReport = async (activityId) => {
@@ -86,10 +64,9 @@ const fetchPublicMilestones = async () => {
 export {
   searchPlayer,
   fetchProfile,
-  fetchCharacters,
-  fetchGroupsForMembers,
   fetchActivityHistory,
-  fetchActivityStatsAggregate,
+  fetchFallbackActivityHistory,
   fetchPostGameCarnageReport,
-  fetchPublicMilestones
+  fetchPublicMilestones,
+  fetchActivityUpdate
 };

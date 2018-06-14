@@ -11,7 +11,39 @@ function* handleSearchPlayerFailure() {
 }
 
 function* clearSearchData() {
-  yield put({ type: consts.SET_RAID_HISTORY, data: { raidCount: { eow: { normal: 0, prestige: 0 }, lev: { normal: 0, prestige: 0 } } } });
+  yield put({ type: consts.SET_RAID_HISTORY, data: {
+    raidCount: {
+      eow: {
+        prestige: '0',
+        normal: '0',
+        successCount:  '0',
+        farmCount: '0',
+      },
+      lev: {
+        prestige: '0',
+        normal: '0',
+        successCount: {
+          prestige: '0',
+          normal: '0'
+        },
+        farmCount: {
+          prestige: '0',
+          normal: '0'
+        }
+      },
+      spire: {
+        prestige: '0',
+        normal: '0',
+        successCount: {
+          prestige: '0',
+          normal: '0'
+        },
+        farmCount: {
+          prestige: '0',
+          normal: '0'
+        }
+      }
+  } } });
   yield put({ type: consts.SET_ACTIVITY_HISTORY, data: { normal: {}, prestige: {}, nfCount: { normal: 0, prestige: 0 } } });
   yield put({ type: consts.SET_NF_HISTORY, data: {} });
   yield put({ type: consts.SET_GAMER_TAG_OPTIONS, data: [] });
@@ -36,9 +68,11 @@ export default function* fetchPlayerProfile({ data }) {
     else {
       yield put({ type: consts.SET_LOADING, data: true });
       yield put({ type: consts.SET_GAMER_TAG_OPTIONS, data: searchResults });
+      yield put({ type: consts.SET_LOADING, data: false });
 
       const searchSelection = yield take([consts.SELECT_GAMER_TAG]);
       yield put({ type: consts.SET_GAMER_TAG_OPTIONS, data: [] });
+      yield put({ type: consts.SET_LOADING, data: true });
       playerSearch = searchResults.filter(curr => curr.membershipId === searchSelection.data.key)[0];
     }
 

@@ -9,6 +9,7 @@ import {
   SET_PUBLIC_MILESTONES,
   SET_LOADING,
   SET_PLAYER_PRIVACY,
+  SET_ACTIVITY_TYPE,
   SET_VIEW_MODE,
   SET_VIEW_RAID,
   TOGGLE_PLAYER_SEARCH,
@@ -17,7 +18,8 @@ import {
   SET_PLAYER_CACHE,
   SET_GAMER_TAG_OPTIONS,
   SELECT_GAMER_TAG,
-  SET_SITE_ERROR, SET_CACHE_TIMEOUT, SET_APP_VERSION, SET_UPDATE_PROMPT, SET_RAID_VIEW_Y_OFFSET
+  SET_NEW_PLAYER,
+  SET_SITE_ERROR, SET_CACHE_TIMEOUT, SET_APP_VERSION, SET_UPDATE_PROMPT, SET_RAID_VIEW_Y_OFFSET, SET_EP_HISTORY
 } from "../constants";
 
 // TODO: Need to break this into smaller files.
@@ -47,7 +49,47 @@ const setPlayerProfile = (state=false, action) => {
   }
 };
 
-const setRaidHistory = (state={ raidCount: { eow: { normal: 0, prestige: 0 }, lev: { normal: 0, prestige: 0 } } }, action) => {
+const setEPHistory = (state={ epActivities: {}, epSuccessCount: '0'}, action) => {
+  if(action.type === SET_EP_HISTORY) {
+   return action.data;
+  }
+  return state;
+};
+
+const setRaidHistory = (state={
+  raidCount: {
+    eow: {
+      prestige: '0',
+      normal: '0',
+      successCount:  '0',
+      farmCount: '0',
+    },
+    lev: {
+      prestige: '0',
+      normal: '0',
+      successCount: {
+        prestige: '0',
+        normal: '0'
+      },
+      farmCount: {
+        prestige: '0',
+        normal: '0'
+      }
+    },
+    spire: {
+      prestige: '0',
+      normal: '0',
+      successCount: {
+        prestige: '0',
+        normal: '0'
+      },
+      farmCount: {
+        prestige: '0',
+        normal: '0'
+      }
+    }
+  }
+}, action) => {
   if(action.type === SET_RAID_HISTORY) {
    return action.data;
   }
@@ -82,14 +124,14 @@ const setPlayerPrivacy = (state = false, action) => {
   return state;
 };
 
-const setViewMode = (state = 'prestige', action) => {
+const setViewMode = (state = 'normal', action) => {
   if(action.type === SET_VIEW_MODE) {
     return action.data;
   }
   return state;
 };
 
-const setViewRaid = (state = 'nf', action) => {
+const setViewRaid = (state = 'spire', action) => {
   if(action.type === SET_VIEW_RAID) {
     return action.data;
   }
@@ -159,16 +201,33 @@ const setRaidViewYOffset = (state=0, action) => {
   return state;
 };
 
+const setActivityType = (state='raid', action) => {
+  if(action.type === SET_ACTIVITY_TYPE) {
+    return action.data;
+  }
+  return state;
+};
+
+const setNewPlayer = (state=false, action) => {
+  if(action.type === SET_NEW_PLAYER) {
+    return action.data;
+  }
+  return state;
+};
+
 const rootReducer = combineReducers({
   fetchLogs,
   cacheTimeout: setCacheTimeOut,
+  newPlayer: setNewPlayer,
   playerProfile: setPlayerProfile,
   raidHistory: setRaidHistory,
+  epHistory: setEPHistory,
   postGameCarnageReport: setPostGameCarnageReport,
   publicMilestones: setPublicMilestones,
   nightfallHistory: setNightfallHistory,
   loading: setLoading,
   playerPrivacy: setPlayerPrivacy,
+  activityType: setActivityType,
   viewMode: setViewMode,
   viewRaid: setViewRaid,
   newPlayerSearch: setPlayerSearch,

@@ -3,12 +3,12 @@ import { withRouter, Route } from 'react-router-dom';
 import { connect } from "react-redux";
 import styled from 'styled-components';
 import shortid from 'shortid';
+import { isMobile } from 'react-device-detect';
 
 import { Grid } from 'semantic-ui-react';
 
-import RaidSelection from '../components/RaidSelection';
+import ActivityTypeSelector from '../components/activity-selections/ActivityTypeSelector';
 import RaidStack from '../components/RaidStack';
-import PGCRModal from '../components/PGCRModal';
 import PlayerSearch from '../components/PlayerSearch';
 import * as consts from "../store/constants";
 
@@ -21,41 +21,27 @@ const PlayerDataViewWrapper = styled.div`
     width: 100%;
     margin-bottom: 20px;
     
-    .row {
-      padding: 0;  
-    }
-    
     .raid-selection {
-      max-width: 90%;
-      
+    
       .column {
         padding: 0;
       }
     }
     
     .raid-stack-row {
+      padding-top: 0 !important;
+      justify-content: ${({ flexMobile } ) => flexMobile ? 'flex-start !important' : 'flex-end !important'};
       background-color: white;
-      padding: 15px;
+      border-left: 1px solid #BEBEBE;
+      border-right: 1px solid	#BEBEBE;
+      border-bottom: 1px solid	#BEBEBE;
+      padding-left: 1px;
       
       .column {
         padding: 0;
       }
     }
   }
-`;
-
-const RaidView = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-`;
-
-const RaidStackList = styled.div`
-  width: 100%;
-  padding: 15px 15px;
-  border-radius: 4px;
-  background-color: white;
 `;
 
 class RaidWeekViewer extends Component {
@@ -65,6 +51,7 @@ class RaidWeekViewer extends Component {
     this.state = {
       player: this.props.match.params.playerId || '',
       maxSuccessRaids: 0,
+
     };
 
     this.yOffsetRef = React.createRef();
@@ -101,60 +88,108 @@ class RaidWeekViewer extends Component {
     this.setState({ maxSuccessRaids: 0 });
   };
 
+  setActivity = (activity) => {
+    const type = activity === 'raid' ? 'spire' : 'nf';
+      this.props.setActivityType(activity, type);
+  };
+
   setMaxSuccessRaids = count => {
     this.setState({
       maxSuccessRaids: count
     })
   };
 
+  checkPlayerForEmpty = (statePlayer, player) => {
+    if(statePlayer === '') {
+      this.setState({ player: player });
+    }
+  };
+
+  setFarmCount = (farmCount) => {
+    this.setState({ farmCount })
+  };
+
   render() {
     const {
-      match, loading, nightfallHistory, raidHistory,
+      match, loading, nightfallHistory, raidHistory, epHistory,
       fetchPostGameCarnageReport, playerProfile, playerPrivacy,
       viewRaid, viewMode, gamerTagOptions, selectGamerTag,
-      publicMilestones
+      setActivityType, publicMilestones, activityType
     } = this.props;
     const { maxSuccessRaids } = this.state;
 
     const { notFound } = playerProfile;
 
-    const { nfCount={ prestige: '0', normal: '0' } } = nightfallHistory;
+    const { nfSuccessCount={ prestige: '0', normal: '0' } } = nightfallHistory;
+    const { EP={}, epSuccessCount='0' } = epHistory;
     const {
       LEV={ prestige: {}, normal: {}},
+      SPIRE={ prestige: {}, normal: {}},
       EOW={},
       raidCount={
-        eow: { prestige: '0', normal: '0' },
-        lev: { prestige: '0', normal: '0' }
-      }
+          eow: {
+            prestige: '0',
+            normal: '0',
+            successCount: '0',
+            farmCount: '0'
+          },
+          lev: {
+            prestige: '0',
+            normal: '0',
+            successCount: {
+              prestige: '0',
+              normal: '0'
+            },
+            farmCount: {
+              prestige: '0',
+              normal: '0'
+            }
+          },
+          spire: {
+            prestige: '0',
+            normal: '0',
+            successCount: {
+              prestige: '0',
+              normal: '0'
+            },
+            farmCount: {
+              prestige: '0',
+              normal: '0'
+            }
+          }
+        }
     } = raidHistory;
 
     let raidWeeks = [];
     const player = match.params.playerId;
 
+    this.checkPlayerForEmpty(this.state.player, player);
+
     if(viewRaid === 'nf' && !!nightfallHistory[viewMode]) {
 
       if (Object.keys(nightfallHistory[ viewMode ]).length > 1) {
-
-        //hack get this shit outta here
         const nfLen = Object.entries(nightfallHistory[viewMode]).length;
         const nfStartIndex = Math.abs(6 - nfLen);
-
         raidWeeks = Object.entries(nightfallHistory[viewMode]).slice(nfStartIndex, nfLen).map((item) => [ ...item ]).reverse()
       }
     }
-    else if(viewRaid === 'eow' || viewRaid === 'lev') {
-        raidWeeks = (viewRaid === 'eow')
-          ? Object.entries(EOW).reverse().slice(0, 6)
-          : Object.entries(LEV[viewMode]).reverse().slice(0, 6)
-    } else {
-      raidWeeks = [];
+    else if(viewRaid === 'eow'){
+      raidWeeks = Object.entries(EOW).reverse().slice(0, 6)
     }
-
+    else if(viewRaid === 'lev') {
+      raidWeeks = Object.entries(LEV[viewMode]).reverse().slice(0, 6)
+    }
+    else if(viewRaid === 'spire') {
+      raidWeeks = Object.entries(SPIRE[viewMode]).reverse().slice(0, 6);
+    }
+    else if(viewRaid === 'ep') {
+      raidWeeks = Object.entries(EP).reverse().slice(0, 6);
+    }
 
     const shouldRender = (!loading && raidWeeks.length > 0 && !notFound && !playerPrivacy);
 
     return (
-      <PlayerDataViewWrapper ref={this.yOffsetRef}>
+      <PlayerDataViewWrapper flexMobile={isMobile} ref={this.yOffsetRef}>
 
         <Grid stackable={true} container centered>
           <Grid.Row centered>
@@ -169,21 +204,20 @@ class RaidWeekViewer extends Component {
           { playerPrivacy && <Grid.Row><h1 style={{ fontSize: 24 }}>The player has set their account to private</h1></Grid.Row>}
           { notFound && <Grid.Row><h1 style={{ fontSize: 24 }}>Sorry player not found</h1></Grid.Row> }
 
-          <Grid.Row>
+          <Grid.Row style={{ paddingBottom: 0}} centered>
           {
             (!loading && !notFound) &&
-              <RaidSelection
-                handleSetRaid={this.setRaid} handleSetMode={this.setMode}
-                nfCount={nfCount} raidCount={raidCount}
-                viewRaid={viewRaid} viewMode={viewMode}
+              <ActivityTypeSelector
+                handleSetRaid={this.setRaid} handleSetMode={this.setMode} epSuccessCount={epSuccessCount}
+                handleSetActivityType={this.setActivity} nfSuccessCount={nfSuccessCount} raidCount={raidCount}
+                activityType={activityType} viewRaid={viewRaid} viewMode={viewMode}
                 resetMaxSuccessRaids={() => this.setMaxSuccessRaids(0)}
               />
           }
           </Grid.Row>
 
-
             {shouldRender &&
-              <Grid.Row reversed='computer' className="raid-stack-row" columns={6}>
+              <Grid.Row reversed='computer tablet' className="raid-stack-row" columns={6}>
                 {raidWeeks.map((raidWeek, idx) => {
                   return (
                     <Grid.Column textAlign="center" key={shortid.generate()}>
@@ -212,9 +246,11 @@ const mapStateToProps = state => {
     pgcr: state.postGameCarnageReport,
     loading: state.loading,
     viewMode: state.viewMode,
+    activityType: state.activityType,
     viewRaid: state.viewRaid,
     nightfallHistory: state.nightfallHistory,
     raidHistory: state.raidHistory,
+    epHistory: state.epHistory,
     playerProfile: state.playerProfile,
     playerPrivacy: state.playerPrivacy,
     gamerTagOptions: state.gamerTagOptions,
@@ -230,6 +266,10 @@ const mapDispatchToProps = dispatch => {
     searchPlayer: pathParams => dispatch({ type: consts.FETCH_PLAYER_PROFILE, data: pathParams }),
     setViewRaid: raid => dispatch({ type: consts.SET_VIEW_RAID, data: raid }),
     setViewMode: mode => dispatch({ type: consts.SET_VIEW_MODE, data: mode }),
+    setActivityType: (type, raid) => ([
+      dispatch({ type: consts.SET_ACTIVITY_TYPE, data: type }),
+      dispatch({ type: consts.SET_VIEW_RAID, data: raid })
+    ]),
     selectGamerTag: gamerTag => dispatch({ type: consts.SELECT_GAMER_TAG, data: gamerTag }),
     setYOffset: yOffset => dispatch({ type: consts.SET_RAID_VIEW_Y_OFFSET, data: yOffset })
   }

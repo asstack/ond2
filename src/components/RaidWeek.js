@@ -6,6 +6,16 @@ import shortid from "shortid";
 
 import { Popup, Progress } from 'semantic-ui-react';
 
+/*
+  @media only screen and (max-width: 750px) {
+    height: 199px;
+  }
+
+  @media only screen and (min-width: 750px) and (max-width: 1100px) {
+    height: 199px;
+  }
+  */
+
 const RaidWeekWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -17,7 +27,6 @@ const RaidWeekWrapper = styled.div`
   }};
   width: 100%;
   max-height: 299px;
-  border-top: 1px solid #d9d9d9;
   background-color: transparent;
   overflow: hidden;
   overflow-y: scroll;
@@ -27,13 +36,7 @@ const RaidWeekWrapper = styled.div`
     background: transparent;  /* optional: just make scrollbar invisible */
   }
   
-  @media only screen and (max-width: 750px) {
-    height: 199px;
-  }
-  
-  @media only screen and (min-width: 750px) and (max-width: 1100px) {
-    height: 199px;
-  }
+
   
   .pgcr-link {
     width: 100%;
@@ -95,6 +98,11 @@ const RaidWeek = ({ raid='nf', raids, handleFetchPGCR, success=true, maxCount })
     <RaidWeekWrapper success={success} maxCount={Math.abs(maxCount)} neg={maxCount < 0}>
       {raids && Object.values(raids).map(currRaid => {
         const tinyBarSizeRequired = manyRaids || !success;
+        const color = success
+          ? currRaid.totalKills >= 400 || raid === 'nf'
+            ? 'green'
+              : 'yellow'
+          : 'red';
 
         const barSize = tinyBarSizeRequired ? 'tiny' : 'small';
 
@@ -111,7 +119,7 @@ const RaidWeek = ({ raid='nf', raids, handleFetchPGCR, success=true, maxCount })
             ? (
               <div>
                 <BarValues>{ isNF ? currRaid.values.teamScore : `${percentWidth} m`}</BarValues>
-                <Progress style={{ minWidth: 150}} value={value} total={total} size="small" success={success} error={!success} />
+                <Progress style={{ minWidth: 150}} value={value} total={total} size="small" color={color} />
                 {isNF
                   ? `Score: ${currRaid.values.score}/${currRaid.values.teamScore} | ${time} m`
                     : `Time: ${time}m | KDA: ${currRaid.values.kills} / ${currRaid.values.deaths} / ${currRaid.values.assists}`
@@ -133,8 +141,7 @@ const RaidWeek = ({ raid='nf', raids, handleFetchPGCR, success=true, maxCount })
               total={total || 0}
               on={['hover', 'focus']}
               size={barSize}
-              success={success}
-              error={!success}
+              color={color}
             />
           </Link>
         );

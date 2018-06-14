@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 
-import PostGameCarnageReportTable from '../components/PostGameCarnageReportTable';
+import PostGameCarnageReportTable from '../components/pgcr-table/PostGameCarnageReportTable';
 
 class PostGameCarnageReport extends Component {
 

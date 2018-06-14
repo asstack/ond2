@@ -1,0 +1,170 @@
+import React from 'react';
+import styled from 'styled-components';
+import { Grid } from 'semantic-ui-react';
+
+const SelectionGroup = styled.div`
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  align-items: center;
+  justify-content: ${({ oneSelection }) => oneSelection ? 'flex-start' : 'space-evenly' };
+  margin-left: ${({ oneSelection }) => oneSelection ? '20px' : '0px' };;
+`;
+
+const RaidHeading = styled.div`
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  justify-content: center;
+  margin-bottom: 5px;
+  font-family: Montserrat;
+  font-size: 20px;
+  font-weight: 500;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  color: #000000;
+  
+  @media only screen and (max-width: 767px) {
+    text-align: center;
+    font-size: 14px;
+  }
+`;
+
+const RaidSelect = styled.div`
+  width: 100%;
+  align-items: center;
+  padding-top: 20px;
+  background-color: ${props => props.selected ? 'white' : '#eeeeee'};
+  ${props => props.selected ? 'border: 1px solid #BEBEBE' : '' };
+  border-bottom: none;
+  ${({ noRightBorder }) => noRightBorder ? 'border-right: none' : ''};
+  ${({ noLeftBorder }) => noLeftBorder ? 'border-left: none' : ''};
+`;
+
+const Selection = styled.div`
+  display: flex;
+  align-items: baseline;
+  margin-bottom: 10px;
+  ${({ selected }) => selected ? '' : 'border-bottom: 1px solid #2b76ed' };
+  
+`;
+
+const ActivityCount = styled.p`
+  margin-right: 5px;
+  font-family: Montserrat;
+  font-size: 16px;
+  font-weight: ${({ selected }) => selected ? 600 : 'normal'};
+  font-style: normal;
+  font-stretch: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  text-align: center;
+  vertical-align: text-bottom;
+  color: ${({ selected }) => selected ? 'black' : '#2b76ed'};
+  cursor: ${({ selected }) => selected ? 'default' : 'pointer' };
+  
+  @media only screen and (max-width: 400px) {
+    font-size: 12px;
+  }
+`;
+
+const FarmCount = ActivityCount.extend`
+  font-size: 12px;
+  
+  @media only screen and (max-width: 400px) {
+    font-size: 8px;
+  }
+`;
+
+const RaidSelection = ({ handleSetRaid, handleSetMode, nfCount, raidCount, activityType, viewRaid, viewMode }) => {
+  return (
+    <Grid style={{ borderLeft: '1px solid #BEBEBE', borderBottom: '1px solid #BEBEBE' }} className="raid-selection" centered columns={3}>
+      <Grid.Column>
+        <RaidSelect noLeftBorder={viewRaid === 'spire'} noRightBorder={viewRaid !== 'spire'} selected={viewRaid === 'spire'}>
+          <RaidHeading onClick={() => { handleSetRaid('spire'); handleSetMode('prestige');}}>
+            <p>SOS</p>
+          </RaidHeading>
+          <SelectionGroup oneSelection>
+            <Selection
+              href="javascript:void(0)"
+              selected={viewRaid==='spire' && viewMode ==='normal'}
+              onClick={() => { handleSetRaid('spire'); handleSetMode('normal');}}
+            >
+              <ActivityCount selected={viewRaid==='spire' && viewMode ==='normal'}>
+                N{raidCount.spire.successCount.normal}
+              </ActivityCount>
+              <FarmCount selected={viewRaid==='spire' && viewMode ==='normal'}>{raidCount.spire.farmCount.normal}</FarmCount>
+            </Selection>
+          </SelectionGroup>
+        </RaidSelect>
+      </Grid.Column>
+
+      <Grid.Column>
+        <RaidSelect noRightBorder={viewRaid !== 'eow'} noLeftBorder={viewRaid !== 'eow'} selected={viewRaid ==='eow'}>
+          <RaidHeading onClick={() => { handleSetRaid('eow'); handleSetMode('normal');}}>
+            <p>EOW</p>
+          </RaidHeading>
+          <SelectionGroup oneSelection>
+            <Selection
+              href="javascript:void(0)"
+              selected={viewRaid==='eow' && viewMode ==='normal'}
+              onClick={() => { handleSetRaid('eow'); handleSetMode('normal');}}
+            >
+              <ActivityCount selected={viewRaid==='eow' && viewMode ==='normal'}>
+                N{raidCount.eow.successCount}
+              </ActivityCount>
+              <FarmCount selected={viewRaid==='eow' && viewMode ==='normal'}>{raidCount.eow.farmCount}</FarmCount>
+            </Selection>
+          </SelectionGroup>
+        </RaidSelect>
+      </Grid.Column>
+
+      <Grid.Column>
+        <RaidSelect noLeftBorder={viewRaid !== 'lev'} selected={viewRaid ==='lev'}>
+          <RaidHeading onClick={() => { handleSetRaid('lev'); handleSetMode('prestige');}}>
+            <p>Leviathan</p>
+          </RaidHeading>
+          <SelectionGroup>
+            <Selection
+              href="javascript:void(0)"
+              selected={viewRaid==='lev' && viewMode ==='normal'}
+              onClick={() => { handleSetRaid('lev'); handleSetMode('normal');}}
+            >
+              <ActivityCount selected={viewRaid==='lev' && viewMode ==='normal'}>
+                N{raidCount.lev.successCount.normal}
+              </ActivityCount>
+              <FarmCount selected={viewRaid==='lev' && viewMode ==='normal'}>{raidCount.lev.farmCount.prestige}</FarmCount>
+            </Selection>
+            <Selection
+              href="javascript:void(0)"
+              selected={viewRaid==='lev' && viewMode ==='prestige'}
+              onClick={() => { handleSetRaid('lev'); handleSetMode('prestige');}}
+            >
+              <ActivityCount selected={viewRaid==='lev' && viewMode ==='prestige'}>
+                P{raidCount.lev.successCount.prestige}
+              </ActivityCount>
+              <FarmCount selected={viewRaid==='lev' && viewMode ==='prestige'}>{raidCount.lev.farmCount.prestige}</FarmCount>
+            </Selection>
+          </SelectionGroup>
+        </RaidSelect>
+      </Grid.Column>
+    </Grid>
+  );
+};
+
+export default RaidSelection;
+
+/*
+ <Selection
+              href="javascript:void(0)"
+              selected={viewRaid==='spire' && viewMode ==='prestige'}
+              onClick={() => { handleSetRaid('spire'); handleSetMode('prestige');}}
+            >
+              <ActivityCount selected={viewRaid==='spire' && viewMode ==='prestige'}>
+                P{raidCount.spire.successCount.prestige}
+              </ActivityCount>
+              <FarmCount selected={viewRaid==='spire' && viewMode ==='prestige'}>{raidCount.spire.farmCount.prestige}</FarmCount>
+            </Selection>
+ */

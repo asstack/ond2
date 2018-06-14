@@ -14,9 +14,11 @@ export const destinyBaseURL = 'https://www.bungie.net';
 export const LEVIATHAN_IMAGE = `${destinyBaseURL}/img/destiny_content/pgcr/raid_gluttony.jpg`;
 export const EATER_OF_WORLDS_IMAGE = `${destinyBaseURL}/img/destiny_content/pgcr/raids_leviathan_eater_of_worlds.jpg`;
 
-export const EATER_OF_WORLDS_LAUNCH_WEEK = '2017-12-11T17:00:00Z';
+export const EATER_OF_WORLDS_LAUNCH_WEEK = '2017-12-12T17:00:00Z';
 export const LEVIATHAN_LAUNCH_WEEK = '2017-09-12T17:00:00Z';
+export const SPIRE_OF_STARS_LAUNCH_WEEK = '2018-05-15T17:00:00Z';
 export const NF_START_DATE = '2018-02-13T17:00:00Z';
+export const EP_LAUNCH_WEEK = '2018-05-08T17:00:00Z';
 
 export const tier = {
   0: 'Normal',
@@ -846,6 +848,12 @@ export const NF_HASHES = {
   }
 };
 
+export const EP = {
+  raidName: 'Escalation Protocol',
+  allActivityHashes: [4028522574],
+  launchDate: ''
+};
+
 export const NIGHTFALL = {
   milestoneHash: 2171429505,
 };
@@ -891,6 +899,18 @@ export const NIGHTFALL = {
    }
  };
 
+ export const SPIRE_OF_STARS = {
+   raidName: 'Spire of Stars',
+   launchDate: SPIRE_OF_STARS_LAUNCH_WEEK,
+   milestoneHash:  '',
+   allActivityHashes: [3213556450, 119944200]
+ };
+
+ export const ESCALATION_PROTOCOL = {
+   name: 'Escalation Protocol',
+   launchDate: EP_LAUNCH_WEEK
+ };
+
  export const RAID_HASHES = {
    LEV: [
      2693136600, 2693136601, 2693136602, 2693136603, 2693136604, 2693136605 ,
@@ -907,7 +927,7 @@ export const NIGHTFALL = {
    }
  };
 
-export const RAIDS = {EATER_OF_WORLDS, LEVIATHAN, NIGHTFALL};
+export const RAIDS = {EATER_OF_WORLDS, LEVIATHAN, NIGHTFALL, EP};
 
 export const activityModes = {
   0: 'none',

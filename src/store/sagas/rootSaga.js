@@ -17,8 +17,6 @@ function* handleAppVersionCheck(appVersion) {
   const localVersion = localStorage.getItem('appVersion') || 0.0;
   const userUpdate = localStorage.getItem('userUpdate') || false;
 
-  if(userUpdate) console.log('userUpdate', userUpdate);
-
   if(appVersion > localVersion && !userUpdate) {
     yield put({ type: consts.SET_UPDATE_PROMPT, data: true });
   } else {

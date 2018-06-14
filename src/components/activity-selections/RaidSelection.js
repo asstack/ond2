@@ -80,9 +80,9 @@ const FarmCount = ActivityCount.extend`
 
 const RaidSelection = ({ handleSetRaid, handleSetMode, nfCount, raidCount, activityType, viewRaid, viewMode }) => {
   return (
-    <Grid className="raid-selection" centered columns={3}>
-      <Grid.Column >
-        <RaidSelect noRightBorder={viewRaid !== 'spire'} selected={viewRaid === 'spire'}>
+    <Grid style={{ borderLeft: '1px solid #BEBEBE', borderBottom: '1px solid #BEBEBE' }} className="raid-selection" centered columns={3}>
+      <Grid.Column>
+        <RaidSelect noLeftBorder={viewRaid === 'spire'} noRightBorder={viewRaid !== 'spire'} selected={viewRaid === 'spire'}>
           <RaidHeading onClick={() => { handleSetRaid('spire'); handleSetMode('prestige');}}>
             <p>SOS</p>
           </RaidHeading>

@@ -44,7 +44,7 @@ const BigTable = ({ isNF, raidData, column, direction, handleSort }) => {
             <Table.Row textAlign='center' negative={!completed} key={shortid.generate()}>
               <td><Link to={`/player/${displayName.toLowerCase()}`}>{displayName}</Link></td>
               { isNF &&
-                <Table.Cell>{ `${values.score} / ${values.teamScore}` }</Table.Cell>
+                <Table.Cell>{ `${values.score}` }</Table.Cell>
               }
               <Table.Cell>{values.kills}</Table.Cell>
               <Table.Cell>{values.deaths}</Table.Cell>

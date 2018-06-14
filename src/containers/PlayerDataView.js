@@ -22,6 +22,7 @@ const PlayerDataViewWrapper = styled.div`
     margin-bottom: 20px;
     
     .raid-selection {
+    
       .column {
         padding: 0;
       }

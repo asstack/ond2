@@ -33,7 +33,7 @@ const SmallTable = ({ isNF, raidData, column, direction, handleSort }) => {
             <Table.Row negative={!completed} key={shortid.generate()}>
               <td><Link to={`/player/${displayName.toLowerCase()}`}>{displayName}</Link></td>
               { isNF
-                ? <Table.Cell textAlign='center' collapsing>{ `${values.score} / ${values.teamScore}` }</Table.Cell>
+                ? <Table.Cell textAlign='center' collapsing>{ `${values.score}` }</Table.Cell>
                   : <Table.Cell width={1} textAlign='center' collapsing>{values.kills}</Table.Cell>
               }
             </Table.Row>

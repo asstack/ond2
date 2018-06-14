@@ -27,7 +27,6 @@ const RaidWeekWrapper = styled.div`
   }};
   width: 100%;
   max-height: 299px;
-  border-top: 1px solid #d9d9d9;
   background-color: transparent;
   overflow: hidden;
   overflow-y: scroll;

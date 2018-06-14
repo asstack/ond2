@@ -9,7 +9,6 @@ const RaidWeekContainer = styled.div`
   max-width: 212px;
   display: inline-block;  
   background-color: #ffffff;
-  border: solid 1px #e2e2e2;
   
   font-family: Montserrat sans-serif;
   font-size: 16px;

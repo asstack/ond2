@@ -17,6 +17,18 @@ const ActivitySelector = styled.div`
   background-color: ${({ selected }) => selected ? 'white' : '#eeeeee'};
   color: ${({ selected }) => selected ? 'black' : '#2b76ed'};
   ${({ selected }) => selected ? 'z-index: 40' : 'z-index: 0'};
+  
+  @media only screen and (max-width: 767px) {
+  
+  }
+  
+  @media only screen and (max-width: 875px) {
+    left: 5%;
+  }
+  
+  @media only screen and (min-width: 875px) and (max-width: 1100px) {
+    left: 5%;
+  }
 `;
 
 const TypeSelectorContainer = styled.div`
@@ -31,8 +43,8 @@ const TypeSelectorContainer = styled.div`
     margin-right: 10px;
   }
   
-  @media only screen and (min-width: 767px) {
-    width: 40%;
+  @media only screen and (max-width: 767px) {
+    height: 35px;  
   }
 `;
 

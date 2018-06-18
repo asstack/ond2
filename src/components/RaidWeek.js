@@ -94,12 +94,14 @@ const RaidWeek = ({ raid='nf', raids, handleFetchPGCR, success=true, maxCount })
   const isNF = raid === 'nf';
   const manyRaids = Object.values(raids).length >= 14;
 
+  const farmKillLimit = raid === 'sp' ? 500 : 400;
+
   return (
     <RaidWeekWrapper success={success} maxCount={Math.abs(maxCount)} neg={maxCount < 0}>
       {raids && Object.values(raids).map(currRaid => {
         const tinyBarSizeRequired = manyRaids || !success;
         const color = success
-          ? currRaid.totalKills >= 400 || raid === 'nf'
+          ? currRaid.totalKills >= farmKillLimit || raid === 'nf'
             ? 'green'
               : 'yellow'
           : 'red';

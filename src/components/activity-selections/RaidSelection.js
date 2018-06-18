@@ -8,15 +8,17 @@ const SelectionGroup = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: ${({ oneSelection }) => oneSelection ? 'flex-start' : 'space-evenly' };
-  margin-left: ${({ oneSelection }) => oneSelection ? '20px' : '0px' };;
+  padding-left: ${({ oneSelection }) => oneSelection ? '20px' : '0px' };
+  background-color: ${props => props.selected ? 'white' : '#eeeeee' };
 `;
 
 const RaidHeading = styled.div`
   display: flex;
   width: 100%;
   flex-direction: row;
+  background-color: ${props => props.selected ? 'white' : '#eeeeee'};
   justify-content: center;
-  margin-bottom: 5px;
+  padding-bottom: 5px;
   font-family: Montserrat;
   font-size: 20px;
   font-weight: 500;
@@ -35,9 +37,8 @@ const RaidHeading = styled.div`
 const RaidSelect = styled.div`
   width: 100%;
   align-items: center;
-  padding-top: 20px;
-  background-color: ${props => props.selected ? 'white' : '#eeeeee'};
-  ${props => props.selected ? 'border: 1px solid #BEBEBE' : '' };
+  padding-top: 15px;
+  background-color: white;
   border-bottom: none;
   ${({ noRightBorder }) => noRightBorder ? 'border-right: none' : ''};
   ${({ noLeftBorder }) => noLeftBorder ? 'border-left: none' : ''};
@@ -80,13 +81,13 @@ const FarmCount = ActivityCount.extend`
 
 const RaidSelection = ({ handleSetRaid, handleSetMode, nfCount, raidCount, activityType, viewRaid, viewMode }) => {
   return (
-    <Grid style={{ borderLeft: '1px solid #BEBEBE', borderBottom: '1px solid #BEBEBE' }} className="raid-selection" centered columns={3}>
+    <Grid style={{ border: '1px solid #BEBEBE' }} className="raid-selection" centered columns={3}>
       <Grid.Column>
         <RaidSelect noLeftBorder={viewRaid === 'spire'} noRightBorder={viewRaid !== 'spire'} selected={viewRaid === 'spire'}>
-          <RaidHeading onClick={() => { handleSetRaid('spire'); handleSetMode('prestige');}}>
+          <RaidHeading selected={viewRaid === 'spire'} onClick={() => { handleSetRaid('spire'); handleSetMode('normal');}}>
             <p>SOS</p>
           </RaidHeading>
-          <SelectionGroup oneSelection>
+          <SelectionGroup oneSelection selected={viewRaid === 'spire'}>
             <Selection
               href="javascript:void(0)"
               selected={viewRaid==='spire' && viewMode ==='normal'}
@@ -103,10 +104,10 @@ const RaidSelection = ({ handleSetRaid, handleSetMode, nfCount, raidCount, activ
 
       <Grid.Column>
         <RaidSelect noRightBorder={viewRaid !== 'eow'} noLeftBorder={viewRaid !== 'eow'} selected={viewRaid ==='eow'}>
-          <RaidHeading onClick={() => { handleSetRaid('eow'); handleSetMode('normal');}}>
+          <RaidHeading selected={viewRaid === 'eow'} onClick={() => { handleSetRaid('eow'); handleSetMode('normal');}}>
             <p>EOW</p>
           </RaidHeading>
-          <SelectionGroup oneSelection>
+          <SelectionGroup oneSelection selected={viewRaid === 'eow'}>
             <Selection
               href="javascript:void(0)"
               selected={viewRaid==='eow' && viewMode ==='normal'}
@@ -123,10 +124,10 @@ const RaidSelection = ({ handleSetRaid, handleSetMode, nfCount, raidCount, activ
 
       <Grid.Column>
         <RaidSelect noLeftBorder={viewRaid !== 'lev'} selected={viewRaid ==='lev'}>
-          <RaidHeading onClick={() => { handleSetRaid('lev'); handleSetMode('prestige');}}>
+          <RaidHeading selected={viewRaid === 'lev'} onClick={() => { handleSetRaid('lev'); handleSetMode('prestige');}}>
             <p>Leviathan</p>
           </RaidHeading>
-          <SelectionGroup>
+          <SelectionGroup selected={viewRaid === 'lev'}>
             <Selection
               href="javascript:void(0)"
               selected={viewRaid==='lev' && viewMode ==='normal'}

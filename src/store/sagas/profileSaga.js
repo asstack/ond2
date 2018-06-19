@@ -7,6 +7,7 @@ export default function* collectProfile(membershipId) {
   const playerProfileCache = yield  select(state => state.playerCache);
 
   const playerProfile = yield call(fetchProfile, membershipId);
+  console.log('playerProfile', playerProfile);
 
   const fiveMinutesFromNow = moment().add(5, 'm');
   const profile = {...playerProfile, expires: fiveMinutesFromNow};

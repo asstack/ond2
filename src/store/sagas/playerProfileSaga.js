@@ -57,12 +57,16 @@ export default function* fetchPlayerProfile({ data }) {
 
     const searchResults = yield call(searchPlayer, data);
 
+    console.log('searchResults', searchResults);
+    console.log('searchResults.length', searchResults.length);
+
     let playerSearch;
 
     if(searchResults.length <= 0) {
       return yield call(handleSearchPlayerFailure);
     }
     else if( searchResults.length === 1) {
+      console.log('searchResults[0]', searchResults[0]);
      playerSearch = searchResults[0];
     }
     else {
@@ -84,6 +88,7 @@ export default function* fetchPlayerProfile({ data }) {
     if(playerProfileCacheCheck && playerProfileCache[membershipId].expires.isAfter(moment)) {
       yield put({type: consts.SET_RAID_HISTORY, data: playerProfileCache[membershipId]});
     } else {
+      console.log('collectProfile');
       yield spawn(collectProfile, membershipId);
     }
 

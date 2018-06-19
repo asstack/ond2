@@ -51,10 +51,17 @@ class RaidWeekViewer extends Component {
     this.state = {
       player: this.props.match.params.playerId || '',
       maxSuccessRaids: 0,
-
+      membershipId: this.props.playerProfile.membershipId,
     };
 
     this.yOffsetRef = React.createRef();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { viewMode, viewRaid, playerProfile } = this.props;
+    if(viewMode !== nextProps.viewMode || viewRaid !== nextProps.viewRaid || playerProfile.membershipId !== this.state.membershipId) {
+      this.setState({ membershipId: nextProps.playerProfile.membershipId })
+    }
   }
 
   componentDidMount = () => {

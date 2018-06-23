@@ -6,14 +6,15 @@ import normalize from "../normalize";
 import * as consts from "../constants";
 
 const isActivityData = (activity) => {
-  return activity.length > 0;
+  return !!activity && activity.length > 0;
 };
 
-const activityDataFound = ({ nightfallHistory={ normal: [], prestige: []}, raidHistory={ EOW: [], LEV: { normal: [], prestige: []}} }) =>
+const activityDataFound = ({ nightfallHistory, raidHistory }) =>
   (
     isActivityData(raidHistory.EOW) ||
     isActivityData(raidHistory.LEV.normal) ||
     isActivityData(raidHistory.LEV.prestige) ||
+    isActivityData(raidHistory.SPIRE.normal) ||
     isActivityData(nightfallHistory.normal) || isActivityData(nightfallHistory.prestige)
   );
 
@@ -73,6 +74,7 @@ export default function* collectActivityHistory(membershipId) {
 
    if(!playerActivityUpdate[membershipId] && activityHistoryFetchAttempts === 1 && membershipId !== previousMembershipId) {
       //Data exists, so we update behind the scenes. Call update in 10 seconds.
+     console.log('sync new player data');
      yield spawn(syncPlayerNewData, membershipId, 5000);
    }
 
@@ -82,7 +84,7 @@ export default function* collectActivityHistory(membershipId) {
  if(activityDataFound(activityHistory)) {
    const normalizedNF = normalize.nightfall(activityHistory.nightfallHistory);
    const normalizedRH = normalize.raidHistory(activityHistory.raidHistory);
-   const normalizedEP = normalize.epHistory(activityHistory.epHistory);
+   const normalizedEP = {}; //normalize.epHistory(activityHistory.epHistory);
 
    if (activityDataFound(activityHistory)) {
      yield all([

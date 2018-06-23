@@ -131,7 +131,7 @@ class RaidWeekViewer extends Component {
     const { EP={}, epSuccessCount='0' } = epHistory;
     const {
       LEV={ prestige: {}, normal: {}},
-      SPIRE={ prestige: {}, normal: {}},
+      SPIRE={ normal: {} },
       EOW={},
       raidCount={
           eow: {
@@ -153,20 +153,18 @@ class RaidWeekViewer extends Component {
             }
           },
           spire: {
-            prestige: '0',
             normal: '0',
             successCount: {
-              prestige: '0',
               normal: '0'
             },
             farmCount: {
-              prestige: '0',
               normal: '0'
             }
           }
         }
     } = raidHistory;
 
+    console.log('raidHistory', raidHistory);
     let raidWeeks = [];
     const player = match.params.playerId;
 
@@ -187,6 +185,8 @@ class RaidWeekViewer extends Component {
       raidWeeks = Object.entries(LEV[viewMode]).reverse().slice(0, 6)
     }
     else if(viewRaid === 'spire') {
+      console.log('spire', SPIRE[viewMode]);
+      console.log('viewMode', viewMode);
       raidWeeks = Object.entries(SPIRE[viewMode]).reverse().slice(0, 6);
     }
     else if(viewRaid === 'ep') {

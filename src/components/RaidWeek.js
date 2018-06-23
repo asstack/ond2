@@ -11,9 +11,7 @@ import { Popup, Progress } from 'semantic-ui-react';
     height: 199px;
   }
 
-  @media only screen and (min-width: 750px) and (max-width: 1100px) {
-    height: 199px;
-  }
+
   */
 
 const RaidWeekWrapper = styled.div`
@@ -25,7 +23,7 @@ const RaidWeekWrapper = styled.div`
     const size = neg ? 12 : 22;
     return success ? `${size * maxCount + 1}px` : 'fit-content'
   }};
-  width: 100%;
+  width: 98%;
   max-height: 299px;
   background-color: transparent;
   overflow: hidden;
@@ -36,7 +34,9 @@ const RaidWeekWrapper = styled.div`
     background: transparent;  /* optional: just make scrollbar invisible */
   }
   
-
+  @media only screen and (max-width: 716px) {
+    width: 100%;
+   }
   
   .pgcr-link {
     width: 100%;

@@ -4,6 +4,7 @@ import { fetchActivityHistory, fetchActivityUpdate, fetchFallbackActivityHistory
 import { delay } from "redux-saga";
 import normalize from "../normalize";
 import * as consts from "../constants";
+import collectQuickStats from "./quickStatsSaga";
 
 const isActivityData = (activity) => {
   return !!activity && activity.length > 0;
@@ -63,11 +64,16 @@ export default function* collectActivityHistory(membershipId) {
   let activityHistoryFetchAttempts = 1;
 
   while(activityHistoryFetchAttempts < 3 && !activityDataFound(activityHistory)) {
-   //TODO: Need to cancel this if a new player search is initiated. Don't want data to be overwritten
     yield put({ type: consts.SET_NEW_PLAYER, data: true });
     yield delay(2000);
     const { characterIds, membershipType } = yield select(state => state.playerProfile);
+    if(activityHistoryFetchAttempts === 1) {
+     yield spawn(collectQuickStats, membershipId, characterIds, membershipType)
+    }
+
     activityHistory = yield call(fetchFallbackActivityHistory, {membershipId, characterIds, membershipType});
+
+
     yield put({ type: consts.SET_NEW_PLAYER, data: false });
     activityHistoryFetchAttempts += 1;
    }
@@ -113,4 +119,5 @@ export default function* collectActivityHistory(membershipId) {
  }
 
   yield put({ type: consts.SET_LOADING, data: false });
+  yield put({ type: consts.SET_QUICK_STATS, data: false });
 }

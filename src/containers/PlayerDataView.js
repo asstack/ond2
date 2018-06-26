@@ -164,7 +164,6 @@ class RaidWeekViewer extends Component {
         }
     } = raidHistory;
 
-    console.log('raidHistory', raidHistory);
     let raidWeeks = [];
     const player = match.params.playerId;
 
@@ -185,9 +184,7 @@ class RaidWeekViewer extends Component {
       raidWeeks = Object.entries(LEV[viewMode]).reverse().slice(0, 6)
     }
     else if(viewRaid === 'spire') {
-      console.log('spire', SPIRE[viewMode]);
-      console.log('viewMode', viewMode);
-      raidWeeks = Object.entries(SPIRE[viewMode]).reverse().slice(0, 6);
+      raidWeeks = Object.entries(SPIRE.normal).reverse().slice(0, 6);
     }
     else if(viewRaid === 'ep') {
       raidWeeks = Object.entries(EP).reverse().slice(0, 6);
@@ -224,7 +221,7 @@ class RaidWeekViewer extends Component {
           </Grid.Row>
 
             {shouldRender &&
-              <Grid.Row reversed='computer tablet' className="raid-stack-row" columns={6}>
+              <Grid.Row style={{ marginTop: '-1px' }}reversed='computer tablet' className="raid-stack-row" columns={6}>
                 {raidWeeks.map((raidWeek, idx) => {
                   return (
                     <Grid.Column textAlign="center" key={shortid.generate()}>

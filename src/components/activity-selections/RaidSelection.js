@@ -55,7 +55,7 @@ const Selection = styled.div`
 const ActivityCount = styled.p`
   margin-right: 5px;
   font-family: Montserrat;
-  font-size: 16px;
+  font-size: 24px;
   font-weight: ${({ selected }) => selected ? 600 : 'normal'};
   font-style: normal;
   font-stretch: normal;
@@ -71,8 +71,8 @@ const ActivityCount = styled.p`
   }
 `;
 
-const FarmCount = ActivityCount.extend`
-  font-size: 12px;
+const TotalCount = ActivityCount.extend`
+  font-size: 16px;
   
   @media only screen and (max-width: 400px) {
     font-size: 8px;
@@ -81,7 +81,7 @@ const FarmCount = ActivityCount.extend`
 
 const RaidSelection = ({ handleSetRaid, handleSetMode, nfCount, raidCount, activityType, viewRaid, viewMode }) => {
   return (
-    <Grid style={{ border: '1px solid #BEBEBE' }} className="raid-selection" centered columns={3}>
+    <Grid style={{ border: '1px solid #BEBEBE', borderBottom: 'none' }} className="raid-selection" centered columns={3}>
       <Grid.Column>
         <RaidSelect noLeftBorder={viewRaid === 'spire'} noRightBorder={viewRaid !== 'spire'} selected={viewRaid === 'spire'}>
           <RaidHeading selected={viewRaid === 'spire'} onClick={() => { handleSetRaid('spire'); handleSetMode('normal');}}>
@@ -94,9 +94,9 @@ const RaidSelection = ({ handleSetRaid, handleSetMode, nfCount, raidCount, activ
               onClick={() => { handleSetRaid('spire'); handleSetMode('normal');}}
             >
               <ActivityCount selected={viewRaid==='spire' && viewMode ==='normal'}>
-                N{raidCount.spire.successCount.normal}
+                N{raidCount.spire.successCount.normal - raidCount.spire.farmCount.normal}
               </ActivityCount>
-              <FarmCount selected={viewRaid==='spire' && viewMode ==='normal'}>{raidCount.spire.farmCount.normal}</FarmCount>
+              <TotalCount selected={viewRaid==='spire' && viewMode ==='normal'}>{raidCount.spire.successCount.normal}</TotalCount>
             </Selection>
           </SelectionGroup>
         </RaidSelect>
@@ -114,9 +114,9 @@ const RaidSelection = ({ handleSetRaid, handleSetMode, nfCount, raidCount, activ
               onClick={() => { handleSetRaid('eow'); handleSetMode('normal');}}
             >
               <ActivityCount selected={viewRaid==='eow' && viewMode ==='normal'}>
-                N{raidCount.eow.successCount}
+                N{raidCount.eow.successCount - raidCount.eow.farmCount}
               </ActivityCount>
-              <FarmCount selected={viewRaid==='eow' && viewMode ==='normal'}>{raidCount.eow.farmCount}</FarmCount>
+              <TotalCount selected={viewRaid==='eow' && viewMode ==='normal'}>{raidCount.eow.successCount}</TotalCount>
             </Selection>
           </SelectionGroup>
         </RaidSelect>
@@ -134,9 +134,9 @@ const RaidSelection = ({ handleSetRaid, handleSetMode, nfCount, raidCount, activ
               onClick={() => { handleSetRaid('lev'); handleSetMode('normal');}}
             >
               <ActivityCount selected={viewRaid==='lev' && viewMode ==='normal'}>
-                N{raidCount.lev.successCount.normal}
+                N{raidCount.lev.successCount.normal - raidCount.lev.farmCount.normal}
               </ActivityCount>
-              <FarmCount selected={viewRaid==='lev' && viewMode ==='normal'}>{raidCount.lev.farmCount.prestige}</FarmCount>
+              <TotalCount selected={viewRaid==='lev' && viewMode ==='normal'}>{raidCount.lev.successCount.normal}</TotalCount>
             </Selection>
             <Selection
               href="javascript:void(0)"
@@ -144,9 +144,9 @@ const RaidSelection = ({ handleSetRaid, handleSetMode, nfCount, raidCount, activ
               onClick={() => { handleSetRaid('lev'); handleSetMode('prestige');}}
             >
               <ActivityCount selected={viewRaid==='lev' && viewMode ==='prestige'}>
-                P{raidCount.lev.successCount.prestige}
+                P{raidCount.lev.successCount.prestige - raidCount.lev.farmCount.prestige}
               </ActivityCount>
-              <FarmCount selected={viewRaid==='lev' && viewMode ==='prestige'}>{raidCount.lev.farmCount.prestige}</FarmCount>
+              <TotalCount selected={viewRaid==='lev' && viewMode ==='prestige'}>{raidCount.lev.successCount.prestige}</TotalCount>
             </Selection>
           </SelectionGroup>
         </RaidSelect>

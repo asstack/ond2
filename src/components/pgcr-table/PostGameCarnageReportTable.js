@@ -28,7 +28,7 @@ const PGCRWrapper = styled.div`
   }
   
   h2 {
-    font-size: 14px;
+    font-size: 16px;
   }
  
 `;

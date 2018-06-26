@@ -2,6 +2,7 @@ import { awsURL } from '../actions';
 import { applyQueryStringParams } from "./utilities";
 import {
   searchDestinyPlayer,
+  getActivityHistory,
   getProfile,
   getGroupsForMember,
   getAggregateActivityStats,
@@ -31,6 +32,19 @@ const searchPlayer = async pathParams => {
 const fetchProfile = async membershipId => {
   const res = await fetch(`${awsURL}/profile/${membershipId}`, { method: 'GET', mode: 'cors' });
   return await res.json();
+};
+
+const fetchBungieActivityHistory = async (pathParams, queryStringParams) => {
+  const url = applyQueryStringParams(getActivityHistory(pathParams), queryStringParams);
+  const res = await fetch(url, destinyInit);
+  const activityHistory = await res.json();
+  return (
+    !!activityHistory.Response
+      ? isObjectEmpty(activityHistory.Response)
+        ? []
+          : activityHistory.Response.activities
+      : { error: res.Message }
+  );
 };
 
 const fetchActivityHistory = async membershipId => {
@@ -68,5 +82,6 @@ export {
   fetchFallbackActivityHistory,
   fetchPostGameCarnageReport,
   fetchPublicMilestones,
-  fetchActivityUpdate
+  fetchActivityUpdate,
+  fetchBungieActivityHistory
 };

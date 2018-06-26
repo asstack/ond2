@@ -18,8 +18,17 @@ const ActivitySelector = styled.div`
   color: ${({ selected }) => selected ? 'black' : '#2b76ed'};
   ${({ selected }) => selected ? 'z-index: 40' : 'z-index: 0'};
   
-  @media only screen and (max-width: 767px) {
+  font-family: Montserrat;
+  font-size: 26px;
+  font-weight: 500;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: normal;
+  letter-spacing: normal;
   
+  @media only screen and (max-width: 767px) {
+    text-align: center;
+    font-size: 14px;
   }
   
   @media only screen and (max-width: 875px) {

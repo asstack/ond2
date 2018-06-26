@@ -911,7 +911,7 @@ export const NIGHTFALL = {
    launchDate: EP_LAUNCH_WEEK
  };
 
- export const RAID_HASHES = {
+export const RAID_HASHES = {
    LEV: [
      2693136600, 2693136601, 2693136602, 2693136603, 2693136604, 2693136605 ,
      417231112, 757116822, 1685065161, 2449714930, 3446541099, 3879860661
@@ -924,7 +924,12 @@ export const NIGHTFALL = {
    eow: {
      prestige: [ 809170886 ],
      normal: [ 3089205900 ]
-   }
+   },
+   SPIRE: [119944200, 3213556450],
+   spire: {
+     prestige: [ 3213556450 ],
+     normal: [ 119944200 ]
+   },
  };
 
 export const RAIDS = {EATER_OF_WORLDS, LEVIATHAN, NIGHTFALL, EP};

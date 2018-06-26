@@ -92,7 +92,7 @@ class App extends Component {
     const {
       pgcr, siteError, newPlayer, clearErrorState,
       clearPostGameCarnageReport, loading, clearLoader,
-      showUpdatePrompt, location
+      showUpdatePrompt, location, quickStats
     } = this.props;
 
     const handleUpdatePromptClicked = () => {
@@ -119,7 +119,8 @@ class App extends Component {
               <OND2Logo/>
             </MenuToggleWrapper>
           }
-          { loading && <LogoLoader newPlayer={newPlayer} /> }
+
+          <LogoLoader newPlayer={newPlayer} quickStats={quickStats} loading={loading} />
 
           <Route exact path="/" render={data => (
             <Landing loading={loading} clearErrorState={clearErrorState} {...data} />
@@ -171,7 +172,8 @@ const mapStateToProps = state => {
     loading: state.loading,
     newPlayer: state.newPlayer,
     siteError: state.siteError,
-    showUpdatePrompt: state.showUpdatePrompt
+    showUpdatePrompt: state.showUpdatePrompt,
+    quickStats: state.quickStats
   }
 };
 

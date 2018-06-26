@@ -84,7 +84,9 @@ const RaidStack = ({ handleSetFarmCount, handleFetchPGCR, viewRaid, raidWeek, ra
 
   const [date, name] = viewRaid === 'nf' ? weekTitle : week.split(':D:').reverse();
 
-  const sortedCompletions = completedRaids.sort((a, b) => a.totalKills >= 400 ? -1 : 1);
+  const farmKillLimit = raid === 'sp' ? 700 : 400;
+
+  const sortedCompletions = completedRaids.sort((a, b) => a.totalKills >= farmKillLimit ? -1 : 1);
 
   return(
     <RaidWeekContainer>

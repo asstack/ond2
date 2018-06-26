@@ -6,14 +6,6 @@ import shortid from "shortid";
 
 import { Popup, Progress } from 'semantic-ui-react';
 
-/*
-  @media only screen and (max-width: 750px) {
-    height: 199px;
-  }
-
-
-  */
-
 const RaidWeekWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -21,7 +13,7 @@ const RaidWeekWrapper = styled.div`
   align-items: center;
   height: ${({ success, maxCount, neg }) => {
     const size = neg ? 12 : 22;
-    return success ? `${size * maxCount + 1}px` : 'fit-content'
+    return success ? `${size * maxCount + 8}px` : 'fit-content'
   }};
   width: 98%;
   max-height: 299px;
@@ -94,7 +86,7 @@ const RaidWeek = ({ raid='nf', raids, handleFetchPGCR, success=true, maxCount })
   const isNF = raid === 'nf';
   const manyRaids = Object.values(raids).length >= 14;
 
-  const farmKillLimit = raid === 'sp' ? 500 : 400;
+  const farmKillLimit = raid === 'sp' ? 700 : 400;
 
   return (
     <RaidWeekWrapper success={success} maxCount={Math.abs(maxCount)} neg={maxCount < 0}>

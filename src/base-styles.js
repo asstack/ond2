@@ -16,6 +16,11 @@ const baseStyles = () => injectGlobal`
       }
   }
   
+  .quick-stats {
+    width: 350px;
+    height: 675px;
+  }
+  
   .remove-margins.remove-margins.remove-margins {
     margin: 0 !important;
   }

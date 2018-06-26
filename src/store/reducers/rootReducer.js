@@ -18,7 +18,7 @@ import {
   SET_PLAYER_CACHE,
   SET_GAMER_TAG_OPTIONS,
   SELECT_GAMER_TAG,
-  SET_NEW_PLAYER,
+  SET_NEW_PLAYER, SET_QUICK_STATS,
   SET_SITE_ERROR, SET_CACHE_TIMEOUT, SET_APP_VERSION, SET_UPDATE_PROMPT, SET_RAID_VIEW_Y_OFFSET, SET_EP_HISTORY
 } from "../constants";
 
@@ -215,6 +215,13 @@ const setNewPlayer = (state=false, action) => {
   return state;
 };
 
+const setQuickStats = (state=false, action) => {
+  if(action.type === SET_QUICK_STATS) {
+    return action.data
+  }
+  return state;
+};
+
 const rootReducer = combineReducers({
   fetchLogs,
   cacheTimeout: setCacheTimeOut,
@@ -239,7 +246,8 @@ const rootReducer = combineReducers({
   siteError: setSiteError,
   appVersion: setAppVersion,
   showUpdatePrompt: setUpdatePrompt,
-  raidViewYOffset: setRaidViewYOffset
+  raidViewYOffset: setRaidViewYOffset,
+  quickStats: setQuickStats
 });
 
 export default rootReducer;

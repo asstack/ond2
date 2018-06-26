@@ -26,6 +26,7 @@ Query String Params
   - mode: Filter for activity mode to be returned
   - page: Page number to return, starting with 0
 */
+
 const getActivityHistory = (pathParams) => {
   const { characterId, membershipId, membershipType } = pathParams;
   return `${apiType.destiny2}/${membershipType}/Account/${membershipId}/Character/${characterId}/Stats/Activities/`;

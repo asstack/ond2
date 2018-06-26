@@ -20,7 +20,7 @@ const RaidHeading = styled.div`
   justify-content: center;
   padding-bottom: 5px;
   font-family: Montserrat;
-  font-size: 20px;
+  font-size: 26px;
   font-weight: 500;
   font-style: normal;
   font-stretch: normal;
@@ -50,7 +50,7 @@ const Selection = styled.div`
     
   p {
     font-family: Montserrat;
-    font-size: 16px;
+    font-size: 24px;
     font-weight: ${({ selected }) => selected ? 600 : 'normal'};
     font-style: normal;
     font-stretch: normal;
@@ -60,7 +60,10 @@ const Selection = styled.div`
     color: ${({ selected }) => selected ? 'black' : '#2b76ed'};
     cursor: ${({ selected }) => selected ? 'default' : 'pointer' };
     text-decoration: ${({ selected }) => selected ? 'none' : 'underline' };
-    
+ 
+    @media only screen and (max-width: 767px) {
+      font-size: 16px;
+    }
   }
 `;
 

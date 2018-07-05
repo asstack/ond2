@@ -18,6 +18,8 @@ export const SET_GAMER_TAG_OPTIONS = 'set_gamer_tag_suggestions';
 export const SELECT_GAMER_TAG = 'select_gamer_tag';
 export const SET_EP_HISTORY = 'set_ep_history';
 export const SET_QUICK_STATS = 'set_quick_stats';
+export const SET_ID_HISTORY = 'set_id_history';
+export const SET_PGCR_HISTORY = 'set_pgcr_history';
 
 export const SET_PGCR_CACHE = 'set_pgcr_cache';
 export const SET_ACTIVITY_HISTORY_CACHE = 'set_activity_history_cache';

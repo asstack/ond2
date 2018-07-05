@@ -52,6 +52,11 @@ const fetchActivityHistory = async membershipId => {
   return await res.json();
 };
 
+const fetchExactActivityHistory = async (membershipId, activityName) => {
+  const res = await fetch(`${awsURL}/activityHistory/${membershipId}/${activityName}`, { method: 'GET', mode: 'cors' });
+  return await res.json();
+};
+
 const fetchFallbackActivityHistory = async (data) => {
   const bodyData = JSON.stringify(data);
   const res = await fetch(`${awsURL}/fallbackActivityHistory`, { method: 'POST', headers: destinyHeaders, mode: 'cors', body: bodyData });
@@ -83,5 +88,6 @@ export {
   fetchPostGameCarnageReport,
   fetchPublicMilestones,
   fetchActivityUpdate,
-  fetchBungieActivityHistory
+  fetchBungieActivityHistory,
+  fetchExactActivityHistory
 };

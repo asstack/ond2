@@ -12,8 +12,8 @@ const RaidWeekWrapper = styled.div`
   justify-content: ${({ success }) => success ? 'flex-end' : 'flex-start' };
   align-items: center;
   height: ${({ success, maxCount, neg }) => {
-    const size = neg ? 12 : 22;
-    return success ? `${size * maxCount + 8}px` : 'fit-content'
+    const size = neg ? 12 : 24;
+    return success ? `${(size * maxCount) + maxCount + 12}px` : 'fit-content'
   }};
   width: 98%;
   max-height: 299px;
@@ -116,21 +116,21 @@ const RaidWeek = ({ raid='nf', raids, handleFetchPGCR, success=true, maxCount })
                 <Progress style={{ minWidth: 150}} value={value} total={total} size="small" color={color} />
                 {isNF
                   ? `Score: ${currRaid.values.score}/${currRaid.values.teamScore} | ${time} m`
-                    : `Time: ${time}m | KDA: ${currRaid.values.kills} / ${currRaid.values.deaths} / ${currRaid.values.assists}`
+                    : `KDA: ${currRaid.values.kills} / ${currRaid.values.deaths} / ${currRaid.values.assists}`
                 }
               </div>
             )
               : isNF
                 ? `Score: ${currRaid.values.score}/${currRaid.values.teamScore} ${time} m`
-                  : `Time: ${time}m | KDA: ${currRaid.values.kills} / ${currRaid.values.deaths} / ${currRaid.values.assists}`;
+                  : `KDA: ${currRaid.values.kills} / ${currRaid.values.deaths} / ${currRaid.values.assists}`;
 
 
         const RaidProgressBar = (
-          <Link className="pgcr-link" to={{ pathname: `/pgcr/${currRaid.activityDetails.instanceId}`, state: { modal: true } }} >
+          <Link className="pgcr-link" to={{ pathname: `/pgcr/${currRaid.instanceId}`, state: { modal: true } }} >
             { (success && !manyRaids && isNF) && <BarValues>{currRaid.values.teamScore || ''}</BarValues> }
             { (success && !manyRaids && !isNF) && <BarValues>{percentWidth}m</BarValues> }
             <Progress
-              onClick={() => handleFetchPGCR(currRaid.activityDetails.instanceId)}
+              onClick={() => handleFetchPGCR(currRaid.instanceId)}
               value={value || 0}
               total={total || 0}
               on={['hover', 'focus']}

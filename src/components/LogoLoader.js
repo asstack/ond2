@@ -45,12 +45,13 @@ const LoaderWrapper = styled.div`
 
 const QuickStatsWrapper = styled.div`
   ${({ quickStats }) => !quickStats ? 'visibility: hidden' : ''}
-  margin-bottom: 20px;
+  margin-top: 30px;
 `;
 
 const LoaderText = styled.div`
   text-align: center;
   font-size: 28px;
+  margin-bottom: 10px;
   
   p {
     margin-bottom: 10px;
@@ -78,7 +79,7 @@ const LoaderText = styled.div`
 }
 `;
 
-const LogoLoader = ({ newPlayer = true, quickStats = false, loading = false }) => {
+const LogoLoader = ({ playerProfile, newPlayer = true, quickStats = false, loading = false }) => {
   const levN = quickStats ? quickStats.raidCount.lev.success.normal : '';
   const levP = quickStats ? quickStats.raidCount.lev.success.prestige : '';
   const eow = quickStats ? quickStats.raidCount.eow.success.normal : '';
@@ -90,7 +91,16 @@ const LogoLoader = ({ newPlayer = true, quickStats = false, loading = false }) =
         {!newPlayer ? <OND2Logo/> :
           <Modal classNames={{modal: 'quick-stats'}} open={loading} close={!loading} showCloseIcon={false} closeOnOverlayClick={false} center>
 
-            { quickStats && <Header textAlign="center">Quick Stats</Header> }
+            <Header style={{ textDecoration: 'underline' }} textAlign="center">Quick Stats</Header>
+
+            <LoaderText>
+                <OND2Logo/>
+                <p>Next time this will be fast,</p>
+                <p>but for now we have to get</p>
+                <p>your data from BUNGIE.</p>
+                <p>Hang in there!</p>
+            </LoaderText>
+
             <QuickStatsWrapper quickStats={quickStats}>
               <Item.Group className="require-stats" divided>
                 <Item>
@@ -118,14 +128,6 @@ const LogoLoader = ({ newPlayer = true, quickStats = false, loading = false }) =
                 </Item>
               </Item.Group>
             </QuickStatsWrapper>
-
-            <LoaderText>
-              <OND2Logo/>
-              <p>Next time this will be fast,</p>
-              <p>but for now we have to get</p>
-              <p>your data from BUNGIE.</p>
-              <p>Hang in there!</p>
-            </LoaderText>
           </Modal>
         }
       </LoaderWrapper>

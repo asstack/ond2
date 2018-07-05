@@ -32,7 +32,7 @@ const splitRaidByWeek = (raidWeeks, raids) => {
 
     const nextRaidWeek = arr[ idx + 1 ] || {};
     accum[ smallDate ] = raids.filter((raid) => {
-      const raidTime = moment.utc(raid.period);
+      const raidTime = moment.utc(raid.raidDate);
       return raidTime.isSameOrAfter(raidWeek) && raidTime.isBefore(nextRaidWeek);
     });
     return accum;
@@ -48,12 +48,12 @@ const splitNightfallByWeek = (weeks, nightfalls) => {
     const smallDate = week.format('MM/DD');
 
     const weekBox = nightfalls.filter(nf => {
-      const time = moment.utc(nf.period);
+      const time = moment.utc(nf.raidDate);
       return time.isSameOrAfter(week) && time.isBefore(nextWeek);
     });
 
     if (weekBox.length > 0) {
-      const constValue = NF_HASHES.all[ weekBox[ 0 ].activityDetails.referenceId ];
+      const constValue = NF_HASHES.all[weekBox[0].referenceId];
       // Each raid week key is made unique by adding the date 'smallDate'
       const nfName = constValue ? `${constValue.name.substring(11)}:D:${smallDate}` : weekRange;
 
@@ -115,7 +115,7 @@ const _normalizeRaidData = (raidData) => (
 
 const extractDuplicates = (data) => {
   const parsed = Object.values(data).reduce((accum, curr) => {
-      const instanceId = curr.activityDetails.instanceId;
+      const instanceId = curr.instanceId;
       if(!!accum[instanceId]) {
         if(curr.values.startSeconds > accum[instanceId].values.startSeconds) {
           accum[instanceId] = curr;
@@ -428,6 +428,83 @@ const normalizeNightfallLikeServer = ({ prestige=[], normal=[] }) => {
   });
 };
 
+const formatPGCRData = (history) => {
+  const normalizedData = history.reduce((accum, data) => [ ...accum, ...data ], []).map(curr => curr.Item);
+
+  return normalizedData.reduce((accum, data) => {
+    const instanceId = data.instanceId;
+    if (!accum[ instanceId ]) {
+      accum[ instanceId ] = data;
+    }
+    return accum;
+  }, {});
+};
+
+const calculateDerivedData = (entries, membershipId) => {
+  const teamCount = entries.length;
+  const totalKills = entries.reduce((teamKills, entry) => {
+    return teamKills + entry.values.kills;
+  }, 0);
+
+  const killRank = entries.sort((entryOne, entryTwo) => {
+    entryOne.values.kills > entryTwo.kills
+  }).findIndex(entry => entry.player.membershipId === membershipId) + 1;
+
+  return { teamCount, totalKills, killRank };
+};
+
+const activityExtractor = membershipId => history => {
+  //TODO: Since history can have null values, that means we are missing something.
+  // Not sure how we respond that that when it happens. Some sort of update?
+  const cleanHistory = history.filter(curr => !!curr && curr !== null);
+  return cleanHistory.map(curr => {
+    const playerEntry = curr.entries.filter(entry => entry.membershipId === membershipId)[ 0 ];
+    const derivedData = calculateDerivedData(curr.entries, membershipId);
+    return {
+      ...curr.activityDetails,
+      ...playerEntry,
+      raidDate: curr.raidDate,
+      ...derivedData
+    }
+  })
+};
+
+const normalizeActivityHistory = (activityHistory, membershipId) => {
+
+  const pgcrData = [
+    ...activityHistory.LEV.normal,
+    ...activityHistory.LEV.prestige,
+    ...activityHistory.EOW,
+    ...activityHistory.SPIRE.normal,
+    ...activityHistory.NF.normal,
+    ...activityHistory.NF.prestige
+  ];
+
+  const extractActivity = activityExtractor(membershipId);
+
+  const history = {
+    raidHistory: {
+      LEV: {
+        normal: extractActivity(activityHistory.LEV.normal),
+        prestige: extractActivity(activityHistory.LEV.prestige)
+      },
+      EOW: extractActivity(activityHistory.EOW),
+      SPIRE: {
+        normal: extractActivity(activityHistory.SPIRE.normal)
+      }
+    },
+    nightfallHistory: {
+      normal: extractActivity(activityHistory.NF.normal),
+      prestige: extractActivity(activityHistory.NF.prestige)
+    }
+  };
+
+  return {
+    history,
+    pgcrData
+  }
+};
+
 const normalize = {
   player: _normalizePlayerProfile,
   raidData: _normalizeRaidData,
@@ -439,7 +516,8 @@ const normalize = {
   raidWeeks: _normalizeRaidWeeks,
   epHistory: _normalizeEP,
   raids: normalizeRaidsLikeServer,
-  nf: normalizeNightfallLikeServer
+  nf: normalizeNightfallLikeServer,
+  activityHistory: normalizeActivityHistory
 };
 
 export default normalize;

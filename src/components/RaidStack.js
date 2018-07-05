@@ -75,7 +75,7 @@ const RaidStack = ({ handleSetFarmCount, handleFetchPGCR, viewRaid, raidWeek, ra
   const completedCount = Object.keys(completedRaids).length;
 
   if(completedCount > Math.abs(maxSuccessRaids)) {
-    const currCount = maxSuccessRaids >= 14 ? Math.abs(maxSuccessRaids) / 2 : maxSuccessRaids;
+    const currCount = maxSuccessRaids >= 14 ? Math.abs(maxSuccessRaids) / 2 : Math.abs(maxSuccessRaids);
     const incCount = completedCount >= 14 ? completedCount / 2 : completedCount;
 
     const incParsed = completedCount >= 14 ? (completedCount * -1) : completedCount;

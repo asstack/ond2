@@ -18,8 +18,16 @@ import {
   SET_PLAYER_CACHE,
   SET_GAMER_TAG_OPTIONS,
   SELECT_GAMER_TAG,
-  SET_NEW_PLAYER, SET_QUICK_STATS,
-  SET_SITE_ERROR, SET_CACHE_TIMEOUT, SET_APP_VERSION, SET_UPDATE_PROMPT, SET_RAID_VIEW_Y_OFFSET, SET_EP_HISTORY
+  SET_NEW_PLAYER,
+  SET_QUICK_STATS,
+  SET_SITE_ERROR,
+  SET_CACHE_TIMEOUT,
+  SET_APP_VERSION,
+  SET_UPDATE_PROMPT,
+  SET_RAID_VIEW_Y_OFFSET,
+  SET_EP_HISTORY,
+  SET_ID_HISTORY,
+  SET_PGCR_HISTORY
 } from "../constants";
 
 // TODO: Need to break this into smaller files.
@@ -222,6 +230,20 @@ const setQuickStats = (state=false, action) => {
   return state;
 };
 
+const setIdHistory = (state=[], action) => {
+  if(action.type === SET_ID_HISTORY) {
+    return action.data
+  }
+  return state;
+};
+
+const setPGCRHistory = (state=[], action) => {
+  if(action.type === SET_PGCR_HISTORY) {
+    return action.data
+  }
+  return state;
+};
+
 const rootReducer = combineReducers({
   fetchLogs,
   cacheTimeout: setCacheTimeOut,
@@ -247,7 +269,9 @@ const rootReducer = combineReducers({
   appVersion: setAppVersion,
   showUpdatePrompt: setUpdatePrompt,
   raidViewYOffset: setRaidViewYOffset,
-  quickStats: setQuickStats
+  quickStats: setQuickStats,
+  idHistory: setIdHistory,
+  pgcrHistory: setPGCRHistory
 });
 
 export default rootReducer;

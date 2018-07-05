@@ -78,6 +78,11 @@ class App extends Component {
     searchPlayer({ displayName: gamerTag, membershipType: -1 });
   };
 
+  pullByMembershipId = (membershipId) => {
+    const { searchPlayer } = this.props;
+    searchPlayer({}, membershipId);
+  };
+
   fetchPGCR = (instanceId) => {
     const { fetchPostGameCarnageReport } = this.props;
     fetchPostGameCarnageReport(instanceId)
@@ -92,7 +97,7 @@ class App extends Component {
     const {
       pgcr, siteError, newPlayer, clearErrorState,
       clearPostGameCarnageReport, loading, clearLoader,
-      showUpdatePrompt, location, quickStats
+      showUpdatePrompt, location, quickStats, playerProfile
     } = this.props;
 
     const handleUpdatePromptClicked = () => {
@@ -107,7 +112,7 @@ class App extends Component {
       this.previousLocation !== location
     ); // Not initial render
 
-    const renderFooter = !isModal && location.pathname.indexOf('pgcr') < 0;
+    // const renderFooter = !isModal && location.pathname.indexOf('pgcr') < 0;
 
     return (
       <AppWrapper>
@@ -120,7 +125,7 @@ class App extends Component {
             </MenuToggleWrapper>
           }
 
-          <LogoLoader newPlayer={newPlayer} quickStats={quickStats} loading={loading} />
+          <LogoLoader playerProfile={playerProfile} newPlayer={newPlayer} quickStats={quickStats} loading={loading} />
 
           <Route exact path="/" render={data => (
             <Landing loading={loading} clearErrorState={clearErrorState} {...data} />
@@ -129,6 +134,7 @@ class App extends Component {
           <Route path="/player/:playerId" render={(data) => (
             <PlayerDataView
               handlePlayerSearch={this.searchByGamerTag}
+              handleBackNav={this.pullByMembershipId}
               clearErrorState={clearErrorState}
               {...this.props}
               {...data}
@@ -168,6 +174,7 @@ class App extends Component {
 
 const mapStateToProps = state => {
   return {
+    playerProfile: state.playerProfile,
     pgcr: state.postGameCarnageReport,
     loading: state.loading,
     newPlayer: state.newPlayer,

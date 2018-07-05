@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { call, put, take, spawn, select } from 'redux-saga/effects';
+import { call, put, take, spawn, all, select } from 'redux-saga/effects';
 import { searchPlayer } from "../../services/destiny-services";
 import * as consts from "../constants";
 import collectActivityHistory from './activityHistorySaga';
@@ -49,34 +49,43 @@ function* clearSearchData() {
   yield put({ type: consts.SET_GAMER_TAG_OPTIONS, data: [] });
 }
 
-export default function* fetchPlayerProfile({ data }) {
+export default function* fetchPlayerProfile({ data, backId=false }) {
   try {
     yield put({ type: consts.SET_LOADING, data: true });
     yield call(clearSearchData);
     yield put({ type: consts.SET_PLAYER_PRIVACY, data: false });
 
-    const searchResults = yield call(searchPlayer, data);
+    const idHistory = yield select(state => state.idHistory);
 
-    let playerSearch;
+    let playerSearch = backId ? {} : '';
 
-    if(searchResults.length <= 0) {
-      return yield call(handleSearchPlayerFailure);
-    }
-    else if( searchResults.length === 1) {
-     playerSearch = searchResults[0];
+    if(backId) {
+      idHistory.pop();
+      playerSearch.membershipId = backId;
     }
     else {
-      yield put({ type: consts.SET_LOADING, data: true });
-      yield put({ type: consts.SET_GAMER_TAG_OPTIONS, data: searchResults });
-      yield put({ type: consts.SET_LOADING, data: false });
+      const searchResults = yield call(searchPlayer, data);
 
-      const searchSelection = yield take([consts.SELECT_GAMER_TAG]);
-      yield put({ type: consts.SET_GAMER_TAG_OPTIONS, data: [] });
-      yield put({ type: consts.SET_LOADING, data: true });
-      playerSearch = searchResults.filter(curr => curr.membershipId === searchSelection.data.key)[0];
+      if (searchResults.length <= 0) {
+        return yield call(handleSearchPlayerFailure);
+      }
+      else if (searchResults.length === 1) {
+        playerSearch = searchResults[ 0 ];
+      }
+      else {
+        yield put({type: consts.SET_LOADING, data: true});
+        yield put({type: consts.SET_GAMER_TAG_OPTIONS, data: searchResults});
+        yield put({type: consts.SET_LOADING, data: false});
+
+        const searchSelection = yield take([ consts.SELECT_GAMER_TAG ]);
+        yield put({type: consts.SET_GAMER_TAG_OPTIONS, data: []});
+        yield put({type: consts.SET_LOADING, data: true});
+        playerSearch = searchResults.filter(curr => curr.membershipId === searchSelection.data.key)[ 0 ];
+      }
     }
 
     const membershipId = playerSearch.membershipId;
+    yield put({ type: consts.SET_ID_HISTORY, data: [...idHistory, membershipId ] });
 
     const playerProfileCache = yield select(state => state.playerProfile);
     const playerProfileCacheCheck = Object.keys(playerProfileCache).indexOf(membershipId) >= 0;
@@ -84,18 +93,23 @@ export default function* fetchPlayerProfile({ data }) {
     if(playerProfileCacheCheck && playerProfileCache[membershipId].expires.isAfter(moment)) {
       yield put({type: consts.SET_RAID_HISTORY, data: playerProfileCache[membershipId]});
     } else {
-      yield spawn(collectProfile, membershipId);
+      yield call(collectProfile, membershipId);
     }
 
     const activityHistoryCache = yield select(state => state.activityHistoryCache);
+    const pgcrCache = yield select(state => state.pgcrCache);
     const activityHistoryCacheCheck = Object.keys(activityHistoryCache).indexOf(membershipId) >= 0;
 
     const playersActivityHistory = activityHistoryCache[membershipId];
+    const playersPGCR = pgcrCache[membershipId];
     if(activityHistoryCacheCheck && playersActivityHistory.expires.isAfter(moment())) {
       console.log('servedFromCache');
-      yield put({type: consts.SET_RAID_HISTORY, data: playersActivityHistory.raidHistory });
-      yield put({type: consts.SET_NF_HISTORY, data: playersActivityHistory.nightfallHistory });
-      yield put({ type: consts.SET_LOADING, data: false });
+      yield all([
+        put({type: consts.SET_RAID_HISTORY, data: playersActivityHistory.raidHistory }),
+        put({type: consts.SET_NF_HISTORY, data: playersActivityHistory.nightfallHistory }),
+        put({ type: consts.SET_PGCR_HISTORY, data: playersPGCR }),
+        put({ type: consts.SET_LOADING, data: false })
+      ]);
     } else {
       yield spawn(collectActivityHistory, membershipId);
     }

@@ -13,6 +13,10 @@ const RaidWeekWrapper = styled.div`
   align-items: center;
   height: ${({ success, maxCount, neg }) => {
     const size = neg ? 12 : 24;
+    //console.log('size', size);
+    //console.log('success', success);
+    //console.log('maxCount', maxCount);
+    //console.log('neg', neg);
     return success ? `${(size * maxCount) + maxCount + 12}px` : 'fit-content'
   }};
   width: 98%;
@@ -87,6 +91,7 @@ const RaidWeek = ({ raid='nf', raids, handleFetchPGCR, success=true, maxCount })
   const manyRaids = Object.values(raids).length >= 14;
 
   const farmKillLimit = raid === 'sp' ? 700 : 400;
+  console.log('maxCount', maxCount);
 
   return (
     <RaidWeekWrapper success={success} maxCount={Math.abs(maxCount)} neg={maxCount < 0}>
@@ -99,15 +104,10 @@ const RaidWeek = ({ raid='nf', raids, handleFetchPGCR, success=true, maxCount })
           : 'red';
 
         const barSize = tinyBarSizeRequired ? 'tiny' : 'small';
-
         const time = `${Number.parseFloat(currRaid.values.activityDurationSeconds/60).toFixed(2)}`;
-
         const value = success ? isNF ? currRaid.values.score : time : 100;
-
         const total = success ? isNF ? currRaid.values.teamScore : 120 : 100;
-
         const percentWidth =  (success && !isNF) ? Number.parseFloat(time).toFixed(0) : 100;
-
         const popUpContent =
           manyRaids
             ? (

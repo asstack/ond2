@@ -77,15 +77,12 @@ const RaidStack = ({ handleSetFarmCount, handleFetchPGCR, viewRaid, raidWeek, ra
   if(completedCount > Math.abs(maxSuccessRaids)) {
     const currCount = maxSuccessRaids >= 14 ? Math.abs(maxSuccessRaids) / 2 : Math.abs(maxSuccessRaids);
     const incCount = completedCount >= 14 ? completedCount / 2 : completedCount;
-
     const incParsed = completedCount >= 14 ? (completedCount * -1) : completedCount;
     incCount > currCount ? handleSetMaxSuccessRaids(incParsed) : null;
   }
 
   const [date, name] = viewRaid === 'nf' ? weekTitle : week.split(':D:').reverse();
-
   const farmKillLimit = raid === 'sp' ? 700 : 400;
-
   const sortedCompletions = completedRaids.sort((a, b) => a.totalKills >= farmKillLimit ? -1 : 1);
 
   return(
@@ -94,8 +91,8 @@ const RaidStack = ({ handleSetFarmCount, handleFetchPGCR, viewRaid, raidWeek, ra
         {name}
         <HeaderDate>{date.substring(0, 5)}</HeaderDate>
       </RaidWeekHeader>
-      <RaidWeek raid={raid} raids={sortedCompletions} maxCount={maxSuccessRaids} handleFetchPGCR={handleFetchPGCR} />
-      <RaidWeek success={false} raids={failedRaids} handleFetchPGCR={handleFetchPGCR} />
+      <RaidWeek raid={raid} raids={sortedCompletions} maxCount={Math.abs(maxSuccessRaids)} handleFetchPGCR={handleFetchPGCR} />
+      <RaidWeek success={false} raids={failedRaids} maxCount={0} handleFetchPGCR={handleFetchPGCR} />
     </RaidWeekContainer>
   );
 };

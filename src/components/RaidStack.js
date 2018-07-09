@@ -59,9 +59,11 @@ const isApplicableRaid = (raid) => {
 };
 
 const RaidStack = ({ handleSetFarmCount, handleFetchPGCR, viewRaid, raidWeek, raid, maxSuccessRaids, handleSetMaxSuccessRaids, weekTitle }) => {
+  console.log('raidWeek', raidWeek);
   const [week, raids] = raidWeek;
   const raidValues = Object.values(raids);
 
+  console.log('raids', raids);
   const completedRaids =
     (viewRaid === 'nf' || viewRaid === 'ep') ?
       raidValues.filter(raid => raid.values.completionReason === 0 && raid.values.completed === 1)
@@ -74,10 +76,16 @@ const RaidStack = ({ handleSetFarmCount, handleFetchPGCR, viewRaid, raidWeek, ra
 
   const completedCount = Object.keys(completedRaids).length;
 
+  console.log('completedRaids', completedRaids);
+  console.log('completedCount', completedCount);
   if(completedCount > Math.abs(maxSuccessRaids)) {
     const currCount = maxSuccessRaids >= 14 ? Math.abs(maxSuccessRaids) / 2 : Math.abs(maxSuccessRaids);
     const incCount = completedCount >= 14 ? completedCount / 2 : completedCount;
     const incParsed = completedCount >= 14 ? (completedCount * -1) : completedCount;
+
+    console.log('incCount', incCount);
+    console.log('currCount', currCount);
+
     incCount > currCount ? handleSetMaxSuccessRaids(incParsed) : null;
   }
 

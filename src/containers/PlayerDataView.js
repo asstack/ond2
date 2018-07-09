@@ -192,6 +192,9 @@ class RaidWeekViewer extends Component {
 
     const shouldRender = (!loading && raidWeeks.length > 0 && !notFound && !playerPrivacy);
 
+    console.log('maxSuccessRaids', maxSuccessRaids);
+    console.log('raidWeeks', raidWeeks);
+    console.log('raidHistory', raidHistory);
     return (
       <PlayerDataViewWrapper flexMobile={isMobile} ref={this.yOffsetRef}>
 
@@ -221,7 +224,7 @@ class RaidWeekViewer extends Component {
           </Grid.Row>
 
             {shouldRender &&
-              <Grid.Row style={{ marginTop: '-1px' }}reversed='computer tablet' className="raid-stack-row" columns={6}>
+              <Grid.Row style={{ marginTop: '-1px' }} reversed='computer tablet' className="raid-stack-row" columns={6}>
                 {raidWeeks.map((raidWeek, idx) => {
                   return (
                     <Grid.Column textAlign="center" key={shortid.generate()}>

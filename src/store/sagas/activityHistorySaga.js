@@ -67,6 +67,8 @@ export default function* collectActivityHistory(membershipId) {
     call(fetchExactActivityHistory, membershipId, 'nightfall'),
   ]);
 
+  console.log('fetches', fetches);
+
   const [ spire, lev, eow, nf ] = fetches;
   const activityHistory = {
     SPIRE: { normal: spire.normal || [] },
@@ -91,6 +93,9 @@ export default function* collectActivityHistory(membershipId) {
     const normalizedRH = normalize.raidHistory(history.raidHistory);
     const normalizedEP = {}; //normalize.epHistory(activityHistory.epHistory);
     const normalizedPGCR = pgcrData;
+
+    console.log('normalizedNF', normalizedNF);
+    console.log('normalizedRH', normalizedRH);
 
     yield all([
       put({type: consts.SET_NF_HISTORY, data: normalizedNF}),

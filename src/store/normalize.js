@@ -31,8 +31,9 @@ const splitRaidByWeek = (raidWeeks, raids) => {
     const smallDate = raidWeek.format('MM/DD/YY');
 
     const nextRaidWeek = arr[ idx + 1 ] || {};
+
     accum[ smallDate ] = raids.filter((raid) => {
-      const raidTime = moment.utc(raid.raidDate);
+      const raidTime = moment.utc(raid.raidDate, 'MM-DD-YYYY HH:mm a');
       return raidTime.isSameOrAfter(raidWeek) && raidTime.isBefore(nextRaidWeek);
     });
     return accum;
@@ -48,7 +49,7 @@ const splitNightfallByWeek = (weeks, nightfalls) => {
     const smallDate = week.format('MM/DD');
 
     const weekBox = nightfalls.filter(nf => {
-      const time = moment.utc(nf.raidDate);
+      const time = moment.utc(nf.raidDate, 'MM-DD-YYYY HH:mm a');
       return time.isSameOrAfter(week) && time.isBefore(nextWeek);
     });
 
@@ -211,10 +212,12 @@ const _normalizeRaidHistory = ({ EOW, LEV, SPIRE }) => {
   const LEV_PrestigeRaids = extractDuplicates(LEV.prestige);
   const SPIRE_NormalRaids = extractDuplicates(SPIRE.normal);
 
+
   const EOW_RaidsByWeek = splitRaidByWeek(EOW_RaidWeeks, EOW_Raids);
   const LEV_NormalRaidsByWeek = splitRaidByWeek(LEV_RaidWeeks, LEV_NormalRaids);
   const LEV_PrestigeRaidsByWeek = splitRaidByWeek(LEV_RaidWeeks, LEV_PrestigeRaids);
   const SPIRE_NormalRaidsByWeek = splitRaidByWeek(SPIRE_RaidWeeks, SPIRE_NormalRaids);
+
 
   const raidHistory = { EOW: {}, LEV: { normal: {}, prestige: {} }, SPIRE: { normal: {} }};
 

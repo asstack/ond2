@@ -36,6 +36,8 @@ class Landing extends Component {
 
   componentDidMount() {
     this.props.clearErrorState();
+    this.props.clearLoader();
+
   }
 
   playerSearch = (name) => {

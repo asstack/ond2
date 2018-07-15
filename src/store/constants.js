@@ -20,6 +20,7 @@ export const SET_EP_HISTORY = 'set_ep_history';
 export const SET_QUICK_STATS = 'set_quick_stats';
 export const SET_ID_HISTORY = 'set_id_history';
 export const SET_PGCR_HISTORY = 'set_pgcr_history';
+export const SET_CHAR_ACTIVITIES = 'set_char_activities';
 
 export const SET_PGCR_CACHE = 'set_pgcr_cache';
 export const SET_ACTIVITY_HISTORY_CACHE = 'set_activity_history_cache';
@@ -32,6 +33,7 @@ export const FETCH_PLAYER_PROFILE = 'fetch_player_profile';
 export const FETCH_PGCR = 'fetch_pgcr';
 
 export const LOAD_PUBLIC_MILESTONE_DATA = 'load_public_milestone_data';
+export const SYNC_NEW_PLAYER_DATA = 'sync_new_player_data';
 
 export const SET_LOADING = 'toggle_loading';
 export const TOGGLE_PLAYER_SEARCH = 'set_player_search';

@@ -114,6 +114,22 @@ const _normalizeRaidData = (raidData) => (
   }, {})
 );
 
+const extractDuplicatesLikeServer = (data) => {
+  const parsed = data.reduce((accum, curr) => {
+      const instanceId = curr.activityDetails.instanceId;
+      if(!!accum[instanceId]) {
+        if(curr.values.startSeconds > accum[instanceId].values.startSeconds) {
+          accum[instanceId] = curr;
+        }
+      } else {
+        accum[instanceId] = curr;
+      }
+
+      return accum;
+    }, {});
+  return Object.values(parsed);
+};
+
 const extractDuplicates = (data) => {
   const parsed = Object.values(data).reduce((accum, curr) => {
       const instanceId = curr.instanceId;
@@ -127,7 +143,6 @@ const extractDuplicates = (data) => {
 
       return accum;
     }, {});
-
   return Object.values(parsed);
 };
 
@@ -391,10 +406,10 @@ const normalizeRaidsLikeServer = (activityHistory, dateLastUpdated) => {
 
   const [levPrestige, levNormal] = _splitLevByMode(LEV, 'lev');
 
-  const EOW_Raids = extractDuplicates(EOW);
-  const LEV_NormalRaids = extractDuplicates(levNormal);
-  const LEV_PrestigeRaids = extractDuplicates(levPrestige);
-  const SPIRE_NormalRaids = extractDuplicates(SPIRE);
+  const EOW_Raids = extractDuplicatesLikeServer(EOW);
+  const LEV_NormalRaids = extractDuplicatesLikeServer(levNormal);
+  const LEV_PrestigeRaids = extractDuplicatesLikeServer(levPrestige);
+  const SPIRE_NormalRaids = extractDuplicatesLikeServer(SPIRE);
 
   const eow = serverNormalizeRaidData(EOW_Raids);
   const lev = { normal: serverNormalizeRaidData(LEV_NormalRaids), prestige: serverNormalizeRaidData(LEV_PrestigeRaids) };
@@ -411,10 +426,10 @@ const normalizeNightfallLikeServer = ({ prestige=[], normal=[] }) => {
   const normalizePrestige = Object.values(prestige).map(nf => ({...nf, values: _normalizeRaidValues(nf.values)}));
   const normalizedNormal = Object.values(normal).map(nf => ({...nf, values: _normalizeRaidValues(nf.values)}));
 
-  const nfNSuccess = normalizePrestige.filter((raid) => raid.values.completionReason === 0 && raid.values.completed === 1).length;
+  const nfNSuccess = normalizedNormal.filter((raid) => raid.values.completionReason === 0 && raid.values.completed === 1).length;
   const nfPSuccess = normalizePrestige.filter((raid) => raid.values.completionReason === 0 && raid.values.completed === 1).length;
 
-  const nfNFails = normalizePrestige.filter(raid => raid.values.completionReason !== 0 && raid.values.completed !== 1).length;
+  const nfNFails = normalizedNormal.filter(raid => raid.values.completionReason !== 0 && raid.values.completed !== 1).length;
   const nfPFails = normalizePrestige.filter(raid => raid.values.completionReason !== 0 && raid.values.completed !== 1).length;
 
   return ({
@@ -499,7 +514,8 @@ const normalizeActivityHistory = (activityHistory, membershipId) => {
     nightfallHistory: {
       normal: extractActivity(activityHistory.NF.normal),
       prestige: extractActivity(activityHistory.NF.prestige)
-    }
+    },
+    characterActivities: activityHistory.characterActivities
   };
 
   return {

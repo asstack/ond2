@@ -12,7 +12,7 @@ import {
   SET_LOADING,
   CONTACT_REDDIT,
   SET_SITE_ERROR,
-  SET_UPDATE_PROMPT
+  SET_UPDATE_PROMPT, SET_ID_HISTORY
 } from "./store/constants";
 
 import Landing from './containers/Landing';
@@ -69,13 +69,9 @@ class App extends Component {
     this.previousLocation = this.props.location;
   }
 
-  componentDidMount() {
-
-  }
-
-  searchByGamerTag = (gamerTag) => {
+  searchByGamerTag = (gamerTag, event) => {
     const { searchPlayer } = this.props;
-    searchPlayer({ displayName: gamerTag, membershipType: -1 });
+    searchPlayer({ displayName: gamerTag, membershipType: -1, event });
   };
 
   pullByMembershipId = (membershipId) => {
@@ -97,7 +93,7 @@ class App extends Component {
     const {
       pgcr, siteError, newPlayer, clearErrorState,
       clearPostGameCarnageReport, loading, clearLoader,
-      showUpdatePrompt, location, quickStats, playerProfile
+      showUpdatePrompt, location, quickStats, playerProfile, setPlatform
     } = this.props;
 
     const handleUpdatePromptClicked = () => {
@@ -128,13 +124,14 @@ class App extends Component {
           <LogoLoader playerProfile={playerProfile} newPlayer={newPlayer} quickStats={quickStats} loading={loading} />
 
           <Route exact path="/" render={data => (
-            <Landing loading={loading} clearErrorState={clearErrorState} {...data} />
+            <Landing loading={loading} clearErrorState={clearErrorState} clearLoader={clearLoader} {...data} />
           )} />
 
           <Route path="/player/:playerId" render={(data) => (
             <PlayerDataView
               handlePlayerSearch={this.searchByGamerTag}
               handleBackNav={this.pullByMembershipId}
+              setPlatform={setPlatform}
               clearErrorState={clearErrorState}
               {...this.props}
               {...data}
@@ -180,7 +177,8 @@ const mapStateToProps = state => {
     newPlayer: state.newPlayer,
     siteError: state.siteError,
     showUpdatePrompt: state.showUpdatePrompt,
-    quickStats: state.quickStats
+    quickStats: state.quickStats,
+    platform: state.platform
   }
 };
 
@@ -191,7 +189,8 @@ const mapDispatchToProps = dispatch => {
     searchPlayer: pathParams => dispatch({ type: consts.FETCH_PLAYER_PROFILE, data: pathParams }),
     clearLoader: () => dispatch({ type: SET_LOADING, data: false }),
     clearErrorState: () => dispatch({ type: SET_SITE_ERROR, data: false }),
-    clearUpdatePrompt: () => dispatch({ type: SET_UPDATE_PROMPT, data: false })
+    clearUpdatePrompt: () => dispatch({ type: SET_UPDATE_PROMPT, data: false }),
+    setPlatform: (platform) => dispatch({ type: SET_ID_HISTORY, data: platform })
   }
 };
 

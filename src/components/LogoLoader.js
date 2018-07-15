@@ -44,21 +44,24 @@ const LoaderWrapper = styled.div`
 `;
 
 const QuickStatsWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
   ${({ quickStats }) => !quickStats ? 'visibility: hidden' : ''}
-  margin-top: 30px;
+  margin-top: 20px;
+  
+  .require-stats {
+    margin: 0 !important;
+  }
 `;
 
 const LoaderText = styled.div`
   text-align: center;
   font-size: 28px;
-  margin-bottom: 10px;
+  margin 10px 0;
   
   p {
     margin-bottom: 10px;
-    
-    &:last-child {
-      margin-top: 20px;
-    }
   }
   
   @media only screen and (max-width: 450px) {
@@ -80,37 +83,37 @@ const LoaderText = styled.div`
 `;
 
 const LogoLoader = ({ playerProfile, newPlayer = true, quickStats = false, loading = false }) => {
-  const levN = quickStats ? quickStats.raidCount.lev.success.normal : '';
-  const levP = quickStats ? quickStats.raidCount.lev.success.prestige : '';
+  const levNormal = quickStats ? quickStats.raidCount.lev.success.normal : '';
+  const levPrestige = quickStats ? quickStats.raidCount.lev.success.prestige : '';
   const eow = quickStats ? quickStats.raidCount.eow.success.normal : '';
   const spire = quickStats ? quickStats.raidCount.spire.success.normal : '';
+  const nfNormal = quickStats ? quickStats.nfCount.success.normal : '';
+  const nfPrestige = quickStats ? quickStats.nfCount.success.prestige : '';
 
   if(loading) {
     return (
       <LoaderWrapper>
         {!newPlayer ? <OND2Logo/> :
-          <Modal classNames={{modal: 'quick-stats'}} open={loading} close={!loading} showCloseIcon={false} closeOnOverlayClick={false} center>
-
-            <Header style={{ textDecoration: 'underline' }} textAlign="center">Quick Stats</Header>
-
+          <Modal size="large" classNames={{modal: 'quick-stats'}} open={loading} close={!loading} showCloseIcon={false} closeOnOverlayClick={false} onClose={() => {}} center>
             <LoaderText>
                 <OND2Logo/>
-                <p>Next time this will be fast,</p>
-                <p>but for now we have to get</p>
-                <p>your data from BUNGIE.</p>
-                <p>Hang in there!</p>
+                <p>Analyzing bungie data for full clears vs farm.</p>
+                <p>Please be patient this only happens <b>once</b>,</p>
+                <p>next time this will be much faster.</p>
+                <p>Till then some quick stats!</p>
             </LoaderText>
+
+            <Header style={{ textDecoration: 'underline' }} textAlign="center">Quick Stats</Header>
 
             <QuickStatsWrapper quickStats={quickStats}>
               <Item.Group className="require-stats" divided>
                 <Item>
-                  <Item.Image size='tiny' src="/assets/leviathan_splash.jpg"/>
+                  <Item.Image size='tiny' src="/assets/spire_splash.jpg"/>
                   <Item.Content verticalAlign='middle'>
-                    <Item.Header>Leviathan</Item.Header>
-                    <Item.Description>{levP} Prestige | {levN} Normal</Item.Description>
+                    <Item.Header>Spire of Stars</Item.Header>
+                    <Item.Description>{spire} Normal</Item.Description>
                   </Item.Content>
                 </Item>
-
                 <Item>
                   <Item.Image size='tiny' src="/assets/eow_splash.jpg"/>
                   <Item.Content verticalAlign='middle'>
@@ -118,12 +121,20 @@ const LogoLoader = ({ playerProfile, newPlayer = true, quickStats = false, loadi
                     <Item.Description>{eow} Normal</Item.Description>
                   </Item.Content>
                 </Item>
-
+              </Item.Group>
+              <Item.Group className="require-stats" divided>
                 <Item>
-                  <Item.Image size='tiny' src="/assets/spire_splash.jpg"/>
+                  <Item.Image size='tiny' src="/assets/leviathan_splash.jpg"/>
                   <Item.Content verticalAlign='middle'>
-                    <Item.Header>Spire of Stars</Item.Header>
-                    <Item.Description>{spire} Normal</Item.Description>
+                    <Item.Header>Leviathan</Item.Header>
+                    <Item.Description>{levPrestige} Prestige | {levNormal} Normal</Item.Description>
+                  </Item.Content>
+                </Item>
+                <Item>
+                  <Item.Image size='tiny' src="/assets/nightfall_splash.jpg"/>
+                  <Item.Content verticalAlign='middle'>
+                    <Item.Header>Nightfall</Item.Header>
+                    <Item.Description>{nfPrestige} Prestige | {nfNormal} Normal</Item.Description>
                   </Item.Content>
                 </Item>
               </Item.Group>

@@ -13,10 +13,6 @@ const RaidWeekWrapper = styled.div`
   align-items: center;
   height: ${({ success, maxCount, neg }) => {
     const size = neg ? 12 : 24;
-    //console.log('size', size);
-    //console.log('success', success);
-    //console.log('maxCount', maxCount);
-    //console.log('neg', neg);
     return success ? `${(size * maxCount) + maxCount + 12}px` : 'fit-content'
   }};
   width: 98%;
@@ -91,7 +87,6 @@ const RaidWeek = ({ raid='nf', raids, handleFetchPGCR, success=true, maxCount })
   const manyRaids = Object.values(raids).length >= 14;
 
   const farmKillLimit = raid === 'sp' ? 700 : 400;
-  console.log('maxCount', maxCount);
 
   return (
     <RaidWeekWrapper success={success} maxCount={Math.abs(maxCount)} neg={maxCount < 0}>
@@ -114,15 +109,16 @@ const RaidWeek = ({ raid='nf', raids, handleFetchPGCR, success=true, maxCount })
               <div>
                 <BarValues>{ isNF ? currRaid.values.teamScore : `${percentWidth} m`}</BarValues>
                 <Progress style={{ minWidth: 150}} value={value} total={total} size="small" color={color} />
-                {isNF
-                  ? `Score: ${currRaid.values.score}/${currRaid.values.teamScore} | ${time} m`
-                    : `KDA: ${currRaid.values.kills} / ${currRaid.values.deaths} / ${currRaid.values.assists}`
-                }
+                Kill Rank ({currRaid.killRank}-{currRaid.teamCount})
+                <br />
+                Death Rank: ({currRaid.killRank}-{currRaid.teamCount})
               </div>
-            )
-              : isNF
-                ? `Score: ${currRaid.values.score}/${currRaid.values.teamScore} ${time} m`
-                  : `KDA: ${currRaid.values.kills} / ${currRaid.values.deaths} / ${currRaid.values.assists}`;
+            ) :
+            <div>
+              Kill Rank ({currRaid.killRank}-{currRaid.teamCount})
+              <br />
+              Death Rank: ({currRaid.killRank}-{currRaid.teamCount})
+            </div>;
 
 
         const RaidProgressBar = (

@@ -59,8 +59,8 @@ const TypeSelectorContainer = styled.div`
 
 const ActivityTypeSelector = (props) => {
   return (
-    <Grid className="raid-selection" container>
-      <Grid.Row style={{ paddingBottom: 0 }} container>
+    <Grid className="raid-selection" container={true}>
+      <Grid.Row style={{ paddingBottom: 0 }} container="true">
         <TypeSelectorContainer>
           <ActivitySelector onClick={ () => props.handleSetActivityType('raid') } selected={props.activityType === 'raid'}>
             <p>Raids</p>
@@ -70,7 +70,7 @@ const ActivityTypeSelector = (props) => {
           </ActivitySelector>
         </TypeSelectorContainer>
       </Grid.Row>
-      <Grid.Row style={{ paddingTop: 0, paddingRight: 1 }} container>
+      <Grid.Row style={{ paddingTop: 0, paddingRight: 1 }} container="true">
         {
           props.activityType === 'raid'
             ? <RaidSelection {...props} />

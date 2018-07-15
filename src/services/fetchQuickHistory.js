@@ -45,24 +45,13 @@ const fetchQuickHistory = async ({membershipId, characterIds, membershipType}) =
 
     const [ raidActivity, nfNormalActivities, nfPrestigeActivities, epActivities ] = await Promise.all([ raidPromises, nfNormalPromises, nfPrestigePromises, epPromises ]);
 
-    const [characterOne, characterTwo, characterThree] = raidActivity;
-
-    console.log('characterOne', characterOne);
-    console.log('characterTwo', characterTwo);
-    console.log('characterThree', characterThree);
-
     const nfNormalData = isObjectEmpty(nfNormalActivities) ? [] : nfNormalActivities.reduce((accum, data) => [ ...accum, ...data ], []);
     const nfPrestigeData = isObjectEmpty(nfPrestigeActivities) ? [] : nfPrestigeActivities.reduce((accum, data) => [ ...accum, ...data ], []);
-    const epData = isObjectEmpty(epActivities) ? [] : epActivities.reduce((accum, data) => [ ...accum, ...data ], []);
+    // const epData = isObjectEmpty(epActivities) ? [] : epActivities.reduce((accum, data) => [ ...accum, ...data ], []);
 
     const nightfallHistory = normalize.nf({normal: nfNormalData, prestige: nfPrestigeData});
     const raidHistory = normalize.raids(raidActivity.reduce((accum, data) => [ ...accum, ...data ], []));
-    const epHistory = {}; // normalize.ep(epData);
-
-
-    console.log('nightfallHistory', nightfallHistory);
-    console.log('raidHistory', raidHistory);
-
+    // const epHistory = normalize.ep(epData);
     return {
       raidCount: raidHistory.raidCount,
       nfCount: nightfallHistory.raidCount

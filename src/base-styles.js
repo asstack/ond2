@@ -17,8 +17,8 @@ const baseStyles = () => injectGlobal`
   }
   
   .quick-stats {
-    width: 350px;
-    height: 675px;
+    width: 650px;
+    height: 600px;
   }
   
   .remove-margins.remove-margins.remove-margins {

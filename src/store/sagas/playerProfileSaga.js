@@ -11,6 +11,7 @@ function* handleSearchPlayerFailure() {
 }
 
 function* clearSearchData() {
+  console.log('clear Search');
   yield put({ type: consts.SET_RAID_HISTORY, data: {
     raidCount: {
       eow: {
@@ -49,70 +50,86 @@ function* clearSearchData() {
   yield put({ type: consts.SET_GAMER_TAG_OPTIONS, data: [] });
 }
 
-export default function* fetchPlayerProfile({ data, backId=false }) {
+export default function* fetchPlayerProfile({ data }) {
+  console.log("data", data);
   try {
-    yield put({ type: consts.SET_LOADING, data: true });
+
+    const displayName = yield select(state => state.playerProfile.displayName || '');
+
+    console.log('displayName', displayName);
+    console.log("2displayName2", data.displayName);
+
+     yield put({type: consts.SET_LOADING, data: true});
+
+    let platform = yield select(state => state.platform);
+
     yield call(clearSearchData);
-    yield put({ type: consts.SET_PLAYER_PRIVACY, data: false });
 
-    const idHistory = yield select(state => state.idHistory);
+    if(data.displayName.toLowerCase() !== displayName.toLowerCase()) {
 
-    let playerSearch = backId ? {} : '';
+     if (data.event === 'replace') {
+       console.log('replace');
+       yield put({type: consts.SET_ID_HISTORY, data: 'false'});
+       platform = 'false';
+     }
 
-    if(backId) {
-      idHistory.pop();
-      playerSearch.membershipId = backId;
-    }
-    else {
-      const searchResults = yield call(searchPlayer, data);
+     yield put({type: consts.SET_PLAYER_PRIVACY, data: false});
 
-      if (searchResults.length <= 0) {
-        return yield call(handleSearchPlayerFailure);
-      }
-      else if (searchResults.length === 1) {
-        playerSearch = searchResults[ 0 ];
-      }
-      else {
-        yield put({type: consts.SET_LOADING, data: true});
-        yield put({type: consts.SET_GAMER_TAG_OPTIONS, data: searchResults});
-        yield put({type: consts.SET_LOADING, data: false});
+     let playerSearch = {};
+     const searchResults = yield call(searchPlayer, data);
 
-        const searchSelection = yield take([ consts.SELECT_GAMER_TAG ]);
-        yield put({type: consts.SET_GAMER_TAG_OPTIONS, data: []});
-        yield put({type: consts.SET_LOADING, data: true});
-        playerSearch = searchResults.filter(curr => curr.membershipId === searchSelection.data.key)[ 0 ];
-      }
-    }
+     console.log('searchResults', searchResults);
 
-    const membershipId = playerSearch.membershipId;
-    yield put({ type: consts.SET_ID_HISTORY, data: [...idHistory, membershipId ] });
+     if (searchResults.length <= 0) {
+       return yield call(handleSearchPlayerFailure);
+     }
+     else if (searchResults.length === 1) {
+       playerSearch = searchResults[ 0 ];
+     } else if (platform !== 'false' && !!platform) {
+       playerSearch.membershipId = platform;
+     }
+     else {
+       yield put({type: consts.SET_LOADING, data: true});
+       yield put({type: consts.SET_GAMER_TAG_OPTIONS, data: searchResults});
+       yield put({type: consts.SET_LOADING, data: false});
 
-    const playerProfileCache = yield select(state => state.playerProfile);
-    const playerProfileCacheCheck = Object.keys(playerProfileCache).indexOf(membershipId) >= 0;
+       const searchSelection = yield take([ consts.SELECT_GAMER_TAG ]);
+       yield put({type: '', data: ''});
+       yield put({type: consts.SET_GAMER_TAG_OPTIONS, data: []});
+       yield put({type: consts.SET_LOADING, data: true});
+       playerSearch = searchResults.filter(curr => curr.membershipId === searchSelection.data.key)[ 0 ];
+       yield put({type: consts.SET_ID_HISTORY, data: searchSelection.data.key});
+     }
 
-    if(playerProfileCacheCheck && playerProfileCache[membershipId].expires.isAfter(moment)) {
-      yield put({type: consts.SET_RAID_HISTORY, data: playerProfileCache[membershipId]});
-    } else {
-      yield call(collectProfile, membershipId);
-    }
+     const membershipId = playerSearch.membershipId;
 
-    const activityHistoryCache = yield select(state => state.activityHistoryCache);
-    const pgcrCache = yield select(state => state.pgcrCache);
-    const activityHistoryCacheCheck = Object.keys(activityHistoryCache).indexOf(membershipId) >= 0;
+     const playerProfileCache = yield select(state => state.playerProfile);
+     const playerProfileCacheCheck = Object.keys(playerProfileCache).indexOf(membershipId) >= 0;
 
-    const playersActivityHistory = activityHistoryCache[membershipId];
-    const playersPGCR = pgcrCache[membershipId];
-    if(activityHistoryCacheCheck && playersActivityHistory.expires.isAfter(moment())) {
-      console.log('servedFromCache');
-      yield all([
-        put({type: consts.SET_RAID_HISTORY, data: playersActivityHistory.raidHistory }),
-        put({type: consts.SET_NF_HISTORY, data: playersActivityHistory.nightfallHistory }),
-        put({ type: consts.SET_PGCR_HISTORY, data: playersPGCR }),
-        put({ type: consts.SET_LOADING, data: false })
-      ]);
-    } else {
-      yield spawn(collectActivityHistory, membershipId);
-    }
+     if (playerProfileCacheCheck && playerProfileCache[ membershipId ].expires.isAfter(moment)) {
+       yield put({type: consts.SET_RAID_HISTORY, data: playerProfileCache[ membershipId ]});
+     } else {
+       yield call(collectProfile, membershipId);
+     }
+
+     const activityHistoryCache = yield select(state => state.activityHistoryCache);
+     const pgcrCache = yield select(state => state.pgcrCache);
+     const activityHistoryCacheCheck = Object.keys(activityHistoryCache).indexOf(membershipId) >= 0;
+
+     const playersActivityHistory = activityHistoryCache[ membershipId ];
+     const playersPGCR = pgcrCache[ membershipId ];
+     if (activityHistoryCacheCheck && playersActivityHistory.expires.isAfter(moment())) {
+       console.log('servedFromCache');
+       yield all([
+         put({type: consts.SET_RAID_HISTORY, data: playersActivityHistory.raidHistory}),
+         put({type: consts.SET_NF_HISTORY, data: playersActivityHistory.nightfallHistory}),
+         put({type: consts.SET_PGCR_HISTORY, data: playersPGCR}),
+         put({type: consts.SET_LOADING, data: false})
+       ]);
+     } else {
+       yield spawn(collectActivityHistory, membershipId);
+     }
+   }
   }
   catch(error) {
     console.log('error', error);

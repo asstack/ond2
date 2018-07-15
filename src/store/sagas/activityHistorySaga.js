@@ -1,9 +1,9 @@
 import moment from 'moment';
-import { call, put, select, all, spawn, cancel } from 'redux-saga/effects';
-import { fetchActivityHistory, fetchActivityUpdate, fetchExactActivityHistory } from "../../services/destiny-services";
-import { delay } from "redux-saga";
+import { call, put, select, all, spawn } from 'redux-saga/effects';
+import { fetchExactActivityHistory } from "../../services/destiny-services";
 import normalize from "../normalize";
 import * as consts from "../constants";
+import { delay } from "redux-saga";
 import collectQuickStats from "./quickStatsSaga";
 
 const isActivityData = (activity) => {
@@ -20,32 +20,8 @@ const activityDataFound = (activityHistory) =>
     isActivityData(activityHistory.NF.prestige)
   );
 
-const playerActivityUpdate = {};
 const shouldUpdate = {};
 let newSearch = false;
-
-function* syncPlayerNewData(membershipId, delayMs) {
-  let count = 0;
-
-  while(count < 12) {
-    count += 1;
-
-    if(shouldUpdate[membershipId]) {
-      yield delay(delayMs);
-
-      if(shouldUpdate[membershipId]) {
-        const hasUpdate = yield call(fetchActivityUpdate, membershipId);
-
-        if(hasUpdate && shouldUpdate[membershipId]) {
-          yield spawn(collectActivityHistory, membershipId);
-          yield cancel();
-        }
-      }
-    } else {
-      yield cancel();
-    }
-  }
-}
 
 let previousMembershipId = false;
 
@@ -65,42 +41,41 @@ export default function* collectActivityHistory(membershipId) {
     call(fetchExactActivityHistory, membershipId, 'leviathan'),
     call(fetchExactActivityHistory, membershipId, 'eaterOfWorlds'),
     call(fetchExactActivityHistory, membershipId, 'nightfall'),
+    call(fetchExactActivityHistory, membershipId, 'characterActivities'),
   ]);
 
-  console.log('fetches', fetches);
-
-  const [ spire, lev, eow, nf ] = fetches;
+  const [ spire, lev, eow, nf, characterActivities ] = fetches;
   const activityHistory = {
     SPIRE: { normal: spire.normal || [] },
     LEV: { normal: lev.normal || [], prestige: lev.prestige || [] },
     EOW: eow.normal || [],
-    NF: { normal: nf.normal || [], prestige: nf.prestige || [] }
+    NF: { normal: nf.normal || [], prestige: nf.prestige || [] },
+    characterActivities: {}
   };
 
-  console.log('activityHistory', activityHistory);
-  console.log('found? ', activityDataFound(activityHistory));
+  if(!!characterActivities.characterOne) {activityHistory.characterActivities.characterOne = characterActivities.characterOne;}
+  if(!!characterActivities.characterTwo) {activityHistory.characterActivities.characterTwo = characterActivities.characterTwo;}
+  if(!!characterActivities.characterThree) {activityHistory.characterActivities.characterThree = characterActivities.characterThree;}
 
   // Send out multiple queries to get each "set" of data.
   if(activityDataFound(activityHistory)) {
-    const {history, pgcrData} = normalize.activityHistory(activityHistory, membershipId);
+    const {history, pgcrData } = normalize.activityHistory(activityHistory, membershipId);
 
-    console.log('history', history);
     if (!activityDataFound({ ...history.raidHistory, NF: history.nightfallHistory })) {
       yield put({type: consts.SET_SITE_ERROR, data: true});
     }
 
     const normalizedNF = normalize.nightfall(history.nightfallHistory);
     const normalizedRH = normalize.raidHistory(history.raidHistory);
-    const normalizedEP = {}; //normalize.epHistory(activityHistory.epHistory);
+    // const normalizedEP = {}; //normalize.epHistory(activityHistory.epHistory);
     const normalizedPGCR = pgcrData;
 
-    console.log('normalizedNF', normalizedNF);
-    console.log('normalizedRH', normalizedRH);
 
     yield all([
       put({type: consts.SET_NF_HISTORY, data: normalizedNF}),
       put({type: consts.SET_RAID_HISTORY, data: normalizedRH}),
-      put({type: consts.SET_PGCR_HISTORY, data: normalizedPGCR})
+      put({type: consts.SET_PGCR_HISTORY, data: normalizedPGCR}),
+      put({type: consts.SET_CHAR_ACTIVITIES, data: activityHistory.characterActivities})
     ]);
 
     const activityHistoryCache = yield select(state => state.activityHistoryCache);
@@ -110,6 +85,7 @@ export default function* collectActivityHistory(membershipId) {
     activityHistoryCache[ membershipId ] = {
       nightfallHistory: normalizedNF,
       raidHistory: normalizedRH,
+      characterActivities,
       expires: fiveMinutesFromNow
     };
 
@@ -120,9 +96,11 @@ export default function* collectActivityHistory(membershipId) {
       put({type: consts.SET_PGCR_CACHE, data: pgcrCache})
     ]);
 
-    yield put({ type: consts.SET_LOADING, data: false });
     yield put({ type: consts.SET_QUICK_STATS, data: false });
     yield put({ type: consts.SET_NEW_PLAYER, data: false });
+    yield delay(500);
+    yield put({ type: consts.SET_LOADING, data: false });
+
   } else {
 
     yield put({ type: consts.SET_NEW_PLAYER, data: true });
@@ -134,7 +112,7 @@ export default function* collectActivityHistory(membershipId) {
   if (membershipId !== previousMembershipId) {
     //Data exists, so we update behind the scenes. Call update in 10 seconds.
     console.log('sync new player data');
-    yield spawn(syncPlayerNewData, membershipId, 5000);
+    yield put({ type: consts.SYNC_NEW_PLAYER_DATA, data: { membershipId, delayMS: 3000 }});
   }
   previousMembershipId = membershipId;
 }

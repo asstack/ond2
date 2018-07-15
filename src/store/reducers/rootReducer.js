@@ -27,7 +27,8 @@ import {
   SET_RAID_VIEW_Y_OFFSET,
   SET_EP_HISTORY,
   SET_ID_HISTORY,
-  SET_PGCR_HISTORY
+  SET_PGCR_HISTORY,
+  SET_CHAR_ACTIVITIES
 } from "../constants";
 
 // TODO: Need to break this into smaller files.
@@ -55,6 +56,13 @@ const setPlayerProfile = (state=false, action) => {
     default:
       return state;
   }
+};
+
+const setCharacterActivities = (state=[], action) => {
+  if(action.type === SET_CHAR_ACTIVITIES) {
+    return action.data
+  }
+  return state;
 };
 
 const setEPHistory = (state={ epActivities: {}, epSuccessCount: '0'}, action) => {
@@ -230,7 +238,7 @@ const setQuickStats = (state=false, action) => {
   return state;
 };
 
-const setIdHistory = (state=[], action) => {
+const setIdHistory = (state=false, action) => {
   if(action.type === SET_ID_HISTORY) {
     return action.data
   }
@@ -270,8 +278,9 @@ const rootReducer = combineReducers({
   showUpdatePrompt: setUpdatePrompt,
   raidViewYOffset: setRaidViewYOffset,
   quickStats: setQuickStats,
-  idHistory: setIdHistory,
-  pgcrHistory: setPGCRHistory
+  platform: setIdHistory,
+  pgcrHistory: setPGCRHistory,
+  characterActivities: setCharacterActivities
 });
 
 export default rootReducer;

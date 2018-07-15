@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+import { Icon, Grid } from 'semantic-ui-react';
 
 import RaidWeek from '../components/RaidWeek';
 
@@ -33,7 +34,7 @@ const RaidWeekHeader = styled.div`
 `;
 
 const HeaderDate = styled.span`
-  margin: 0 0 0 5px;
+  padding-right: 5px;
   font-family: Montserrat sans-serif;
   font-size: 14px;
   font-weight: bolder;
@@ -43,6 +44,12 @@ const HeaderDate = styled.span`
   letter-spacing: normal;
   text-align: match-parent;
   color: #000000;
+`;
+
+const CharacterCompletions = styled.div`
+  display: flex;
+  justify-content: start;
+  margin-top: 4px;
 `;
 
 // Non-applicable raids
@@ -58,12 +65,11 @@ const isApplicableRaid = (raid) => {
   )
 };
 
-const RaidStack = ({ handleSetFarmCount, handleFetchPGCR, viewRaid, raidWeek, raid, maxSuccessRaids, handleSetMaxSuccessRaids, weekTitle }) => {
-  console.log('raidWeek', raidWeek);
+const RaidStack = ({ characterActivities, handleSetFarmCount, handleFetchPGCR, viewRaid, raidWeek, raid, maxSuccessRaids, handleSetMaxSuccessRaids, weekTitle }) => {
   const [week, raids] = raidWeek;
   const raidValues = Object.values(raids);
 
-  console.log('raids', raids);
+  characterActivities
   const completedRaids =
     (viewRaid === 'nf' || viewRaid === 'ep') ?
       raidValues.filter(raid => raid.values.completionReason === 0 && raid.values.completed === 1)
@@ -76,18 +82,33 @@ const RaidStack = ({ handleSetFarmCount, handleFetchPGCR, viewRaid, raidWeek, ra
 
   const completedCount = Object.keys(completedRaids).length;
 
-  console.log('completedRaids', completedRaids);
-  console.log('completedCount', completedCount);
   if(completedCount > Math.abs(maxSuccessRaids)) {
     const currCount = maxSuccessRaids >= 14 ? Math.abs(maxSuccessRaids) / 2 : Math.abs(maxSuccessRaids);
     const incCount = completedCount >= 14 ? completedCount / 2 : completedCount;
     const incParsed = completedCount >= 14 ? (completedCount * -1) : completedCount;
 
-    console.log('incCount', incCount);
-    console.log('currCount', currCount);
-
     incCount > currCount ? handleSetMaxSuccessRaids(incParsed) : null;
   }
+
+  const characterCompletions = Object.values(characterActivities).reduce((accum, curr) => {
+    accum[curr[0]] = completedRaids.reduce((complete, activity) => {
+      if(curr.indexOf(activity.instanceId) >= 0) {
+        complete = true;
+      }
+      return complete;
+    }, false);
+
+    if(!accum[curr[0]]) {
+      accum[curr[0]] = failedRaids.reduce((fail, activityF) => {
+        if(fail === 'n/a' && curr.indexOf(activityF.instanceId) >= 0) {
+          fail = false
+        }
+        return fail;
+      }, 'n/a')
+    }
+
+    return accum;
+  }, {});
 
   const [date, name] = viewRaid === 'nf' ? weekTitle : week.split(':D:').reverse();
   const farmKillLimit = raid === 'sp' ? 700 : 400;
@@ -96,8 +117,24 @@ const RaidStack = ({ handleSetFarmCount, handleFetchPGCR, viewRaid, raidWeek, ra
   return(
     <RaidWeekContainer>
       <RaidWeekHeader raid={raid}>
-        {name}
-        <HeaderDate>{date.substring(0, 5)}</HeaderDate>
+        <Grid centered>
+          {!!name && <div style={{ display: 'flex', alignItems: 'center'}}><br/> {name}</div>}
+          <Grid.Column width='8' textAlign='right'>
+            <HeaderDate>{date.substring(0, 5)}</HeaderDate>
+          </Grid.Column>
+          <Grid.Column width='8' verticalAlign='middle'>
+            <CharacterCompletions>
+              { Object.entries(characterCompletions).map((curr) =>
+                <Icon
+                  key={curr[0]}
+                  size="small"
+                  name={(curr[1] && curr[1] === 'n/a') ? 'circle outline' : 'circle'}
+                  color={curr[1] ? curr[1] === 'n/a' ? 'black' : 'green' : 'red'}
+                  />
+              )}
+            </CharacterCompletions>
+          </Grid.Column>
+        </Grid>
       </RaidWeekHeader>
       <RaidWeek raid={raid} raids={sortedCompletions} maxCount={Math.abs(maxSuccessRaids)} handleFetchPGCR={handleFetchPGCR} />
       <RaidWeek success={false} raids={failedRaids} maxCount={0} handleFetchPGCR={handleFetchPGCR} />

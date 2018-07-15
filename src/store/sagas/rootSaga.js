@@ -1,15 +1,40 @@
-import { takeEvery, all, call, put, spawn } from 'redux-saga/effects';
+import { takeEvery, takeLatest, all, take, call, cancel, put, cancelled, spawn } from 'redux-saga/effects';
 import * as consts from "../constants";
 import collectPGCR from './pgcrSaga';
 import fetchPlayerProfile from './playerProfileSaga';
 import collectPublicMilestoneData from './publicMilestoneSaga';
-import { fetchPublicMilestones } from "../../services/destiny-services";
+import { fetchActivityUpdate, fetchPublicMilestones } from "../../services/destiny-services";
 import normalize from "../normalize";
+import { delay } from "redux-saga";
+import collectActivityHistory from "./activityHistorySaga";
 
 function* watchProfileCharacters() {
-  yield takeEvery(consts.FETCH_PLAYER_PROFILE, fetchPlayerProfile);
+  yield takeLatest(consts.FETCH_PLAYER_PROFILE, fetchPlayerProfile);
+  yield takeLatest(consts.SYNC_NEW_PLAYER_DATA, syncPlayerNewData);
   yield takeEvery(consts.FETCH_PGCR, collectPGCR);
   yield takeEvery(consts.LOAD_PUBLIC_MILESTONE_DATA, collectPublicMilestoneData);
+}
+
+function* syncPlayerNewData({ data }) {
+  const {membershipId, delayMS} = data;
+  try {
+    console.log('params', data);
+    let count = 0;
+    let hasUpdate = false;
+
+    console.log('membershipId', membershipId);
+    console.log('delayMS', delayMS);
+    while (count < 12 && !hasUpdate) {
+      count += 1;
+      yield delay(delayMS);
+      hasUpdate = yield call(fetchActivityUpdate, membershipId);
+    }
+    yield spawn(collectActivityHistory, membershipId);
+} finally {
+    if(yield cancelled()) {
+      console.log('cancel me... you bitch');
+    }
+  }
 }
 
 function* handleAppVersionCheck(appVersion) {

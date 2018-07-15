@@ -83,15 +83,23 @@ class PlayerSearch extends Component {
   };
 
   state = {
-    playerSearch: this.props.playerId || '',
+    playerSearch: '',
   };
 
   componentDidMount() {
+    const { playerSearch } = this.state;
+    const { playerId } = this.props;
+
     this.focusSearchElement();
+    if(playerSearch === '' && playerId !== '') {
+      this.setState({ playerSearch: playerId });
+    }
   }
 
   componentWillReceiveProps(nextProps) {
-    this.props.playerId !== nextProps.playerId && this.setState({ playerSearch: nextProps.playerId });
+    if(this.props.playerId !== nextProps.playerId) {
+      this.setState({ playerSearch: nextProps.playerId });
+    }
   }
 
   focusSearchElement = () => {
@@ -100,7 +108,8 @@ class PlayerSearch extends Component {
 
   clearSearch = () => {
     this.setState( {
-      playerSearch: ''
+      playerSearch: '',
+      recentClear: true
     })
   };
 
@@ -118,7 +127,7 @@ class PlayerSearch extends Component {
 
   render() {
     const { playerSearch } = this.state;
-    const { handlePlayerSearch, gamerTagOptions } = this.props;
+    const { handlePlayerSearch, gamerTagOptions, playerId } = this.props;
 
     const openSearchSelection = gamerTagOptions ? gamerTagOptions.length > 0 : false;
 
@@ -133,6 +142,7 @@ class PlayerSearch extends Component {
           };
           return accum;
     }, []);
+
 
     const playerSearchDisplay = playerSearch.replace('%23', '#');
 

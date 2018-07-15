@@ -65,22 +65,55 @@ class RaidWeekViewer extends Component {
   }
 
   componentDidMount = () => {
-    const {handlePlayerSearch, match, history} = this.props;
-    handlePlayerSearch(match.params.playerId);
+    const {handlePlayerSearch, match, history, setPlatform} = this.props;
+    console.log('match', match);
+    console.log('history', history);
+
+    if(history.action === 'POP') {
+      if(!!history.location.state && !history.location.state.modal) {
+        const gamerTag = history.location.pathname.split('/')[ 2 ];
+        console.log('upper pop replace', gamerTag);
+        handlePlayerSearch(match.params.playerId);
+      }
+    }
+    else if(history.action === 'REPLACE') {
+      //if(!!history.location.state && !history.location.state.modal) {
+      //  console.log('replace');
+      //  handlePlayerSearch(match.params.playerId, 'replace');
+      //}
+    }
+    else {
+      handlePlayerSearch(match.params.playerId, 'mount');
+    }
 
     // Prevents a new search on "history back" actions.
     history.listen((location, action) => {
-      if(action === 'PUSH' || action === 'POP') {
+      console.log('listener', location, action);
+      if(action === 'PUSH') {
         if(!!location.state && !location.state.modal) {
           this.props.clearErrorState();
-          handlePlayerSearch(location.state.gamerTag);
+          handlePlayerSearch(location.state.gamerTag, 'push');
+        }
+      } else if(action === 'POP') {
+        if(!!location.state && !location.state.modal) {
+          const gamerTag = location.pathname.split('/')[ 2 ];
+          console.log('pop replace', gamerTag);
+          history.push(`/player/${gamerTag}`, {gamerTag});
+        }
+      } else if(action === 'REPLACE') {
+        if(!!location.state && !location.state.modal) {
+          console.log('location', location);
+          const gamerTag = location.pathname.split('/')[ 2 ];
+          console.log('replace lower');
+          handlePlayerSearch(gamerTag, 'replace');
         }
       }
     });
   };
 
   searchPlayer = (gamerTag) => {
-    this.props.history.push(`/player/${gamerTag}`, { gamerTag });
+    const { platform } = this.props;
+    this.props.history.push(`/player/${gamerTag}`, { gamerTag, event: 'search' });
   };
 
   normalizeRaidWeeks = (raids={}, size=6) => Object.entries(raids).reverse().slice(0, size);
@@ -121,7 +154,7 @@ class RaidWeekViewer extends Component {
       match, loading, nightfallHistory, raidHistory, epHistory,
       fetchPostGameCarnageReport, playerProfile, playerPrivacy,
       viewRaid, viewMode, gamerTagOptions, selectGamerTag,
-      setActivityType, publicMilestones, activityType
+      characterActivities, publicMilestones, activityType
     } = this.props;
     const { maxSuccessRaids } = this.state;
 
@@ -192,9 +225,6 @@ class RaidWeekViewer extends Component {
 
     const shouldRender = (!loading && raidWeeks.length > 0 && !notFound && !playerPrivacy);
 
-    console.log('maxSuccessRaids', maxSuccessRaids);
-    console.log('raidWeeks', raidWeeks);
-    console.log('raidHistory', raidHistory);
     return (
       <PlayerDataViewWrapper flexMobile={isMobile} ref={this.yOffsetRef}>
 
@@ -231,6 +261,8 @@ class RaidWeekViewer extends Component {
                       <RaidStack
                         handleFetchPGCR={fetchPostGameCarnageReport}
                         weekTitle={publicMilestones[idx]}
+                        characterIds={playerProfile.characterIds}
+                        characterActivities={characterActivities}
                         viewRaid={viewRaid}
                         raidWeek={raidWeek}
                         raid={viewRaid}
@@ -262,7 +294,9 @@ const mapStateToProps = state => {
     playerPrivacy: state.playerPrivacy,
     gamerTagOptions: state.gamerTagOptions,
     publicMilestones: state.publicMilestones,
-    raidViewYOffset: state.raidViewYOffset
+    raidViewYOffset: state.raidViewYOffset,
+    characterActivities: state.characterActivities,
+    platform: state.platform
   }
 };
 

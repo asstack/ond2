@@ -52,67 +52,54 @@ class RaidWeekViewer extends Component {
       player: this.props.match.params.playerId || '',
       maxSuccessRaids: 0,
       membershipId: this.props.playerProfile.membershipId,
+      render: false
     };
 
     this.yOffsetRef = React.createRef();
   }
 
   componentWillReceiveProps(nextProps) {
-    const { viewMode, viewRaid, playerProfile } = this.props;
-    if(viewMode !== nextProps.viewMode || viewRaid !== nextProps.viewRaid || playerProfile.membershipId !== this.state.membershipId) {
-      this.setState({ membershipId: nextProps.playerProfile.membershipId })
+    const { history, handlePlayerSearch, playerProfile, cacheLength } = this.props;
+    if(cacheLength > 0 && playerProfile.membershipId !== nextProps.playerProfile.membershipId) {
+      const gamerTag = history.location.pathname.split('/')[ 2 ];
+      handlePlayerSearch({ gamerTag, membershipId: nextProps.playerProfile.membershipId, event: "no location.state"})
+      this.setState({
+        membershipId: nextProps.playerProfile.membershipId,
+      });
     }
   }
 
   componentDidMount = () => {
-    const {handlePlayerSearch, match, history, setPlatform} = this.props;
-    console.log('match', match);
-    console.log('history', history);
+    const { player } = this.state;
+    const {handlePlayerSearch, match, history, playerProfile, cacheLength} = this.props;
 
-    if(history.action === 'POP') {
-      if(!!history.location.state && !history.location.state.modal) {
-        const gamerTag = history.location.pathname.split('/')[ 2 ];
-        console.log('upper pop replace', gamerTag);
-        handlePlayerSearch(match.params.playerId);
-      }
-    }
-    else if(history.action === 'REPLACE') {
-      //if(!!history.location.state && !history.location.state.modal) {
-      //  console.log('replace');
-      //  handlePlayerSearch(match.params.playerId, 'replace');
-      //}
-    }
-    else {
-      handlePlayerSearch(match.params.playerId, 'mount');
+    if(!playerProfile || cacheLength > 1) {
+      handlePlayerSearch({ gamerTag: this.state.player, membershipId: playerProfile.membershipId, event: 'reload'} );
     }
 
     // Prevents a new search on "history back" actions.
     history.listen((location, action) => {
-      console.log('listener', location, action);
       if(action === 'PUSH') {
-        if(!!location.state && !location.state.modal) {
+        if (!!location.state && !location.state.modal) {
           this.props.clearErrorState();
-          handlePlayerSearch(location.state.gamerTag, 'push');
-        }
-      } else if(action === 'POP') {
-        if(!!location.state && !location.state.modal) {
+          handlePlayerSearch({ gamerTag: location.state.gamerTag, event: 'push'});
+        } else if(!location.state) {
           const gamerTag = location.pathname.split('/')[ 2 ];
-          console.log('pop replace', gamerTag);
-          history.push(`/player/${gamerTag}`, {gamerTag});
+          handlePlayerSearch({ gamerTag, event: 'push' });
         }
-      } else if(action === 'REPLACE') {
+      }
+      else if(action === 'POP') {
         if(!!location.state && !location.state.modal) {
-          console.log('location', location);
+          handlePlayerSearch({ gamerTag: location.state.gamerTag, event: 'back' });
+        } else if(!location.state) {
           const gamerTag = location.pathname.split('/')[ 2 ];
-          console.log('replace lower');
-          handlePlayerSearch(gamerTag, 'replace');
+          handlePlayerSearch({ gamerTag, event: "no location.state"})
         }
       }
     });
   };
 
   searchPlayer = (gamerTag) => {
-    const { platform } = this.props;
     this.props.history.push(`/player/${gamerTag}`, { gamerTag, event: 'search' });
   };
 
@@ -141,6 +128,7 @@ class RaidWeekViewer extends Component {
 
   checkPlayerForEmpty = (statePlayer, player) => {
     if(statePlayer === '') {
+      //this.props.setHistoryCache()
       this.setState({ player: player });
     }
   };
@@ -154,9 +142,9 @@ class RaidWeekViewer extends Component {
       match, loading, nightfallHistory, raidHistory, epHistory,
       fetchPostGameCarnageReport, playerProfile, playerPrivacy,
       viewRaid, viewMode, gamerTagOptions, selectGamerTag,
-      characterActivities, publicMilestones, activityType
+      characterActivities, publicMilestones, activityType, cacheLength
     } = this.props;
-    const { maxSuccessRaids } = this.state;
+    const { maxSuccessRaids, membershipId } = this.state;
 
     const { notFound } = playerProfile;
 
@@ -296,7 +284,8 @@ const mapStateToProps = state => {
     publicMilestones: state.publicMilestones,
     raidViewYOffset: state.raidViewYOffset,
     characterActivities: state.characterActivities,
-    platform: state.platform
+    platform: state.platform,
+    cacheLength: Object.keys(state.activityHistoryCache).length
   }
 };
 
@@ -312,7 +301,8 @@ const mapDispatchToProps = dispatch => {
       dispatch({ type: consts.SET_VIEW_RAID, data: raid })
     ]),
     selectGamerTag: gamerTag => dispatch({ type: consts.SELECT_GAMER_TAG, data: gamerTag }),
-    setYOffset: yOffset => dispatch({ type: consts.SET_RAID_VIEW_Y_OFFSET, data: yOffset })
+    setYOffset: yOffset => dispatch({ type: consts.SET_RAID_VIEW_Y_OFFSET, data: yOffset }),
+    setHistoryCache: (membershipId, history) => dispatch({ type: consts.SET_ACTIVITY_HISTORY_CACHE, data: { membershipId, history } })
   }
 };
 

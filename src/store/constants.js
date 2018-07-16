@@ -24,6 +24,7 @@ export const SET_CHAR_ACTIVITIES = 'set_char_activities';
 
 export const SET_PGCR_CACHE = 'set_pgcr_cache';
 export const SET_ACTIVITY_HISTORY_CACHE = 'set_activity_history_cache';
+export const CALL_SET_ACTIVITY_HISTORY_CACHE = 'call_set_activity_history_cache';
 export const SET_APP_VERSION = 'set_app_version';
 export const SET_UPDATE_PROMPT = 'set_update_prompt';
 export const SET_PLAYER_CACHE = 'set_player_cache';

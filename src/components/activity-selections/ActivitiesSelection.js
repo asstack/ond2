@@ -61,7 +61,7 @@ const Selection = styled.div`
     cursor: ${({ selected }) => selected ? 'default' : 'pointer' };
     text-decoration: ${({ selected }) => selected ? 'none' : 'underline' };
  
-    @media only screen and (max-width: 767px) {
+    @media only screen and (min-width: 767px) {
       font-size: 16px;
     }
   }

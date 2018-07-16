@@ -66,16 +66,16 @@ const ActivityCount = styled.p`
   color: ${({ selected }) => selected ? 'black' : '#2b76ed'};
   cursor: ${({ selected }) => selected ? 'default' : 'pointer' };
   
-  @media only screen and (max-width: 400px) {
-    font-size: 12px;
+  @media only screen and (max-width: 450px) {
+    font-size: 16px;
   }
 `;
 
 const TotalCount = ActivityCount.extend`
   font-size: 16px;
   
-  @media only screen and (max-width: 400px) {
-    font-size: 8px;
+  @media only screen and (max-width: 450px) {
+    font-size: 13px;
   }
 `;
 

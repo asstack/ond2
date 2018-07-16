@@ -26,7 +26,7 @@ let newSearch = false;
 let previousMembershipId = false;
 
 export default function* collectActivityHistory(membershipId) {
-
+  console.log('collectAH');
   if(previousMembershipId !== membershipId) {
     newSearch = true;
     shouldUpdate[membershipId] = true;
@@ -69,32 +69,21 @@ export default function* collectActivityHistory(membershipId) {
     const normalizedRH = normalize.raidHistory(history.raidHistory);
     // const normalizedEP = {}; //normalize.epHistory(activityHistory.epHistory);
     const normalizedPGCR = pgcrData;
-
+    const playerProfile = yield select(state => state.playerProfile);
+    const displayName = playerProfile ? playerProfile.displayName : '';
 
     yield all([
       put({type: consts.SET_NF_HISTORY, data: normalizedNF}),
       put({type: consts.SET_RAID_HISTORY, data: normalizedRH}),
       put({type: consts.SET_PGCR_HISTORY, data: normalizedPGCR}),
-      put({type: consts.SET_CHAR_ACTIVITIES, data: activityHistory.characterActivities})
+      put({type: consts.SET_CHAR_ACTIVITIES, data: activityHistory.characterActivities}),
+      put({type: consts.CALL_SET_ACTIVITY_HISTORY_CACHE, data: { displayName, history: {raidHistory: normalizedRH, nightfallHistory: normalizedNF}}})
     ]);
 
-    const activityHistoryCache = yield select(state => state.activityHistoryCache);
+
     const pgcrCache = yield select(state => state.pgcrCache);
-    const fiveMinutesFromNow = moment().add(5, 'm');
-
-    activityHistoryCache[ membershipId ] = {
-      nightfallHistory: normalizedNF,
-      raidHistory: normalizedRH,
-      characterActivities,
-      expires: fiveMinutesFromNow
-    };
-
     pgcrCache[ membershipId ] = pgcrData;
-
-    yield all([
-      put({type: consts.SET_ACTIVITY_HISTORY_CACHE, data: activityHistoryCache}),
-      put({type: consts.SET_PGCR_CACHE, data: pgcrCache})
-    ]);
+    yield put({type: consts.SET_PGCR_CACHE, data: pgcrCache});
 
     yield put({ type: consts.SET_QUICK_STATS, data: false });
     yield put({ type: consts.SET_NEW_PLAYER, data: false });
@@ -111,7 +100,6 @@ export default function* collectActivityHistory(membershipId) {
 
   if (membershipId !== previousMembershipId) {
     //Data exists, so we update behind the scenes. Call update in 10 seconds.
-    console.log('sync new player data');
     yield put({ type: consts.SYNC_NEW_PLAYER_DATA, data: { membershipId, delayMS: 3000 }});
   }
   previousMembershipId = membershipId;

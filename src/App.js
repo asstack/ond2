@@ -69,9 +69,10 @@ class App extends Component {
     this.previousLocation = this.props.location;
   }
 
-  searchByGamerTag = (gamerTag, event) => {
+  searchByGamerTag = (data) => {
+    const { gamerTag, event, membershipId } = data;
     const { searchPlayer } = this.props;
-    searchPlayer({ displayName: gamerTag, membershipType: -1, event });
+    searchPlayer({ displayName: gamerTag, membershipType: -1, event, membershipId });
   };
 
   pullByMembershipId = (membershipId) => {
@@ -132,6 +133,7 @@ class App extends Component {
               handlePlayerSearch={this.searchByGamerTag}
               handleBackNav={this.pullByMembershipId}
               setPlatform={setPlatform}
+              clearLoader={clearLoader}
               clearErrorState={clearErrorState}
               {...this.props}
               {...data}

@@ -255,7 +255,7 @@ const _normalizeRaidHistory = ({ EOW, LEV, SPIRE }) => {
 
 // To get date, add string to header value, and split on some unique character. ::--
 const _normalizeNightfallHistory = ({ prestige, normal }) => {
-  const NF_Weeks = getRaidWeeks(NF_START_DATE);
+  const NF_Weeks = getRaidWeeks(NF_START_DATE).reverse().slice(0, 6);
 
   const prestigeFailCount = Object.values(prestige).filter((raid) => {
     return(raid.values.completionReason !== 0 && raid.values.completed !== 1)

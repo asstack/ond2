@@ -1,4 +1,4 @@
-import { takeEvery, takeLatest, all, take, call, cancel, put, cancelled, spawn } from 'redux-saga/effects';
+import { takeEvery, takeLatest, all, select, call, cancel, put, cancelled, spawn } from 'redux-saga/effects';
 import * as consts from "../constants";
 import collectPGCR from './pgcrSaga';
 import fetchPlayerProfile from './playerProfileSaga';
@@ -7,32 +7,44 @@ import { fetchActivityUpdate, fetchPublicMilestones } from "../../services/desti
 import normalize from "../normalize";
 import { delay } from "redux-saga";
 import collectActivityHistory from "./activityHistorySaga";
+import moment from "moment/moment";
 
 function* watchProfileCharacters() {
   yield takeLatest(consts.FETCH_PLAYER_PROFILE, fetchPlayerProfile);
   yield takeLatest(consts.SYNC_NEW_PLAYER_DATA, syncPlayerNewData);
   yield takeEvery(consts.FETCH_PGCR, collectPGCR);
   yield takeEvery(consts.LOAD_PUBLIC_MILESTONE_DATA, collectPublicMilestoneData);
+  yield takeEvery(consts.CALL_SET_ACTIVITY_HISTORY_CACHE, setActivityCache);
+}
+
+function* setActivityCache({ data }) {
+  const { displayName, history } = data;
+  const activityHistoryCache = yield select(state => state.activityHistoryCache);
+
+  if(displayName) {
+    const fiveMinutesFromNow = moment().add(5, 'm');
+    activityHistoryCache[displayName.toLowerCase()] = {...history, expires: fiveMinutesFromNow};
+    put({type: consts.SET_ACTIVITY_HISTORY_CACHE, data: activityHistoryCache});
+  }
 }
 
 function* syncPlayerNewData({ data }) {
   const {membershipId, delayMS} = data;
   try {
-    console.log('params', data);
     let count = 0;
     let hasUpdate = false;
 
-    console.log('membershipId', membershipId);
-    console.log('delayMS', delayMS);
     while (count < 12 && !hasUpdate) {
       count += 1;
       yield delay(delayMS);
       hasUpdate = yield call(fetchActivityUpdate, membershipId);
     }
-    yield spawn(collectActivityHistory, membershipId);
+
 } finally {
     if(yield cancelled()) {
-      console.log('cancel me... you bitch');
+      console.log('sync cancelled');
+    }else {
+      yield spawn(collectActivityHistory, membershipId);
     }
   }
 }

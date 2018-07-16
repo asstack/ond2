@@ -10,7 +10,7 @@ export default function* collectProfile(membershipId) {
 
   const fiveMinutesFromNow = moment().add(5, 'm');
   const profile = {...playerProfile, expires: fiveMinutesFromNow};
-  playerProfileCache[membershipId] = profile;
+  playerProfileCache[playerProfile.displayName.toLowerCase()] = profile;
 
   yield put({type: consts.SET_PLAYER_PROFILE, data: profile});
   yield put({ type: consts.SET_PLAYER_CACHE, data: playerProfileCache });

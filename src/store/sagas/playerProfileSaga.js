@@ -4,6 +4,7 @@ import { searchPlayer } from "../../services/destiny-services";
 import * as consts from "../constants";
 import collectActivityHistory from './activityHistorySaga';
 import collectProfile from './profileSaga';
+import { isObjectEmpty } from "../../services/utilities";
 
 function* handleSearchPlayerFailure() {
   yield put({ type: consts.SET_PLAYER_PROFILE, data: { notFound: true } });
@@ -11,7 +12,6 @@ function* handleSearchPlayerFailure() {
 }
 
 function* clearSearchData() {
-  console.log('clear Search');
   yield put({ type: consts.SET_RAID_HISTORY, data: {
     raidCount: {
       eow: {
@@ -51,84 +51,74 @@ function* clearSearchData() {
 }
 
 export default function* fetchPlayerProfile({ data }) {
-  console.log("data", data);
   try {
 
-    const displayName = yield select(state => state.playerProfile.displayName || '');
+    let displayName = data.displayName || '';
+    displayName = displayName.toLowerCase();
 
-    console.log('displayName', displayName);
-    console.log("2displayName2", data.displayName);
+    const playerProfileCache = yield select(state => state.playerCache);
 
      yield put({type: consts.SET_LOADING, data: true});
 
     let platform = yield select(state => state.platform);
 
-    yield call(clearSearchData);
+    if(data.event === 'search' || data.event === 'no location.state') {
+      yield call(clearSearchData);
+    }
 
-    if(data.displayName.toLowerCase() !== displayName.toLowerCase()) {
+    let playerSearch = {};
 
-     if (data.event === 'replace') {
-       console.log('replace');
-       yield put({type: consts.SET_ID_HISTORY, data: 'false'});
-       platform = 'false';
-     }
+    if(!Object.keys(playerProfileCache).indexOf(data.displayName) >= 0 ) {
+      yield put({type: consts.SET_PLAYER_PRIVACY, data: false});
 
-     yield put({type: consts.SET_PLAYER_PRIVACY, data: false});
+      const searchResults = yield call(searchPlayer, data);
 
-     let playerSearch = {};
-     const searchResults = yield call(searchPlayer, data);
+      if (searchResults.length <= 0) {
+        return yield call(handleSearchPlayerFailure);
+      }
+      else if (searchResults.length === 1) {
+        playerSearch = searchResults[ 0 ];
+      } else if (platform !== 'false' && !!platform) {
+        playerSearch.membershipId = platform;
+      }
+      else {
+        yield put({type: consts.SET_LOADING, data: true});
+        yield put({type: consts.SET_GAMER_TAG_OPTIONS, data: searchResults});
+        yield put({type: consts.SET_LOADING, data: false});
 
-     console.log('searchResults', searchResults);
+        const searchSelection = yield take([ consts.SELECT_GAMER_TAG ]);
+        yield put({type: '', data: ''});
+        yield put({type: consts.SET_GAMER_TAG_OPTIONS, data: []});
+        yield put({type: consts.SET_LOADING, data: true});
+        playerSearch = searchResults.filter(curr => curr.membershipId === searchSelection.data.key)[ 0 ];
+        yield put({type: consts.SET_ID_HISTORY, data: searchSelection.data.key});
+      }
+    }
 
-     if (searchResults.length <= 0) {
-       return yield call(handleSearchPlayerFailure);
-     }
-     else if (searchResults.length === 1) {
-       playerSearch = searchResults[ 0 ];
-     } else if (platform !== 'false' && !!platform) {
-       playerSearch.membershipId = platform;
-     }
-     else {
-       yield put({type: consts.SET_LOADING, data: true});
-       yield put({type: consts.SET_GAMER_TAG_OPTIONS, data: searchResults});
-       yield put({type: consts.SET_LOADING, data: false});
+   const membershipId = playerSearch.membershipId;
+   const playerProfileCacheCheck = Object.keys(playerProfileCache).indexOf(displayName) >= 0;
 
-       const searchSelection = yield take([ consts.SELECT_GAMER_TAG ]);
-       yield put({type: '', data: ''});
-       yield put({type: consts.SET_GAMER_TAG_OPTIONS, data: []});
-       yield put({type: consts.SET_LOADING, data: true});
-       playerSearch = searchResults.filter(curr => curr.membershipId === searchSelection.data.key)[ 0 ];
-       yield put({type: consts.SET_ID_HISTORY, data: searchSelection.data.key});
-     }
+   if (playerProfileCacheCheck && !playerProfileCache[displayName].expires.isAfter(moment)) {
+     yield put({type: consts.SET_RAID_HISTORY, data: playerProfileCache[displayName]});
+   } else {
+     yield call(collectProfile, membershipId);
+   }
 
-     const membershipId = playerSearch.membershipId;
+   const activityHistoryCache = yield select(state => state.activityHistoryCache);
+   const pgcrCache = yield select(state => state.pgcrCache);
+   const activityHistoryCacheCheck = Object.keys(activityHistoryCache).indexOf(displayName) >= 0;
 
-     const playerProfileCache = yield select(state => state.playerProfile);
-     const playerProfileCacheCheck = Object.keys(playerProfileCache).indexOf(membershipId) >= 0;
+   //const playersPGCR = pgcrCache[];put({type: consts.SET_PGCR_HISTORY, data: playersPGCR}),
+    const playersActivityHistory = activityHistoryCache[displayName];
 
-     if (playerProfileCacheCheck && playerProfileCache[ membershipId ].expires.isAfter(moment)) {
-       yield put({type: consts.SET_RAID_HISTORY, data: playerProfileCache[ membershipId ]});
-     } else {
-       yield call(collectProfile, membershipId);
-     }
-
-     const activityHistoryCache = yield select(state => state.activityHistoryCache);
-     const pgcrCache = yield select(state => state.pgcrCache);
-     const activityHistoryCacheCheck = Object.keys(activityHistoryCache).indexOf(membershipId) >= 0;
-
-     const playersActivityHistory = activityHistoryCache[ membershipId ];
-     const playersPGCR = pgcrCache[ membershipId ];
-     if (activityHistoryCacheCheck && playersActivityHistory.expires.isAfter(moment())) {
-       console.log('servedFromCache');
-       yield all([
-         put({type: consts.SET_RAID_HISTORY, data: playersActivityHistory.raidHistory}),
-         put({type: consts.SET_NF_HISTORY, data: playersActivityHistory.nightfallHistory}),
-         put({type: consts.SET_PGCR_HISTORY, data: playersPGCR}),
-         put({type: consts.SET_LOADING, data: false})
-       ]);
-     } else {
-       yield spawn(collectActivityHistory, membershipId);
-     }
+   if (activityHistoryCacheCheck && playersActivityHistory.expires.isAfter(moment())) {
+     yield all([
+       put({type: consts.SET_RAID_HISTORY, data: playersActivityHistory.raidHistory}),
+       put({type: consts.SET_NF_HISTORY, data: playersActivityHistory.nightfallHistory}),
+       put({type: consts.SET_LOADING, data: false})
+     ]);
+   } else {
+     yield spawn(collectActivityHistory, membershipId);
    }
   }
   catch(error) {

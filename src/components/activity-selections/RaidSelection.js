@@ -87,16 +87,27 @@ const RaidSelection = ({ handleSetRaid, handleSetMode, nfCount, raidCount, activ
           <RaidHeading selected={viewRaid === 'spire'} onClick={() => { handleSetRaid('spire'); handleSetMode('normal');}}>
             <p>SOS</p>
           </RaidHeading>
-          <SelectionGroup oneSelection selected={viewRaid === 'spire'}>
+          <SelectionGroup selected={viewRaid === 'spire'}>
             <Selection
               href="javascript:void(0)"
               selected={viewRaid==='spire' && viewMode ==='normal'}
               onClick={() => { handleSetRaid('spire'); handleSetMode('normal');}}
             >
               <ActivityCount selected={viewRaid==='spire' && viewMode ==='normal'}>
-                N{raidCount.spire.successCount.normal - raidCount.spire.farmCount.normal}
+                N{Math.max(0, raidCount.spire.successCount.normal - raidCount.spire.farmCount.normal)}
               </ActivityCount>
               <TotalCount selected={viewRaid==='spire' && viewMode ==='normal'}>{raidCount.spire.successCount.normal}</TotalCount>
+            </Selection>
+
+            <Selection
+              href="javascript:void(0)"
+              selected={viewRaid==='spire' && viewMode ==='prestige'}
+              onClick={() => { handleSetRaid('spire'); handleSetMode('prestige');}}
+            >
+              <ActivityCount selected={viewRaid==='spire' && viewMode ==='prestige'}>
+                N{Math.max(0, raidCount.spire.successCount.prestige - raidCount.spire.farmCount.prestige)}
+              </ActivityCount>
+              <TotalCount selected={viewRaid==='spire' && viewMode ==='prestige'}>{raidCount.spire.successCount.prestige}</TotalCount>
             </Selection>
           </SelectionGroup>
         </RaidSelect>
@@ -107,16 +118,27 @@ const RaidSelection = ({ handleSetRaid, handleSetMode, nfCount, raidCount, activ
           <RaidHeading selected={viewRaid === 'eow'} onClick={() => { handleSetRaid('eow'); handleSetMode('normal');}}>
             <p>EOW</p>
           </RaidHeading>
-          <SelectionGroup oneSelection selected={viewRaid === 'eow'}>
+          <SelectionGroup selected={viewRaid === 'eow'}>
             <Selection
               href="javascript:void(0)"
               selected={viewRaid==='eow' && viewMode ==='normal'}
               onClick={() => { handleSetRaid('eow'); handleSetMode('normal');}}
             >
               <ActivityCount selected={viewRaid==='eow' && viewMode ==='normal'}>
-                N{raidCount.eow.successCount - raidCount.eow.farmCount}
+                N{Math.max(0, raidCount.eow.successCount.normal - raidCount.eow.farmCount.normal)}
               </ActivityCount>
-              <TotalCount selected={viewRaid==='eow' && viewMode ==='normal'}>{raidCount.eow.successCount}</TotalCount>
+              <TotalCount selected={viewRaid==='eow' && viewMode ==='normal'}>{raidCount.eow.successCount.normal}</TotalCount>
+            </Selection>
+
+            <Selection
+              href="javascript:void(0)"
+              selected={viewRaid==='eow' && viewMode ==='prestige'}
+              onClick={() => { handleSetRaid('eow'); handleSetMode('prestige');}}
+            >
+              <ActivityCount selected={viewRaid==='eow' && viewMode ==='prestige'}>
+                P{Math.max(0, raidCount.eow.successCount.prestige - raidCount.eow.farmCount.prestige)}
+              </ActivityCount>
+              <TotalCount selected={viewRaid==='eow' && viewMode ==='prestige'}>{raidCount.eow.successCount.prestige}</TotalCount>
             </Selection>
           </SelectionGroup>
         </RaidSelect>
@@ -134,7 +156,7 @@ const RaidSelection = ({ handleSetRaid, handleSetMode, nfCount, raidCount, activ
               onClick={() => { handleSetRaid('lev'); handleSetMode('normal');}}
             >
               <ActivityCount selected={viewRaid==='lev' && viewMode ==='normal'}>
-                N{raidCount.lev.successCount.normal - raidCount.lev.farmCount.normal}
+                N{Math.max(0, raidCount.lev.successCount.normal - raidCount.lev.farmCount.normal)}
               </ActivityCount>
               <TotalCount selected={viewRaid==='lev' && viewMode ==='normal'}>{raidCount.lev.successCount.normal}</TotalCount>
             </Selection>
@@ -144,7 +166,7 @@ const RaidSelection = ({ handleSetRaid, handleSetMode, nfCount, raidCount, activ
               onClick={() => { handleSetRaid('lev'); handleSetMode('prestige');}}
             >
               <ActivityCount selected={viewRaid==='lev' && viewMode ==='prestige'}>
-                P{raidCount.lev.successCount.prestige - raidCount.lev.farmCount.prestige}
+                P{Math.max(0, raidCount.lev.successCount.prestige - raidCount.lev.farmCount.prestige)}
               </ActivityCount>
               <TotalCount selected={viewRaid==='lev' && viewMode ==='prestige'}>{raidCount.lev.successCount.prestige}</TotalCount>
             </Selection>
@@ -156,16 +178,3 @@ const RaidSelection = ({ handleSetRaid, handleSetMode, nfCount, raidCount, activ
 };
 
 export default RaidSelection;
-
-/*
- <Selection
-              href="javascript:void(0)"
-              selected={viewRaid==='spire' && viewMode ==='prestige'}
-              onClick={() => { handleSetRaid('spire'); handleSetMode('prestige');}}
-            >
-              <ActivityCount selected={viewRaid==='spire' && viewMode ==='prestige'}>
-                P{raidCount.spire.successCount.prestige}
-              </ActivityCount>
-              <FarmCount selected={viewRaid==='spire' && viewMode ==='prestige'}>{raidCount.spire.farmCount.prestige}</FarmCount>
-            </Selection>
- */

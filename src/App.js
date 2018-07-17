@@ -154,7 +154,7 @@ class App extends Component {
 
         </SideMenu>
         {(!pgcr && !isMobile) &&
-          <Segment vertical style={{width: '100%', padding: '2em 0em', zIndex: 999}}>
+          <Segment vertical style={{width: '100%', zIndex: 999}}>
             <Container textAlign='center'>
               <List horizontal divided link small="true">
                 <List.Item as='a' href={CONTACT_REDDIT}>Contact Us</List.Item>

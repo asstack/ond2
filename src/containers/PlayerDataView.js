@@ -142,44 +142,47 @@ class RaidWeekViewer extends Component {
       match, loading, nightfallHistory, raidHistory, epHistory,
       fetchPostGameCarnageReport, playerProfile, playerPrivacy,
       viewRaid, viewMode, gamerTagOptions, selectGamerTag,
-      characterActivities, publicMilestones, activityType, cacheLength
+      characterActivities, publicMilestones, activityType
     } = this.props;
-    const { maxSuccessRaids, membershipId } = this.state;
+    const { maxSuccessRaids } = this.state;
 
     const { notFound } = playerProfile;
 
-    const { nfSuccessCount={ prestige: '0', normal: '0' } } = nightfallHistory;
-    const { EP={}, epSuccessCount='0' } = epHistory;
+    const { nfSuccessCount={ prestige: 0, normal: 0 } } = nightfallHistory;
+    const { EP={}, epSuccessCount = 0 } = epHistory;
     const {
       LEV={ prestige: {}, normal: {}},
-      SPIRE={ normal: {} },
-      EOW={},
+      SPIRE={ normal: {}, prestige: {} },
+      EOW={ normal: {}, prestige: {}},
       raidCount={
           eow: {
-            prestige: '0',
-            normal: '0',
-            successCount: '0',
-            farmCount: '0'
-          },
-          lev: {
-            prestige: '0',
-            normal: '0',
             successCount: {
-              prestige: '0',
-              normal: '0'
+              normal: 0,
+              prestige: 0
             },
             farmCount: {
-              prestige: '0',
-              normal: '0'
+              normal: 0,
+              prestige: 0
+            }
+          },
+          lev: {
+            successCount: {
+              prestige: 0,
+              normal: 0
+            },
+            farmCount: {
+              prestige: 0,
+              normal: 0
             }
           },
           spire: {
-            normal: '0',
             successCount: {
-              normal: '0'
+              normal: 0,
+              prestige: 0
             },
             farmCount: {
-              normal: '0'
+              normal: 0,
+              prestige: 0
             }
           }
         }
@@ -199,16 +202,16 @@ class RaidWeekViewer extends Component {
       }
     }
     else if(viewRaid === 'eow'){
-      raidWeeks = Object.entries(EOW).reverse().slice(0, 6)
+      raidWeeks = Object.entries(EOW[viewMode]).reverse();
     }
     else if(viewRaid === 'lev') {
-      raidWeeks = Object.entries(LEV[viewMode]).reverse().slice(0, 6)
+      raidWeeks = Object.entries(LEV[viewMode]).reverse();
     }
     else if(viewRaid === 'spire') {
-      raidWeeks = Object.entries(SPIRE.normal).reverse().slice(0, 6);
+      raidWeeks = Object.entries(SPIRE[viewMode]).reverse();
     }
     else if(viewRaid === 'ep') {
-      raidWeeks = Object.entries(EP).reverse().slice(0, 6);
+      raidWeeks = Object.entries(EP[viewMode]).reverse();
     }
 
     const shouldRender = (!loading && raidWeeks.length > 0 && !notFound && !playerPrivacy);

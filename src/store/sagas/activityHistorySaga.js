@@ -16,6 +16,7 @@ const activityDataFound = (activityHistory) =>
     isActivityData(activityHistory.LEV.normal) ||
     isActivityData(activityHistory.LEV.prestige) ||
     isActivityData(activityHistory.SPIRE.normal) ||
+    isActivityData(activityHistory.SPIRE.prestige) ||
     isActivityData(activityHistory.NF.normal) ||
     isActivityData(activityHistory.NF.prestige)
   );
@@ -26,7 +27,6 @@ let newSearch = false;
 let previousMembershipId = false;
 
 export default function* collectActivityHistory(membershipId) {
-  console.log('collectAH');
   if(previousMembershipId !== membershipId) {
     newSearch = true;
     shouldUpdate[membershipId] = true;
@@ -46,9 +46,9 @@ export default function* collectActivityHistory(membershipId) {
 
   const [ spire, lev, eow, nf, characterActivities ] = fetches;
   const activityHistory = {
-    SPIRE: { normal: spire.normal || [] },
+    SPIRE: { normal: spire.normal || [], prestige: spire.prestige || []},
     LEV: { normal: lev.normal || [], prestige: lev.prestige || [] },
-    EOW: eow.normal || [],
+    EOW: { normal: eow.normal || [], prestige: eow.prestige || []},
     NF: { normal: nf.normal || [], prestige: nf.prestige || [] },
     characterActivities: {}
   };

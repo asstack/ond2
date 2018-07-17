@@ -61,7 +61,7 @@ const Selection = styled.div`
     cursor: ${({ selected }) => selected ? 'default' : 'pointer' };
     text-decoration: ${({ selected }) => selected ? 'none' : 'underline' };
  
-    @media only screen and (min-width: 767px) {
+    @media only screen and (max-width: 450px) {
       font-size: 16px;
     }
   }
@@ -98,13 +98,13 @@ const ActivitiesSelection = ({ handleSetRaid, handleSetMode, nfSuccessCount, rai
           <RaidHeading selected={viewRaid ==='ep'} onClick={() => { handleSetRaid('ep'); handleSetMode('normal');}}>
             <p>Escalation Protocol</p>
           </RaidHeading>
-          <SelectionGroup oneSelection selected={viewRaid ==='ep'}>
+          <SelectionGroup selected={viewRaid ==='ep'}>
             <Selection
               href="javascript:void(0)"
               selected={viewRaid==='ep' && viewMode ==='normal'}
-              onClick={() => { handleSetRaid('ep'); handleSetMode('normal');}}
+              onClick={() => { /*handleSetRaid('ep'); handleSetMode('normal');*/}}
             >
-              <p>N {epSuccessCount}</p>
+              <p style={{ fontSize: 20, color: "black", textDecoration: "none" }}>Coming Soon</p>
             </Selection>
           </SelectionGroup>
         </RaidSelect>

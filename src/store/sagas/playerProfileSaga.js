@@ -59,6 +59,7 @@ export default function* fetchPlayerProfile({ data }) {
     const playerProfileCache = yield select(state => state.playerCache);
 
      yield put({type: consts.SET_LOADING, data: true});
+    yield put({type: consts.SET_GAMER_TAG_OPTIONS, data: []});
 
     let platform = yield select(state => state.platform);
 
@@ -87,7 +88,6 @@ export default function* fetchPlayerProfile({ data }) {
         yield put({type: consts.SET_LOADING, data: false});
 
         const searchSelection = yield take([ consts.SELECT_GAMER_TAG ]);
-        yield put({type: '', data: ''});
         yield put({type: consts.SET_GAMER_TAG_OPTIONS, data: []});
         yield put({type: consts.SET_LOADING, data: true});
         playerSearch = searchResults.filter(curr => curr.membershipId === searchSelection.data.key)[ 0 ];
@@ -99,7 +99,7 @@ export default function* fetchPlayerProfile({ data }) {
    const playerProfileCacheCheck = Object.keys(playerProfileCache).indexOf(displayName) >= 0;
 
    if (playerProfileCacheCheck && !playerProfileCache[displayName].expires.isAfter(moment)) {
-     yield put({type: consts.SET_RAID_HISTORY, data: playerProfileCache[displayName]});
+     yield put({type: consts.SET_PLAYER_PROFILE, data: playerProfileCache[displayName]});
    } else {
      yield call(collectProfile, membershipId);
    }

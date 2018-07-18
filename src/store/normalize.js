@@ -167,8 +167,8 @@ const getRaidCount = (EOW, LEV, SPIRE) => {
   const eowPFarmCount = eowPSuccessCount.reduce((accum, currRaid) => currRaid.totalKills < 400 ? accum += 1 : accum, 0);
   const levPFarmCount = levPSuccessCount.reduce((accum, currRaid) => currRaid.totalKills < 400 ? accum += 1 : accum, 0);
   const levNFarmCount = levNSuccessCount.reduce((accum, currRaid) => currRaid.totalKills < 400 ? accum += 1 : accum, 0);
-  const spireNFarmCount = spireNSuccessCount.reduce((accum, currRaid) => currRaid.totalKills < 700 ? accum += 1 : accum, 0);
-  const spirePFarmCount = spireNSuccessCount.reduce((accum, currRaid) => currRaid.totalKills < 700 ? accum += 1 : accum, 0);
+  const spireNFarmCount = spireNSuccessCount.reduce((accum, currRaid) => currRaid.totalKills < 600 ? accum += 1 : accum, 0);
+  const spirePFarmCount = spireNSuccessCount.reduce((accum, currRaid) => currRaid.totalKills < 600 ? accum += 1 : accum, 0);
 
 
   const eowNFailCount = Object.values(EOW.normal).filter(

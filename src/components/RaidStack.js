@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { Icon, Grid } from 'semantic-ui-react';
+import { Icon, Grid, Popup } from 'semantic-ui-react';
+import { CLASS_MAP } from '../actions/index';
 
 import RaidWeek from '../components/RaidWeek';
 
@@ -65,7 +66,7 @@ const isApplicableRaid = (raid) => {
   )
 };
 
-const RaidStack = ({ characterActivities, handleSetFarmCount, handleFetchPGCR, viewRaid, raidWeek, raid, maxSuccessRaids, handleSetMaxSuccessRaids, weekTitle }) => {
+const RaidStack = ({ characterActivities, handleSetFarmCount, handleFetchPGCR, viewRaid, raidWeek, raid, characters, maxSuccessRaids, handleSetMaxSuccessRaids, weekTitle }) => {
   const [week, raids] = raidWeek;
   const raidValues = Object.values(raids);
 
@@ -111,7 +112,7 @@ const RaidStack = ({ characterActivities, handleSetFarmCount, handleFetchPGCR, v
   }, {});
 
   const [date, name] = viewRaid === 'nf' ? weekTitle : week.split(':D:').reverse();
-  const farmKillLimit = raid === 'sp' ? 700 : 400;
+  const farmKillLimit = raid === 'sp' ? 600 : 400;
   const sortedCompletions = completedRaids.sort((a, b) => a.totalKills >= farmKillLimit ? -1 : 1);
 
   return(
@@ -125,12 +126,16 @@ const RaidStack = ({ characterActivities, handleSetFarmCount, handleFetchPGCR, v
           <Grid.Column width='8' verticalAlign='middle'>
             <CharacterCompletions>
               { Object.entries(characterCompletions).map((curr) =>
-                <Icon
-                  key={curr[0]}
-                  size="small"
-                  name={(curr[1] && curr[1] === 'n/a') ? 'circle outline' : 'circle'}
-                  color={curr[1] ? curr[1] === 'n/a' ? 'black' : 'green' : 'red'}
+                <Popup key={curr[0]} trigger={
+                  <Icon
+                    size="small"
+                    name={curr[1] === 'n/a' ? 'circle outline' : 'circle'}
+                    color={curr[1] ? curr[1] === 'n/a' ? 'black' : 'green' : 'red'}
                   />
+                }
+                >
+                  {CLASS_MAP[characters[curr[0]].classHash]}
+                </Popup>
               )}
             </CharacterCompletions>
           </Grid.Column>

@@ -105,7 +105,7 @@ const RaidSelection = ({ handleSetRaid, handleSetMode, nfCount, raidCount, activ
               onClick={() => { handleSetRaid('spire'); handleSetMode('prestige');}}
             >
               <ActivityCount selected={viewRaid==='spire' && viewMode ==='prestige'}>
-                N{Math.max(0, raidCount.spire.successCount.prestige - raidCount.spire.farmCount.prestige)}
+                P{Math.max(0, raidCount.spire.successCount.prestige - raidCount.spire.farmCount.prestige)}
               </ActivityCount>
               <TotalCount selected={viewRaid==='spire' && viewMode ==='prestige'}>{raidCount.spire.successCount.prestige}</TotalCount>
             </Selection>

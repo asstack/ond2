@@ -256,6 +256,7 @@ class RaidWeekViewer extends Component {
                         characterActivities={characterActivities}
                         viewRaid={viewRaid}
                         raidWeek={raidWeek}
+                        characters={playerProfile.characters}
                         raid={viewRaid}
                         maxSuccessRaids={maxSuccessRaids}
                         handleSetMaxSuccessRaids={this.setMaxSuccessRaids}

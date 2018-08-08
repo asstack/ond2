@@ -42,9 +42,12 @@ function* syncPlayerNewData({ data }) {
 
 } finally {
     if(yield cancelled()) {
-      console.log('sync cancelled');
     }else {
-      yield spawn(collectActivityHistory, membershipId);
+      const memId = yield select(state => state.playerProfile.membershipId);
+
+      if(memId === membershipId) {
+        yield spawn(collectActivityHistory, membershipId);
+      }
     }
   }
 }

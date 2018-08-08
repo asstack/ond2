@@ -42,7 +42,14 @@ const BigTable = ({ isNF, raidData, column, direction, handleSort }) => {
 
           return (
             <Table.Row textAlign='center' negative={!completed} key={shortid.generate()}>
-              <td><Link to={`/player/${displayName.toLowerCase()}`}>{displayName}</Link></td>
+              <td>
+                <Link to={{
+                  pathname: `/player/${displayName.toLowerCase()}`,
+                  state: {event: 'fromPGCR' }
+                }}>
+                {displayName}
+                </Link>
+              </td>
               { isNF &&
                 <Table.Cell>{ `${values.score}` }</Table.Cell>
               }

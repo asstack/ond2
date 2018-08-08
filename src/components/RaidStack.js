@@ -111,6 +111,14 @@ const RaidStack = ({ characterActivities, handleSetFarmCount, handleFetchPGCR, v
     return accum;
   }, {});
 
+  const getCharClassName = (curr) => {
+    try {
+      const className = CLASS_MAP[characters[curr[0]].classHash];
+      return !!className ? className : '';
+    }catch(error) {
+    }
+  };
+
   const [date, name] = viewRaid === 'nf' ? weekTitle : week.split(':D:').reverse();
   const farmKillLimit = raid === 'sp' ? 600 : 400;
   const sortedCompletions = completedRaids.sort((a, b) => a.totalKills >= farmKillLimit ? -1 : 1);
@@ -126,7 +134,7 @@ const RaidStack = ({ characterActivities, handleSetFarmCount, handleFetchPGCR, v
           <Grid.Column width='8' verticalAlign='middle'>
             <CharacterCompletions>
               { Object.entries(characterCompletions).map((curr) =>
-                <Popup key={curr[0]} trigger={
+                <Popup key={curr[0]} position="top left" size="large" trigger={
                   <Icon
                     size="small"
                     name={curr[1] === 'n/a' ? 'circle outline' : 'circle'}
@@ -134,7 +142,7 @@ const RaidStack = ({ characterActivities, handleSetFarmCount, handleFetchPGCR, v
                   />
                 }
                 >
-                  {CLASS_MAP[characters[curr[0]].classHash]}
+                  {getCharClassName(curr)}
                 </Popup>
               )}
             </CharacterCompletions>

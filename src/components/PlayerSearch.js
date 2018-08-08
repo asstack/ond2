@@ -108,8 +108,7 @@ class PlayerSearch extends Component {
 
   clearSearch = () => {
     this.setState( {
-      playerSearch: '',
-      recentClear: true
+      playerSearch: ''
     })
   };
 
@@ -159,7 +158,7 @@ class PlayerSearch extends Component {
             onSearchChange={this.handlePlayerInput}
             open={openSearchSelection}
             onResultSelect={this.handleResultSelect}
-            onMouseDown={this.clearSearch}
+            onMouseDown={() => !openSearchSelection && this.clearSearch()}
           />
           <Icon
             name="search"

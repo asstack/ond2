@@ -1,4 +1,3 @@
-import moment from 'moment';
 import { call, put, select, all, spawn } from 'redux-saga/effects';
 import { fetchExactActivityHistory } from "../../services/destiny-services";
 import normalize from "../normalize";
@@ -21,23 +20,30 @@ const activityDataFound = (activityHistory) =>
     isActivityData(activityHistory.NF.prestige)
   );
 
-const shouldUpdate = {};
-let newSearch = false;
-
 let previousMembershipId = false;
 
+const handleFirstRaid = function* (membershipId, activity) {
+  const raid = yield call(fetchExactActivityHistory, membershipId, 'spireOfStars');
+  const history = normalize.activity(activity, { normal: raid.normal, prestige: raid.prestige }, membershipId);
+
+  const nf = normalize.nightfall(history.NF);
+  const raids = normalize.raidHistory(history);
+
+  yield all([
+    put({type: consts.SET_NF_HISTORY, data: nf }),
+    put({type: consts.SET_RAID_HISTORY, data: raids }),
+  ]);
+
+  yield put({ type: consts.SET_LOADING, data: false });
+  return raid;
+};
+
 export default function* collectActivityHistory(membershipId) {
-  if(previousMembershipId !== membershipId) {
-    newSearch = true;
-    shouldUpdate[membershipId] = true;
 
-    if(previousMembershipId) {
-      shouldUpdate[previousMembershipId] = false;
-    }
-  }
+  //const spire = yield call(fetchExactActivityHistory, membershipId, 'spireOfStars');
 
-  let fetches = yield all([
-    call(fetchExactActivityHistory, membershipId, 'spireOfStars'),
+  const fetches = yield all([
+    call(handleFirstRaid, membershipId, 'SPIRE'),
     call(fetchExactActivityHistory, membershipId, 'leviathan'),
     call(fetchExactActivityHistory, membershipId, 'eaterOfWorlds'),
     call(fetchExactActivityHistory, membershipId, 'nightfall'),
@@ -45,6 +51,7 @@ export default function* collectActivityHistory(membershipId) {
   ]);
 
   const [ spire, lev, eow, nf, characterActivities ] = fetches;
+
   const activityHistory = {
     SPIRE: { normal: spire.normal || [], prestige: spire.prestige || []},
     LEV: { normal: lev.normal || [], prestige: lev.prestige || [] },
@@ -72,6 +79,7 @@ export default function* collectActivityHistory(membershipId) {
     const playerProfile = yield select(state => state.playerProfile);
     const displayName = playerProfile ? playerProfile.displayName : '';
 
+    //console.log('!#!#!#!#!#Set History', normalizedRH);
     yield all([
       put({type: consts.SET_NF_HISTORY, data: normalizedNF}),
       put({type: consts.SET_RAID_HISTORY, data: normalizedRH}),

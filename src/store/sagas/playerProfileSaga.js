@@ -4,7 +4,7 @@ import { searchPlayer } from "../../services/destiny-services";
 import * as consts from "../constants";
 import collectActivityHistory from './activityHistorySaga';
 import collectProfile from './profileSaga';
-import { isObjectEmpty } from "../../services/utilities";
+import { delay } from "redux-saga";
 
 function* handleSearchPlayerFailure() {
   yield put({ type: consts.SET_PLAYER_PROFILE, data: { notFound: true } });
@@ -45,7 +45,6 @@ function* clearSearchData() {
         }
       }
   } } });
-  yield put({ type: consts.SET_ACTIVITY_HISTORY, data: { normal: {}, prestige: {}, nfCount: { normal: 0, prestige: 0 } } });
   yield put({ type: consts.SET_NF_HISTORY, data: {} });
   yield put({ type: consts.SET_GAMER_TAG_OPTIONS, data: [] });
 }
@@ -53,23 +52,20 @@ function* clearSearchData() {
 export default function* fetchPlayerProfile({ data }) {
   try {
 
+    yield put({type: consts.SET_LOADING, data: true});
+    yield put({type: consts.SET_GAMER_TAG_OPTIONS, data: []});
+    let platform = yield select(state => state.platform);
+
     let displayName = data.displayName || '';
-    displayName = displayName.toLowerCase();
+    displayName = displayName.toLowerCase() || '';
+
 
     const playerProfileCache = yield select(state => state.playerCache);
 
-     yield put({type: consts.SET_LOADING, data: true});
-    yield put({type: consts.SET_GAMER_TAG_OPTIONS, data: []});
-
-    let platform = yield select(state => state.platform);
-
-    if(data.event === 'search' || data.event === 'no location.state') {
-      yield call(clearSearchData);
-    }
-
     let playerSearch = {};
 
-    if(!Object.keys(playerProfileCache).indexOf(data.displayName) >= 0 ) {
+    if(!(Object.keys(playerProfileCache).indexOf(displayName) >= 0)) {
+      yield call(clearSearchData);
       yield put({type: consts.SET_PLAYER_PRIVACY, data: false});
 
       const searchResults = yield call(searchPlayer, data);
@@ -90,7 +86,7 @@ export default function* fetchPlayerProfile({ data }) {
         const searchSelection = yield take([ consts.SELECT_GAMER_TAG ]);
         yield put({type: consts.SET_GAMER_TAG_OPTIONS, data: []});
         yield put({type: consts.SET_LOADING, data: true});
-        playerSearch = searchResults.filter(curr => curr.membershipId === searchSelection.data.key)[ 0 ];
+        playerSearch = searchResults.filter(curr => curr.membershipId === searchSelection.data.key)[0];
         yield put({type: consts.SET_ID_HISTORY, data: searchSelection.data.key});
       }
     }
@@ -115,8 +111,9 @@ export default function* fetchPlayerProfile({ data }) {
      yield all([
        put({type: consts.SET_RAID_HISTORY, data: playersActivityHistory.raidHistory}),
        put({type: consts.SET_NF_HISTORY, data: playersActivityHistory.nightfallHistory}),
-       put({type: consts.SET_LOADING, data: false})
      ]);
+
+     yield put({type: consts.SET_LOADING, data: false});
    } else {
      yield spawn(collectActivityHistory, membershipId);
    }

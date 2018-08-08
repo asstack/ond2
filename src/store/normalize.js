@@ -517,7 +517,7 @@ const activityExtractor = membershipId => history => {
   //TODO: Since history can have null values, that means we are missing something.
   // Not sure how we respond that that when it happens. Some sort of update?
   const cleanHistory = history.filter(curr => !!curr && curr !== null);
-  return cleanHistory.map(curr => {
+  return cleanHistory.map((curr = { entries: []}) => {
     const playerEntry = curr.entries.filter(entry => entry.membershipId === membershipId)[ 0 ];
     const derivedData = calculateDerivedData(curr.entries, membershipId);
     return {
@@ -527,6 +527,19 @@ const activityExtractor = membershipId => history => {
       ...derivedData
     }
   })
+};
+
+const normalizeActivity = (activity, activities, membershipId) => {
+  const extractActivity = activityExtractor(membershipId);
+  const RAIDS = ['LEV', 'EOW', 'SPIRE', 'NF'];
+
+  return RAIDS.reduce((accum, curr) => {
+    curr === activity
+      ? accum[`${curr}`] = { normal: extractActivity(activities.normal), prestige: extractActivity(activities.prestige) }
+        : accum[`${curr}`] = { normal: {}, prestige: {} };
+
+    return accum;
+  }, {});
 };
 
 const normalizeActivityHistory = (activityHistory, membershipId) => {
@@ -584,7 +597,8 @@ const normalize = {
   epHistory: _normalizeEP,
   raids: normalizeRaidsLikeServer,
   nf: normalizeNightfallLikeServer,
-  activityHistory: normalizeActivityHistory
+  activityHistory: normalizeActivityHistory,
+  activity: normalizeActivity
 };
 
 export default normalize;

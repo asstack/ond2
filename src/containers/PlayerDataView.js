@@ -58,45 +58,35 @@ class RaidWeekViewer extends Component {
     this.yOffsetRef = React.createRef();
   }
 
-  componentWillReceiveProps(nextProps) {
-    const { history, handlePlayerSearch, playerProfile, cacheLength } = this.props;
-    if(cacheLength > 0 && playerProfile.membershipId !== nextProps.playerProfile.membershipId) {
-      const gamerTag = history.location.pathname.split('/')[ 2 ];
-      handlePlayerSearch({ gamerTag, membershipId: nextProps.playerProfile.membershipId, event: "no location.state"})
-      this.setState({
-        membershipId: nextProps.playerProfile.membershipId,
-      });
+  componentDidUpdate = (previousProps) => {
+    const { handlePlayerSearch, match, playerProfile } = this.props;
+    const previousMatch = previousProps.match;
+
+    //console.log('match', match);
+    //console.log('previousMatch', previousMatch);
+    //console.log('playerProfile', playerProfile);
+
+    if(playerProfile && playerProfile.displayName && match.params.playerId !== playerProfile.displayName.toLowerCase() && match.params.playerId !== previousMatch.params.playerId) {
+      console.log(' if search');
+      handlePlayerSearch({gamerTag: match.params.playerId, event: 'search'});
     }
-  }
+    else if(match && match.params) {
+      if (match.params.playerId !== previousMatch.params.playerId) {
+        console.log(' else if');
+        handlePlayerSearch({gamerTag: match.params.playerId, event: 'search'});
+      }
+    }
+  };
 
   componentDidMount = () => {
-    const { player } = this.state;
-    const {handlePlayerSearch, match, history, playerProfile, cacheLength} = this.props;
+    const {handlePlayerSearch, playerProfile, location  } = this.props;
 
-    if(!playerProfile || cacheLength > 1) {
-      handlePlayerSearch({ gamerTag: this.state.player, membershipId: playerProfile.membershipId, event: 'reload'} );
+    console.log("location", location);
+    console.log('check',(location && location.state && location.state.event && location.state.event === 'fromPGCR'));
+
+    if(!playerProfile || (location && location.state && location.state.event && location.state.event === 'fromPGCR'))  {
+      handlePlayerSearch({gamerTag: this.state.player, membershipId: playerProfile.membershipId, event: 'onLoad'});
     }
-
-    // Prevents a new search on "history back" actions.
-    history.listen((location, action) => {
-      if(action === 'PUSH') {
-        if (!!location.state && !location.state.modal) {
-          this.props.clearErrorState();
-          handlePlayerSearch({ gamerTag: location.state.gamerTag, event: 'push'});
-        } else if(!location.state) {
-          const gamerTag = location.pathname.split('/')[ 2 ];
-          handlePlayerSearch({ gamerTag, event: 'push' });
-        }
-      }
-      else if(action === 'POP') {
-        if(!!location.state && !location.state.modal) {
-          handlePlayerSearch({ gamerTag: location.state.gamerTag, event: 'back' });
-        } else if(!location.state) {
-          const gamerTag = location.pathname.split('/')[ 2 ];
-          handlePlayerSearch({ gamerTag, event: "no location.state"})
-        }
-      }
-    });
   };
 
   searchPlayer = (gamerTag) => {
@@ -128,7 +118,6 @@ class RaidWeekViewer extends Component {
 
   checkPlayerForEmpty = (statePlayer, player) => {
     if(statePlayer === '') {
-      //this.props.setHistoryCache()
       this.setState({ player: player });
     }
   };

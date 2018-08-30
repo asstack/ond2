@@ -524,7 +524,8 @@ const activityExtractor = membershipId => history => {
       ...curr.activityDetails,
       ...playerEntry,
       raidDate: curr.raidDate,
-      ...derivedData
+      ...derivedData,
+      startingPhaseIndex: curr.startingPhaseIndex
     }
   })
 };

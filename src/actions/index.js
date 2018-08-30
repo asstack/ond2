@@ -2,6 +2,12 @@
 
 export const FETCH_LOG = 'FETCH_LOG';
 
+export const activityPhaseCount = {
+  EATER_OF_WORLDS: 7,
+  LEVIATHAN: 5,
+  SPIRE_OF_STARS: 5,
+};
+
 // TODO: Need Class Race and Gender Hash
 export const CLASS_MAP = {
     3655393761: 'Titan',

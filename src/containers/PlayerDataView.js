@@ -8,7 +8,7 @@ import { isMobile } from 'react-device-detect';
 import { Grid } from 'semantic-ui-react';
 
 import ActivityTypeSelector from '../components/activity-selections/ActivityTypeSelector';
-import RaidStack from '../components/RaidStack';
+import RaidWeek from '../components/RaidWeek';
 import PlayerSearch from '../components/PlayerSearch';
 import * as consts from "../store/constants";
 
@@ -62,17 +62,11 @@ class RaidWeekViewer extends Component {
     const { handlePlayerSearch, match, playerProfile } = this.props;
     const previousMatch = previousProps.match;
 
-    //console.log('match', match);
-    //console.log('previousMatch', previousMatch);
-    //console.log('playerProfile', playerProfile);
-
     if(playerProfile && playerProfile.displayName && match.params.playerId !== playerProfile.displayName.toLowerCase() && match.params.playerId !== previousMatch.params.playerId) {
-      console.log(' if search');
       handlePlayerSearch({gamerTag: match.params.playerId, event: 'search'});
     }
     else if(match && match.params) {
       if (match.params.playerId !== previousMatch.params.playerId) {
-        console.log(' else if');
         handlePlayerSearch({gamerTag: match.params.playerId, event: 'search'});
       }
     }
@@ -80,9 +74,6 @@ class RaidWeekViewer extends Component {
 
   componentDidMount = () => {
     const {handlePlayerSearch, playerProfile, location  } = this.props;
-
-    console.log("location", location);
-    console.log('check',(location && location.state && location.state.event && location.state.event === 'fromPGCR'));
 
     if(!playerProfile || (location && location.state && location.state.event && location.state.event === 'fromPGCR'))  {
       handlePlayerSearch({gamerTag: this.state.player, membershipId: playerProfile.membershipId, event: 'onLoad'});
@@ -238,7 +229,7 @@ class RaidWeekViewer extends Component {
                 {raidWeeks.map((raidWeek, idx) => {
                   return (
                     <Grid.Column textAlign="center" key={shortid.generate()}>
-                      <RaidStack
+                      <RaidWeek
                         handleFetchPGCR={fetchPostGameCarnageReport}
                         weekTitle={publicMilestones[idx]}
                         characterIds={playerProfile.characterIds}

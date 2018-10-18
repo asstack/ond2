@@ -1,5 +1,5 @@
 import { call, put, select, all, spawn } from 'redux-saga/effects';
-import { fetchExactActivityHistory } from "../../services/destiny-services";
+import { fetchExactActivityHistory, fetchFallbackActivityHistory } from "../../services/destiny-services";
 import normalize from "../normalize";
 import * as consts from "../constants";
 import { delay } from "redux-saga";
@@ -29,28 +29,57 @@ const handleFirstRaid = function* (membershipId, activity) {
   const nf = normalize.nightfall(history.NF);
   const raids = normalize.raidHistory(history);
 
-  yield all([
-    put({type: consts.SET_NF_HISTORY, data: nf }),
-    put({type: consts.SET_RAID_HISTORY, data: raids }),
-  ]);
 
-  yield put({ type: consts.SET_LOADING, data: false });
+
+  const showNext = activityDataFound({ ...raids, NF: { normal: nf.normal, prestige: nf.prestige }});
+  if(showNext) {
+    yield all([
+      put({type: consts.SET_NF_HISTORY, data: nf }),
+      put({type: consts.SET_RAID_HISTORY, data: raids }),
+      put({type: consts.SET_LOADING, data: false})
+    ]);
+    yield
+  }
   return raid;
 };
 
-export default function* collectActivityHistory(membershipId) {
+export default function* collectActivityHistory(membershipId, fallbackFetch = false) {
 
   //const spire = yield call(fetchExactActivityHistory, membershipId, 'spireOfStars');
 
-  const fetches = yield all([
-    call(handleFirstRaid, membershipId, 'SPIRE'),
-    call(fetchExactActivityHistory, membershipId, 'leviathan'),
-    call(fetchExactActivityHistory, membershipId, 'eaterOfWorlds'),
-    call(fetchExactActivityHistory, membershipId, 'nightfall'),
-    call(fetchExactActivityHistory, membershipId, 'characterActivities'),
-  ]);
+  let spire, lev, eow, nf, characterActivities;
 
-  const [ spire, lev, eow, nf, characterActivities ] = fetches;
+  if(fallbackFetch) {
+    const playerProfile = yield select(state => state.playerProfile);
+    const activityHistory = yield call(fetchFallbackActivityHistory, {
+      membershipId: membershipId,
+      characterIds: playerProfile.characterIds,
+      membershipType: 1
+    });
+
+    console.log('activiityHistory', activityHistory);
+    spire = activityHistory.raidHistory.SPIRE;
+    lev = activityHistory.raidHistory.LEV;
+    eow = activityHistory.raidHistory.EOW;
+    nf = activityHistory.nightfallHistory;
+    characterActivities = {
+      characterOne: [],
+      characterTwo: [],
+      characterThree: []
+    }
+
+  } else {
+    const fetches = yield all([
+      call(handleFirstRaid, membershipId, 'SPIRE'),
+      call(fetchExactActivityHistory, membershipId, 'leviathan'),
+      call(fetchExactActivityHistory, membershipId, 'eaterOfWorlds'),
+      call(fetchExactActivityHistory, membershipId, 'nightfall'),
+      call(fetchExactActivityHistory, membershipId, 'characterActivities'),
+    ]);
+
+    [ spire, lev, eow, nf, characterActivities ] = fetches;
+  }
+
 
   const activityHistory = {
     SPIRE: { normal: spire.normal || [], prestige: spire.prestige || []},
@@ -77,6 +106,7 @@ export default function* collectActivityHistory(membershipId) {
     // const normalizedEP = {}; //normalize.epHistory(activityHistory.epHistory);
     const normalizedPGCR = pgcrData;
     const playerProfile = yield select(state => state.playerProfile);
+    console.log('playerProfile', playerProfile);
     const displayName = playerProfile ? playerProfile.displayName : '';
 
     //console.log('!#!#!#!#!#Set History', normalizedRH);
@@ -95,20 +125,19 @@ export default function* collectActivityHistory(membershipId) {
 
     yield put({ type: consts.SET_QUICK_STATS, data: false });
     yield put({ type: consts.SET_NEW_PLAYER, data: false });
-    yield delay(500);
+
     yield put({ type: consts.SET_LOADING, data: false });
 
+    if (membershipId !== previousMembershipId && !activityDataFound(activityHistory)) {
+      //Data exists, so we update behind the scenes. Call update in 10 seconds.
+      yield put({ type: consts.SYNC_NEW_PLAYER_DATA, data: { membershipId, delayMS: 3000 }});
+    }
+    previousMembershipId = membershipId;
+
   } else {
-
-    yield put({ type: consts.SET_NEW_PLAYER, data: true });
-    const { characterIds, membershipType } = yield select(state => state.playerProfile);
-    yield spawn(collectQuickStats, membershipId, characterIds, membershipType);
-    // activityHistory = yield call(fetchFallbackActivityHistory, {membershipId, characterIds, membershipType});
+    //const { characterIds, membershipType } = yield select(state => state.playerProfile);
+    //yield spawn(collectQuickStats, membershipId, characterIds, membershipType);
+    yield spawn(collectActivityHistory, membershipId, true);
+    yield put({ type: consts.SCHEDULE_NEW_PLAYER_UPDATE, data: { membershipId, delayMS: 10000 }});
   }
-
-  if (membershipId !== previousMembershipId) {
-    //Data exists, so we update behind the scenes. Call update in 10 seconds.
-    yield put({ type: consts.SYNC_NEW_PLAYER_DATA, data: { membershipId, delayMS: 3000 }});
-  }
-  previousMembershipId = membershipId;
 }

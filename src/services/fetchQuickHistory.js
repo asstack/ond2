@@ -53,8 +53,8 @@ const fetchQuickHistory = async ({membershipId, characterIds, membershipType}) =
     const raidHistory = normalize.raids(raidActivity.reduce((accum, data) => [ ...accum, ...data ], []));
     // const epHistory = normalize.ep(epData);
     return {
-      raidCount: raidHistory.raidCount,
-      nfCount: nightfallHistory.raidCount
+      nightfallHistory,
+      raidHistory
   };
 
   } catch(error) {

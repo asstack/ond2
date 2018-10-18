@@ -72,40 +72,7 @@ const setEPHistory = (state={ epActivities: {}, epSuccessCount: '0'}, action) =>
   return state;
 };
 
-const setRaidHistory = (state={
-  raidCount: {
-    eow: {
-      prestige: '0',
-      normal: '0',
-      successCount:  '0',
-      farmCount: '0',
-    },
-    lev: {
-      prestige: '0',
-      normal: '0',
-      successCount: {
-        prestige: '0',
-        normal: '0'
-      },
-      farmCount: {
-        prestige: '0',
-        normal: '0'
-      }
-    },
-    spire: {
-      prestige: '0',
-      normal: '0',
-      successCount: {
-        prestige: '0',
-        normal: '0'
-      },
-      farmCount: {
-        prestige: '0',
-        normal: '0'
-      }
-    }
-  }
-}, action) => {
+const setRaidHistory = (state={}, action) => {
   if(action.type === SET_RAID_HISTORY) {
    return action.data;
   }

@@ -2,9 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { Icon, Grid, Popup } from 'semantic-ui-react';
-import { CLASS_MAP } from '../actions/index';
+import { CLASS_MAP } from '../consts';
 
-import RaidView from './RaidView';
+import RaidBar from './RaidBar';
 import FailedRaidWeek from '../components/FailedRaidWeek';
 
 const RaidWeekContainer = styled.div`
@@ -71,7 +71,7 @@ const RaidWeek = ({ characterActivities, handleSetFarmCount, handleFetchPGCR, vi
   const [week, raids] = raidWeek;
   const raidValues = Object.values(raids);
 
-  characterActivities
+  //characterActivities
   const completedRaids =
     (viewRaid === 'nf' || viewRaid === 'ep') ?
       raidValues.filter(raid => raid.values.completionReason === 0 && raid.values.completed === 1)
@@ -121,6 +121,7 @@ const RaidWeek = ({ characterActivities, handleSetFarmCount, handleFetchPGCR, vi
   };
 
   const [date, name] = viewRaid === 'nf' ? weekTitle : week.split(':D:').reverse();
+
   const farmKillLimit = raid === 'sp' ? 600 : 400;
   const sortedCompletions = completedRaids.sort((a, b) => a.totalKills >= farmKillLimit ? -1 : 1);
 
@@ -150,7 +151,7 @@ const RaidWeek = ({ characterActivities, handleSetFarmCount, handleFetchPGCR, vi
           </Grid.Column>
         </Grid>
       </RaidWeekHeader>
-      <RaidView raid={raid} raids={sortedCompletions} maxCount={Math.abs(maxSuccessRaids)} handleFetchPGCR={handleFetchPGCR} />
+      <RaidBar raid={raid} raids={sortedCompletions} maxCount={Math.abs(maxSuccessRaids)} handleFetchPGCR={handleFetchPGCR} />
       <FailedRaidWeek success={false} raids={failedRaids} maxCount={0} handleFetchPGCR={handleFetchPGCR} />
     </RaidWeekContainer>
   );

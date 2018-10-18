@@ -174,12 +174,7 @@ class RaidWeekViewer extends Component {
     this.checkPlayerForEmpty(this.state.player, player);
 
     if(viewRaid === 'nf' && !!nightfallHistory[viewMode]) {
-
-      if (Object.keys(nightfallHistory[ viewMode ]).length > 1) {
-        const nfLen = Object.entries(nightfallHistory[viewMode]).length;
-        const nfStartIndex = Math.abs(6 - nfLen);
-        raidWeeks = Object.entries(nightfallHistory[viewMode]).slice(nfStartIndex, nfLen).map((item) => [ ...item ]).reverse()
-      }
+      raidWeeks = Object.entries(nightfallHistory[viewMode]).reverse()
     }
     else if(viewRaid === 'eow'){
       raidWeeks = Object.entries(EOW[viewMode]).reverse();
@@ -194,7 +189,7 @@ class RaidWeekViewer extends Component {
       raidWeeks = Object.entries(EP[viewMode]).reverse();
     }
 
-    const shouldRender = (!loading && raidWeeks.length > 0 && !notFound && !playerPrivacy);
+    const shouldRender = (raidWeeks.length > 0 && !notFound && !playerPrivacy);
 
     return (
       <PlayerDataViewWrapper flexMobile={isMobile} ref={this.yOffsetRef}>
@@ -214,7 +209,7 @@ class RaidWeekViewer extends Component {
 
           <Grid.Row style={{ paddingBottom: 0}} centered>
           {
-            (!loading && !notFound) &&
+            (!notFound) &&
               <ActivityTypeSelector
                 handleSetRaid={this.setRaid} handleSetMode={this.setMode} epSuccessCount={epSuccessCount}
                 handleSetActivityType={this.setActivity} nfSuccessCount={nfSuccessCount} raidCount={raidCount}

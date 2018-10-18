@@ -35,6 +35,7 @@ export const FETCH_PGCR = 'fetch_pgcr';
 
 export const LOAD_PUBLIC_MILESTONE_DATA = 'load_public_milestone_data';
 export const SYNC_NEW_PLAYER_DATA = 'sync_new_player_data';
+export const SCHEDULE_NEW_PLAYER_UPDATE = 'schedule_new_player_update';
 
 export const SET_LOADING = 'toggle_loading';
 export const TOGGLE_PLAYER_SEARCH = 'set_player_search';
@@ -77,4 +78,221 @@ export const activityModes = {
   10: 'control',
   16: 'nightfall',
   17: 'heroicNightfall'
+};
+
+export const RAID_RESET_DATA = {
+  resetActivities: [
+    [
+       {
+         loading: true,
+         values: {
+           totalKills: 800,
+           timePlayedSeconds: 400,
+           completed: 1,
+           completionReason: 0
+         }
+       },
+       {
+         loading: true,
+         values: {
+           totalKills: 800,
+           timePlayedSeconds: 400,
+           completed: 1,
+           completionReason: 0
+         }
+       }
+    ],
+    [
+      {
+         loading: true,
+         values: {
+           totalKills: 800,
+           timePlayedSeconds: 400,
+           completed: 1,
+           completionReason: 0
+         }
+       },
+       {
+         loading: true,
+         values: {
+           totalKills: 800,
+           timePlayedSeconds: 400,
+           completed: 1,
+           completionReason: 0
+         }
+       },
+       {
+         loading: true,
+         values: {
+           totalKills: 800,
+           timePlayedSeconds: 400,
+           completed: 1,
+           completionReason: 0
+         }
+       }
+    ],
+    [
+      {
+        loading: true,
+        values: {
+          totalKills: 800,
+          timePlayedSeconds: 400,
+          completed: 1,
+          completionReason: 0
+        }
+      },
+      {
+         loading: true,
+         values: {
+           totalKills: 800,
+           timePlayedSeconds: 400,
+           completed: 1,
+           completionReason: 0
+         }
+       }
+    ],
+    [
+      {
+        loading: true,
+        values: {
+          totalKills: 800,
+          timePlayedSeconds: 400,
+          completed: 1,
+          completionReason: 0
+        }
+      },
+      {
+         loading: true,
+         values: {
+           totalKills: 800,
+           timePlayedSeconds: 400,
+           completed: 1,
+           completionReason: 0
+         }
+       },
+       {
+         loading: true,
+         values: {
+           totalKills: 800,
+           timePlayedSeconds: 400,
+           completed: 1,
+           completionReason: 0
+         }
+       },
+       {
+         loading: true,
+         values: {
+           totalKills: 800,
+           timePlayedSeconds: 400,
+           completed: 1,
+           completionReason: 0
+         }
+       }
+    ],
+    [
+        {
+           loading: true,
+           values: {
+             totalKills: 800,
+             timePlayedSeconds: 400,
+             completed: 1,
+             completionReason: 0
+           }
+         },
+         {
+           loading: true,
+           values: {
+             totalKills: 800,
+             timePlayedSeconds: 400,
+             completed: 1,
+             completionReason: 0
+           }
+         },
+         {
+           loading: true,
+           values: {
+             totalKills: 800,
+             timePlayedSeconds: 400,
+             completed: 1,
+             completionReason: 0
+           }
+         }
+      ],
+    [
+      {
+        loading: true,
+        values: {
+          totalKills: 800,
+          timePlayedSeconds: 400,
+          completed: 1,
+          completionReason: 0
+        }
+      },
+      {
+         loading: true,
+         values: {
+           totalKills: 800,
+           timePlayedSeconds: 400,
+           completed: 1,
+           completionReason: 0
+         }
+       },
+       {
+         loading: true,
+         values: {
+           totalKills: 800,
+           timePlayedSeconds: 400,
+           completed: 1,
+           completionReason: 0
+         }
+       },
+       {
+         loading: true,
+         values: {
+           totalKills: 800,
+           timePlayedSeconds: 400,
+           completed: 1,
+           completionReason: 0
+         }
+       }
+    ]
+  ],
+  raidCount: {
+    eow: {
+      prestige: '0',
+      normal: '0',
+      successCount:  {
+        normal: '0',
+        prestige: '0'
+      },
+      farmCount: {
+        normal: '0',
+        prestige: '0'
+      },
+    },
+    lev: {
+      prestige: '0',
+      normal: '0',
+      successCount: {
+        prestige: '0',
+        normal: '0'
+      },
+      farmCount: {
+        prestige: '0',
+        normal: '0'
+      }
+    },
+    spire: {
+      prestige: '0',
+      normal: '0',
+      successCount: {
+        prestige: '0',
+        normal: '0'
+      },
+      farmCount: {
+        prestige: '0',
+        normal: '0'
+      }
+    }
+  }
 };

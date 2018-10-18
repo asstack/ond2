@@ -118,11 +118,11 @@ class App extends Component {
         <SideMenu toggle={this.toggleSideMenu} visible={showSideMenu}>
           {(!pgcr || !isMobile) &&
             <MenuToggleWrapper onClick={() => this.toggleSideMenu()}>
-              <OND2Logo/>
+              <OND2Logo loading={loading} />
             </MenuToggleWrapper>
           }
 
-          <LogoLoader playerProfile={playerProfile} newPlayer={newPlayer} quickStats={quickStats} loading={loading} />
+          <LogoLoader playerProfile={playerProfile} newPlayer={newPlayer} quickStats={quickStats} loading={false} />
 
           <Route exact path="/" render={data => (
             <Landing loading={loading} clearErrorState={clearErrorState} clearLoader={clearLoader} {...data} />

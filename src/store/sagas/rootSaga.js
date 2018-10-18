@@ -12,6 +12,7 @@ import moment from "moment/moment";
 function* watchProfileCharacters() {
   yield takeLatest(consts.FETCH_PLAYER_PROFILE, fetchPlayerProfile);
   yield takeLatest(consts.SYNC_NEW_PLAYER_DATA, syncPlayerNewData);
+  yield takeLatest(consts.SCHEDULE_NEW_PLAYER_UPDATE, scheduleNewPlayerUpdate);
   yield takeEvery(consts.FETCH_PGCR, collectPGCR);
   yield takeEvery(consts.LOAD_PUBLIC_MILESTONE_DATA, collectPublicMilestoneData);
   yield takeEvery(consts.CALL_SET_ACTIVITY_HISTORY_CACHE, setActivityCache);
@@ -48,6 +49,20 @@ function* syncPlayerNewData({ data }) {
       if(memId === membershipId) {
         yield spawn(collectActivityHistory, membershipId);
       }
+    }
+  }
+}
+
+function* scheduleNewPlayerUpdate({ data }) {
+  const {membershipId, delayMS} = data;
+  yield delay(delayMS);
+
+  if(yield cancelled()) {
+  } else {
+    const memId = yield select(state => state.playerProfile.membershipId);
+
+    if(memId === membershipId) {
+      yield spawn(collectActivityHistory, membershipId);
     }
   }
 }

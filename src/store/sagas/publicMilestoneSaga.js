@@ -1,5 +1,5 @@
 import { call, put, select } from 'redux-saga/effects';
-import { RAIDS } from "../../actions";
+import { RAIDS } from "../../consts";
 import { fetchPublicMilestones } from "../../services/destiny-services";
 import normalize from "../normalize";
 import * as consts from "../constants";

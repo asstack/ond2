@@ -1,4 +1,4 @@
-import { destinyBaseURL } from "../actions";
+import { destinyBaseURL } from "../consts";
 
 const apiType = {
   destiny2: `${destinyBaseURL}/Platform/Destiny2`,

@@ -97,7 +97,7 @@ const SStepWrapper = styled.div`
   flex-direction: row;
   
   div {
-    border-right: 1px solid black;
+    border-right: ${({ loading }) => loading ? 'none' : '1px solid #979797' };
   }
   
   div:last-of-type {
@@ -108,7 +108,7 @@ const SStepWrapper = styled.div`
 const Step = styled.div`
   width: 20%;
   height: 18px;
-  background-color: ${({ bgColor }) => bgColor ? bgColor : '#b8b8b8' };
+  background-color: ${({ bgColor }) => bgColor ? bgColor : '#d8d8d8' };
 `;
 
 const determineColor = (startingPhaseIndex) => (stepIndex, farm) => {
@@ -130,19 +130,17 @@ const determineColor = (startingPhaseIndex) => (stepIndex, farm) => {
 
 };
 
-const RaidView = ({ raid='nf', raids, handleFetchPGCR, success=true, maxCount }) => {
+const RaidBar = ({ raid='nf', raids, handleFetchPGCR, success=true, maxCount }) => {
   const isNF = raid === 'nf';
   const useSmallRaidBar = Object.values(raids).length >= 14;
 
-  const farmKillLimit = raid === 'sp' ? 700 : 400;
-
-  console.log('raids', raids);
   return (
     <RaidViewWrapper success={success} maxCount={Math.abs(maxCount)} neg={maxCount < 0}>
       {raids && Object.values(raids).map(currRaid => {
-        const farm = success && currRaid.totalKills < farmKillLimit;
         const startingPhaseIndex = currRaid.startingPhaseIndex || 0;
-        const bgColorByIndex = determineColor(startingPhaseIndex);
+        const farm = success && startingPhaseIndex > 0;
+
+        const bgColorByIndex = currRaid.loading ? () => '#b8b8b8' : determineColor(startingPhaseIndex);
         const stepArray = [0, 1, 2, 3, 4];
 
         const time = `${Number.parseFloat(currRaid.values.activityDurationSeconds/60).toFixed(2)}`;
@@ -153,7 +151,7 @@ const RaidView = ({ raid='nf', raids, handleFetchPGCR, success=true, maxCount })
               <div>
                 <BarValues>{ isNF ? currRaid.values.teamScore : `${percentWidth} m`}</BarValues>
                 <SProgressWrapper>
-                  <SStepWrapper>
+                  <SStepWrapper loading={currRaid.loading}>
                     { stepArray.map(curr => <Step farm={farm} bgColor={bgColorByIndex(curr, farm)} />) }
                   </SStepWrapper>
                 </SProgressWrapper>
@@ -172,11 +170,9 @@ const RaidView = ({ raid='nf', raids, handleFetchPGCR, success=true, maxCount })
           <Link className="pgcr-link" to={{ pathname: `/pgcr/${currRaid.instanceId}`, state: { modal: true } }} >
             { (success && !useSmallRaidBar && isNF) && <BarValues>{currRaid.values.teamScore || ''}</BarValues> }
             <SProgressWrapper>
-              <SStepWrapper>
+              <SStepWrapper loading={currRaid.loading}>
                 {
-                  stepArray.map(curr => {
-                    return <Step bgColor={bgColorByIndex(curr, farm)} />
-                  })
+                  stepArray.map(curr => <Step bgColor={bgColorByIndex(curr, farm)} />)
                 }
               </SStepWrapper>
             </SProgressWrapper>
@@ -198,10 +194,10 @@ const RaidView = ({ raid='nf', raids, handleFetchPGCR, success=true, maxCount })
   )
 };
 
-RaidView.propTypes = {
+RaidBar.propTypes = {
   raids: PropTypes.array.isRequired,
   handleFetchPGCR: PropTypes.func.isRequired,
   fail: PropTypes.bool
 };
 
-export default RaidView;
+export default RaidBar;

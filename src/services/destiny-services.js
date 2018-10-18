@@ -1,4 +1,4 @@
-import { awsURL } from '../actions';
+import { awsURL } from '../consts';
 import { applyQueryStringParams } from "./utilities";
 import {
   searchDestinyPlayer,
@@ -22,11 +22,9 @@ const destinyInit = {
   credentials: 'include'
 };
 
-const searchPlayer = async pathParams => {
-  const url = applyQueryStringParams(searchDestinyPlayer(pathParams), { components: 100 });
-  const res = await fetch(url, destinyInit);
-  const playerData = await res.json();
-  return playerData.Response;
+const searchPlayer = async (userName) => {
+  const res = await fetch(`${awsURL}/player/${userName}`, { method: 'GET', mode: 'cors' });
+  return await res.json();
 };
 
 const fetchProfile = async membershipId => {

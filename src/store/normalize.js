@@ -7,7 +7,7 @@ import {
   LEVIATHAN,
   SPIRE_OF_STARS,
   ESCALATION_PROTOCOL
-} from "../actions";
+} from "../consts";
 
 const getCount = (data) => Object.values(data).reduce((accum, arr) => accum + arr.length, 0);
 const getSuccessCount = (data) => Object.values(data).reduce((accum, curr) => {
@@ -500,34 +500,37 @@ const formatPGCRData = (history) => {
   }, {});
 };
 
-const calculateDerivedData = (entries, membershipId) => {
+const calculateDerivedData = (entries=[], membershipId) => {
   const teamCount = entries.length;
   const totalKills = entries.reduce((teamKills, entry) => {
     return teamKills + entry.values.kills;
   }, 0);
 
   const killRank = entries.sort((entryOne, entryTwo) => {
-    entryOne.values.kills > entryTwo.kills
+    return entryOne.values.kills > entryTwo.kills
   }).findIndex(entry => entry.player.membershipId === membershipId) + 1;
 
   return { teamCount, totalKills, killRank };
 };
 
-const activityExtractor = membershipId => history => {
-  //TODO: Since history can have null values, that means we are missing something.
-  // Not sure how we respond that that when it happens. Some sort of update?
-  const cleanHistory = history.filter(curr => !!curr && curr !== null);
-  return cleanHistory.map((curr = { entries: []}) => {
-    const playerEntry = curr.entries.filter(entry => entry.membershipId === membershipId)[ 0 ];
-    const derivedData = calculateDerivedData(curr.entries, membershipId);
-    return {
-      ...curr.activityDetails,
-      ...playerEntry,
-      raidDate: curr.raidDate,
-      ...derivedData,
-      startingPhaseIndex: curr.startingPhaseIndex
-    }
-  })
+const activityExtractor = membershipId => (history = []) => {
+  console.log('history', history);
+  if(history.length > 0) {
+    const cleanHistory = history.filter(curr => !!curr && curr !== null);
+    return cleanHistory.map((curr = {entries: []}) => {
+      const playerEntry = curr.entries.filter(entry => entry.membershipId === membershipId)[ 0 ];
+      const derivedData = calculateDerivedData(curr.entries, membershipId);
+      return {
+        ...curr.activityDetails,
+        ...playerEntry,
+        raidDate: curr.raidDate,
+        ...derivedData,
+        startingPhaseIndex: curr.startingPhaseIndex
+      }
+    })
+  }
+
+  return {}
 };
 
 const normalizeActivity = (activity, activities, membershipId) => {
@@ -584,6 +587,35 @@ const normalizeActivityHistory = (activityHistory, membershipId) => {
     history,
     pgcrData
   }
+};
+
+const getLoadingRaidWeek = (raidWeeks, resetActivities) => {
+  return raidWeeks.reduce((accum, raidWeek, idx, arr) => {
+    const smallDate = raidWeek.format('MM/DD/YY');
+    accum[smallDate] = resetActivities[idx];
+    return accum;
+  }, {})
+};
+
+export const getRaidResetData = (resetData) => {
+  const RaidWeeks = getRaidWeeks(SPIRE_OF_STARS.launchDate).reverse().slice(0, 6).reverse();
+  const raidsByWeek = getLoadingRaidWeek(RaidWeeks, resetData.resetActivities);
+
+  return {
+    EOW:{
+      normal: raidsByWeek,
+      prestige: raidsByWeek
+    },
+    LEV: {
+      normal: raidsByWeek,
+      prestige: raidsByWeek
+    },
+    SPIRE: {
+      normal: raidsByWeek,
+      prestige: raidsByWeek
+    },
+    raidCount: resetData.raidCount
+  };
 };
 
 const normalize = {
